@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "Berry Wallet",
+  "version": "0.0.1",
+  "description": "Berry Wallet on Solana for Berry lovers",
+  "icons": {
+    "32": "./icon-32.png"
+  },
+  "action": {
+    "default_popup": "index.html"
+  },
+  "host_permissions": ["http://*/*", "https://*/*"]
+}
