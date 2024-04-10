@@ -2,7 +2,31 @@
 @tailwind components;
 @tailwind utilities;
 
-html {
-  width: 400px;
-  height: 600px;
+@layer base {
+  h1 {
+    @apply text-[20px] font-semibold;
+  }
+  h2 {
+    @apply text-[18px] font-semibold;
+  }
+  h3 {
+    @apply text-[16px] font-semibold;
+  }
+  p {
+    @apply text-[14px];
+  }
+}
+
+@layer utilities {
+  .extension-container {
+    @apply w-[400px] h-[600px] bg-red-200;
+  }
+}
+
+body {
+  background-color: lightblue;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
