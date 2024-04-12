@@ -1,7 +1,7 @@
 function App() {
   return (
     <div className="extension-container">
-      <p className="text-red-500">Hello, Berry Wallet</p>
+      <p className="text-blue-500">Hello, Berry Wallet</p>
     </div>
   );
 }
