@@ -1,7 +1,7 @@
 import { FC, ReactNode } from "react";
 import { useSnapshot } from "valtio";
-import { appState } from "../state";
 import { Navigate } from "react-router-dom";
+import { appState } from "@/state";
 
 interface Props {
   children: ReactNode;

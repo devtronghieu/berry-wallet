@@ -1,4 +1,4 @@
-import strawberry from "../assets/strawberry.svg";
+import strawberry from "@assets/strawberry.svg";
 
 const SignInScreen = () => {
   return (
