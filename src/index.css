@@ -19,7 +19,7 @@
 
 @layer utilities {
   .extension-container {
-    @apply w-[400px] h-[600px] bg-red-200;
+    @apply w-[400px] h-[600px] bg-primary-100;
   }
 }
 
