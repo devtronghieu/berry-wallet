@@ -1,8 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App.tsx";
 import { createHashRouter, RouterProvider } from "react-router-dom";
+
 import "./index.css";
+
+import App from "./App.tsx";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import SignInScreen from "./screens/SignIn.tsx";
 import CreateWalletScreen from "./screens/CreateWallet.tsx";
