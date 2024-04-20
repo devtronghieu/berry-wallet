@@ -25,7 +25,11 @@ export default {
         500: "#4A4A4A",
       },
     },
-    extend: {},
+    extend: {
+      fontFamily: {
+        poppins: ["Poppins", "sans-serif"],
+      },
+    },
   },
   plugins: [],
 };
