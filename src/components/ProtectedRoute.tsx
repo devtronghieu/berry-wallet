@@ -4,15 +4,15 @@ import { Navigate } from "react-router-dom";
 import { appState } from "@/state";
 
 interface Props {
-    children: ReactNode;
+  children: ReactNode;
 }
 
 const ProtectedRoute: FC<Props> = ({ children }) => {
-    const { isLoggedIn } = useSnapshot(appState);
+  const { isLoggedIn } = useSnapshot(appState);
 
-    if (!isLoggedIn) return <Navigate to="/sign-in" />;
+  if (!isLoggedIn) return <Navigate to="/sign-in" />;
 
-    return children;
+  return children;
 };
 
 export default ProtectedRoute;

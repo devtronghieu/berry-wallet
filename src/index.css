@@ -4,48 +4,44 @@
 @tailwind utilities;
 
 @layer base {
-    h1 {
-        @apply font-['Poppins'] text-[20px] font-semibold;
-    }
-    h2 {
-        @apply font-['Poppins'] text-[18px] font-semibold;
-    }
-    h3 {
-        @apply font-['Poppins'] text-[16px] font-semibold;
-    }
-    p {
-        @apply font-['Poppins'] text-[14px];
-    }
+  h1 {
+    @apply text-[20px] font-semibold;
+  }
+  h2 {
+    @apply text-[18px] font-semibold;
+  }
+  h3 {
+    @apply text-[16px] font-semibold;
+  }
+  p {
+    @apply text-[14px];
+  }
 }
 
 @layer utilities {
-    .extension-container {
-        @apply w-[400px] h-[600px] bg-primary-100;
-    }
-    .gradient-background {
-        @apply bg-gradient-to-r from-primary-200 to-primary-300;
-    }
-    .gradient-text {
-        background: linear-gradient(to bottom, #a6d9da 0%, #267578 100%);
-        background: -webkit-linear-gradient(
-            to bottom,
-            #a6d9da 0%,
-            #267578 100%
-        );
-        background-clip: text;
-        -webkit-background-clip: text;
-        color: transparent;
-        -webkit-text-fill-color: transparent;
-    }
-    .gradient-button {
-        @apply gradient-background hover:opacity-90 transition-opacity px-8 py-2 rounded-full text-lg text-primary-100 font-bold flex items-center justify-center gap-2;
-    }
+  .extension-container {
+    @apply w-[400px] h-[600px] bg-primary-100;
+  }
+  .gradient-background {
+    @apply bg-gradient-to-r from-primary-200 to-primary-300;
+  }
+  .gradient-text {
+    background: linear-gradient(to bottom, #a6d9da 0%, #267578 100%);
+    background: -webkit-linear-gradient(to bottom, #a6d9da 0%, #267578 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+  .gradient-button {
+    @apply gradient-background hover:opacity-90 transition-opacity px-8 py-2 rounded-full text-lg text-primary-100 font-bold flex items-center justify-center gap-2;
+  }
 }
 
 body {
-    background-color: lightblue;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  background-color: lightblue;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
