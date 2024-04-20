@@ -7,6 +7,7 @@ interface Props {
   title: string;
   desc: string[];
   ctaText: string;
+  ctaDisabled?: boolean;
   onGoBack: () => void;
   onCTAClick: () => void;
 }
@@ -35,7 +36,11 @@ const OnboardingContainer: FC<Props> = (props) => {
 
           {props.children}
 
-          <button className="gradient-button mt-auto w-full rounded-xl" onClick={props.onCTAClick}>
+          <button
+            disabled={props.ctaDisabled}
+            className={`mt-auto w-full rounded-xl ${props.ctaDisabled ? "disabled-button" : "gradient-button"}`}
+            onClick={props.onCTAClick}
+          >
             {props.ctaText}
           </button>
         </div>

@@ -35,8 +35,16 @@
     -webkit-text-fill-color: transparent;
   }
 
+  .button {
+    @apply px-8 py-2 rounded-full text-lg text-primary-100 font-bold flex items-center justify-center gap-2;
+  }
+
   .gradient-button {
-    @apply gradient-background hover:opacity-90 transition-opacity px-8 py-2 rounded-full text-lg text-primary-100 font-bold flex items-center justify-center gap-2;
+    @apply button gradient-background hover:opacity-90 transition-opacity;
+  }
+
+  .disabled-button {
+    @apply button bg-gray-200;
   }
 
   .mini-icon-button {
