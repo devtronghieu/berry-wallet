@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { IconProps } from "./types";
 
-const ArrowDownIcon: FC<IconProps> = ({ size = 20, color = "#267578" }) => {
+const ArrowDownBGIcon: FC<IconProps> = ({ size = 20, color = "#267578" }) => {
   return (
     <svg width={size} height={size} viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
@@ -14,4 +14,4 @@ const ArrowDownIcon: FC<IconProps> = ({ size = 20, color = "#267578" }) => {
   );
 };
 
-export default ArrowDownIcon;
+export default ArrowDownBGIcon;

@@ -11,6 +11,7 @@ import CreateWalletScreen from "./screens/CreateWallet.tsx";
 import ImportSeedPhraseScreen from "./screens/ImportSeedPhrase.tsx";
 import ImportPrivateKeyScreen from "./screens/ImportPrivateKey.tsx";
 import NotFoundScreen from "./screens/NotFound.tsx";
+import { Route } from "./utils/route.ts";
 
 const router = createHashRouter([
   {
@@ -22,19 +23,19 @@ const router = createHashRouter([
     ),
   },
   {
-    path: "/sign-in",
+    path: Route.SignIn,
     element: <SignInScreen />,
   },
   {
-    path: "/create-wallet",
+    path: Route.CreateWallet,
     element: <CreateWalletScreen />,
   },
   {
-    path: "/import-seed-phrase",
+    path: Route.ImportSeedPhrase,
     element: <ImportSeedPhraseScreen />,
   },
   {
-    path: "/import-private-key",
+    path: Route.ImportPrivateKey,
     element: <ImportPrivateKeyScreen />,
   },
   {
