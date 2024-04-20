@@ -26,6 +26,7 @@ export default {
         400: "#777777",
         500: "#4A4A4A",
       },
+      error: "#EC044E",
     },
     extend: {
       fontFamily: {

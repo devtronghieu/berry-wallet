@@ -51,6 +51,10 @@
     @apply w-6 h-6 flex items-center justify-center bg-primary-200 hover:bg-primary-300 rounded-full transition;
   }
 
+  .input {
+    @apply w-full px-4 py-2 rounded-xl outline-none border border-primary-500 bg-primary-300 text-primary-100 placeholder:text-primary-100 font-semibold;
+  }
+
   .glass-background {
     background-color: #fcebeeab;
     backdrop-filter: blur(8px);

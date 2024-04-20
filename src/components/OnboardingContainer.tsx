@@ -1,8 +1,8 @@
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, useEffect } from "react";
 import strawberry from "@assets/strawberry.svg";
 import ArrowLeft from "@/icons/ArrowLeft";
 
-interface Props {
+export interface OnboardingContainerProps {
   children: ReactNode;
   title: string;
   desc: string[];
@@ -12,7 +12,20 @@ interface Props {
   onCTAClick: () => void;
 }
 
-const OnboardingContainer: FC<Props> = (props) => {
+const OnboardingContainer: FC<OnboardingContainerProps> = (props) => {
+  useEffect(() => {
+    const handleEnter = (e: KeyboardEvent) => {
+      if (e.key === "Enter" && !props.ctaDisabled) {
+        props.onCTAClick();
+      }
+    };
+    window.addEventListener("keydown", handleEnter);
+
+    return () => {
+      window.removeEventListener("keydown", handleEnter);
+    };
+  }, [props]);
+
   return (
     <div className="extension-container flex flex-col">
       <div className="px-4 py-2 gap-1.5 flex items-center bg-primary-300">

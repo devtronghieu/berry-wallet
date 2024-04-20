@@ -7,7 +7,7 @@ import "./index.css";
 import App from "./App.tsx";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import SignInScreen from "./screens/SignIn.tsx";
-import CreateWalletScreen from "./screens/CreateWallet.tsx";
+import CreateWalletScreen from "./screens/CreateWallet";
 import ImportSeedPhraseScreen from "./screens/ImportSeedPhrase.tsx";
 import ImportPrivateKeyScreen from "./screens/ImportPrivateKey.tsx";
 import NotFoundScreen from "./screens/NotFound.tsx";
