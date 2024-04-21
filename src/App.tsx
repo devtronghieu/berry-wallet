@@ -1,7 +1,10 @@
+import { Outlet } from "react-router-dom";
+
 function App() {
+  console.log("--> hello from app");
   return (
     <div className="extension-container">
-      <p className="text-red-500">Hello, Berry Wallet</p>
+      <Outlet />
     </div>
   );
 }

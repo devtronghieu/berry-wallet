@@ -4,14 +4,17 @@ import { createHashRouter, RouterProvider } from "react-router-dom";
 
 import "./index.css";
 
+import { Route } from "@utils/route.ts";
+import ProtectedRoute from "@components/ProtectedRoute.tsx";
+
 import App from "./App.tsx";
-import ProtectedRoute from "./components/ProtectedRoute.tsx";
-import SignInScreen from "./screens/SignIn.tsx";
-import CreateWalletScreen from "./screens/CreateWallet";
-import ImportSeedPhraseScreen from "./screens/ImportSeedPhrase.tsx";
-import ImportPrivateKeyScreen from "./screens/ImportPrivateKey.tsx";
-import NotFoundScreen from "./screens/NotFound.tsx";
-import { Route } from "./utils/route.ts";
+import SignInScreen from "@screens/SignIn.tsx";
+import CreateWalletScreen from "@screens/CreateWallet";
+import ImportSeedPhraseScreen from "@screens/ImportSeedPhrase.tsx";
+import ImportPrivateKeyScreen from "@screens/ImportPrivateKey.tsx";
+import NotFoundScreen from "@screens/NotFound.tsx";
+import UnlockWalletScreen from "@screens/UnlockWallet.tsx";
+import HomeScreen from "@screens/Home.tsx";
 
 const router = createHashRouter([
   {
@@ -21,10 +24,21 @@ const router = createHashRouter([
         <App />
       </ProtectedRoute>
     ),
+    children: [
+      {
+        path: Route.Home,
+        element: <HomeScreen />,
+        index: true,
+      },
+    ],
   },
   {
     path: Route.SignIn,
     element: <SignInScreen />,
+  },
+  {
+    path: Route.UnlockWallet,
+    element: <UnlockWalletScreen />,
   },
   {
     path: Route.CreateWallet,

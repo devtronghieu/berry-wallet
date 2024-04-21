@@ -61,9 +61,11 @@ const CreateWalletScreen = () => {
         desc: ["In order to ensure your wallet security,", "we need you to create a password."],
         ctaText: "Confirm",
         ctaDisabled: password === "",
-        onCTAClick: () => {
-          createWallet(seedPhrase, password);
-          appActions.login();
+        onCTAClick: async () => {
+          const { encryptedSeedPhrase, keypair } = await createWallet(seedPhrase, password);
+          appActions.setEncryptedSeedPhrase(encryptedSeedPhrase);
+          appActions.setKeypair(keypair);
+          appActions.setPassword(password);
           navigate(Route.Home);
         },
         onGoBack: () => setScreenProgress(ScreenProgress.ConfirmSeedPhrase),

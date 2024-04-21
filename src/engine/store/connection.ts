@@ -6,7 +6,7 @@ let db: PouchDB.Database;
 export const getDB = () => {
   if (!db) {
     PouchDB.plugin(IDBPouch);
-    db = new PouchDB("engine", { adapter: "idb" });
+    db = new PouchDB("berry-engine", { adapter: "idb" });
   }
 
   return db;
