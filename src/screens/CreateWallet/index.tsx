@@ -1,5 +1,5 @@
 import { Route } from "@utils/route";
-import { createSeedPhrase } from "@engine/keypair";
+import { createSeedPhrase, createWallet } from "@engine/keypair";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import OnboardingContainer, { OnboardingContainerProps } from "@/components/OnboardingContainer";
@@ -18,7 +18,7 @@ const CreateWalletScreen = () => {
   const [screenProgress, setScreenProgress] = useState<ScreenProgress>(ScreenProgress.ShowSeedPhrase);
   const [seedPhrase, setSeedPhrase] = useState<string>("");
   const [isSeedPhraseConfirmed, setIsSeedPhraseConfirmed] = useState<boolean>(false);
-  const [isPasswordValid, setIsPasswordValid] = useState<boolean>(false);
+  const [password, setPassword] = useState<string>("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -56,12 +56,13 @@ const CreateWalletScreen = () => {
 
     if (screenProgress === ScreenProgress.CreatePassword) {
       return {
-        children: <CreatePassword setIsPasswordValid={setIsPasswordValid} />,
+        children: <CreatePassword setFinalPassword={setPassword} />,
         title: "Create your password",
         desc: ["In order to ensure your wallet security,", "we need you to create a password."],
         ctaText: "Confirm",
-        ctaDisabled: !isPasswordValid,
+        ctaDisabled: password === "",
         onCTAClick: () => {
+          createWallet(seedPhrase, password);
           appActions.login();
           navigate(Route.Home);
         },
@@ -70,7 +71,7 @@ const CreateWalletScreen = () => {
     }
 
     navigate(Route.SignIn);
-  }, [screenProgress, navigate, seedPhrase, isSeedPhraseConfirmed, isPasswordValid]);
+  }, [screenProgress, navigate, seedPhrase, isSeedPhraseConfirmed, password]);
 
   if (!onboardingContainerProps) {
     return null;

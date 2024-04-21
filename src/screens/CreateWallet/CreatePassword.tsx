@@ -1,36 +1,36 @@
 import { FC, useEffect, useState } from "react";
 
 interface Props {
-  setIsPasswordValid: (valid: boolean) => void;
+  setFinalPassword: (password: string) => void;
 }
 
-const CreatePassword: FC<Props> = ({ setIsPasswordValid }) => {
+const CreatePassword: FC<Props> = ({ setFinalPassword }) => {
   const [errorText, setErrorText] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
 
   useEffect(() => {
-    if (password === "" || confirmPassword === "") {
-      setErrorText("Please fill in both fields");
-      setIsPasswordValid(false);
+    if (password === "") {
+      setErrorText("");
+      setFinalPassword("");
       return;
     }
 
     if (password.length < 8) {
       setErrorText("Password must be at least 8 characters long");
-      setIsPasswordValid(false);
+      setFinalPassword("");
       return;
     }
 
     if (password !== confirmPassword) {
       setErrorText("Passwords do not match");
-      setIsPasswordValid(false);
+      setFinalPassword("");
       return;
     }
 
     setErrorText("");
-    setIsPasswordValid(true);
-  }, [confirmPassword, password, setIsPasswordValid]);
+    setFinalPassword(password);
+  }, [confirmPassword, password, setFinalPassword]);
 
   return (
     <div className="flex flex-col gap-5 mt-8 w-full">
