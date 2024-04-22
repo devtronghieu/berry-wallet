@@ -1,4 +1,4 @@
-import { randomBytes, pbkdf2Sync, createCipheriv, createDecipheriv } from "crypto";
+import { randomBytes, pbkdf2Sync, createCipheriv, createDecipheriv, createHash } from "crypto";
 
 const iv = randomBytes(16);
 const salt = randomBytes(16);
@@ -24,4 +24,8 @@ export const decryptWithPassword = (encryptedData: EncryptedData, password: stri
   const decipher = createDecipheriv("aes-256-ctr", key, iv);
   const decrypted = decipher.update(encrypted, "hex", "utf8") + decipher.final("utf8");
   return decrypted;
+};
+
+export const hash = (data: string) => {
+  return createHash("sha256").update(data).digest("hex");
 };

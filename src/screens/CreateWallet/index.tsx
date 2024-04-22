@@ -7,6 +7,7 @@ import ShowSeedPhrase from "./ShowSeedPhrase";
 import CreatePassword from "./CreatePassword";
 import { appActions } from "@/state";
 import ConfirmSeedPhrase from "./ConfirmSeedPhrase";
+import { hash } from "@utils/crypto";
 
 enum ScreenProgress {
   ShowSeedPhrase,
@@ -62,10 +63,11 @@ const CreateWalletScreen = () => {
         ctaText: "Confirm",
         ctaDisabled: password === "",
         onCTAClick: async () => {
-          const { encryptedSeedPhrase, keypair } = await createWallet(seedPhrase, password);
+          const hashedPassword = hash(password);
+          const { encryptedSeedPhrase, keypair } = await createWallet(seedPhrase, hashedPassword);
           appActions.setEncryptedSeedPhrase(encryptedSeedPhrase);
           appActions.setKeypair(keypair);
-          appActions.setPassword(password);
+          appActions.setHashedPassword(hashedPassword);
           navigate(Route.Home);
         },
         onGoBack: () => setScreenProgress(ScreenProgress.ConfirmSeedPhrase),

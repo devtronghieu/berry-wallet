@@ -1,6 +1,7 @@
 import { deriveKeypair } from "@engine/keypair";
-import { getPassword } from "@engine/store";
+import { getActiveKeypairIndex, getPassword } from "@engine/store";
 import { appActions } from "@state/index";
+import { hash } from "@utils/crypto";
 import { Route } from "@utils/route";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -12,14 +13,15 @@ const UnlockWalletScreen = () => {
   const handleUnlockWallet = () => {
     const fetchKeypair = async () => {
       const storedPassword = await getPassword();
-      if (password !== storedPassword) {
+      const hashedPassword = hash(password);
+      if (hashedPassword !== storedPassword) {
         alert("Incorrect password");
         return;
       }
 
-      const activeKeypairIndex = 0; // TODO: Get active keypair index from storage
-      const keypair = await deriveKeypair(password, activeKeypairIndex);
-      appActions.setPassword(password);
+      const activeKeypairIndex = await getActiveKeypairIndex();
+      const keypair = await deriveKeypair(hashedPassword, activeKeypairIndex ?? 0);
+      appActions.setHashedPassword(hashedPassword);
       appActions.setKeypair(keypair);
       navigate(Route.Home);
     };

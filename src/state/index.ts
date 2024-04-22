@@ -5,7 +5,7 @@ import { proxy } from "valtio";
 export interface AppState {
   encryptedSeedPhrase?: EncryptedData;
   keypair?: Keypair;
-  password?: string;
+  hashedPassword?: string;
 }
 
 export const appState = proxy<AppState>({});
@@ -17,7 +17,7 @@ export const appActions = {
   setKeypair: (keypair: Keypair) => {
     appState.keypair = keypair;
   },
-  setPassword: (password: string) => {
-    appState.password = password;
+  setHashedPassword: (password: string) => {
+    appState.hashedPassword = password;
   },
 };

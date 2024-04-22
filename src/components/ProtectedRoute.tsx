@@ -11,7 +11,7 @@ interface Props {
 
 const ProtectedRoute: FC<Props> = ({ children }) => {
   const [loading, setLoading] = useState<boolean>(true);
-  const { encryptedSeedPhrase, password } = useSnapshot(appState);
+  const { encryptedSeedPhrase, hashedPassword: password } = useSnapshot(appState);
 
   useEffect(() => {
     const fetchStoredWallet = async () => {
