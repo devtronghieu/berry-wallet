@@ -4,7 +4,7 @@ import { createHashRouter, RouterProvider } from "react-router-dom";
 
 import "./index.css";
 
-import { Route } from "@utils/route.ts";
+import { Route } from "@utils/routes.ts";
 import ProtectedRoute from "@components/ProtectedRoute.tsx";
 
 import App from "./App.tsx";

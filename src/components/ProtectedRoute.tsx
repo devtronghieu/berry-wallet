@@ -2,7 +2,7 @@ import { FC, ReactNode, useEffect, useState } from "react";
 import { useSnapshot } from "valtio";
 import { Navigate } from "react-router-dom";
 import { appActions, appState } from "@/state";
-import { Route } from "@utils/route";
+import { Route } from "@utils/routes";
 import { getEncryptedSeedPhrase } from "@engine/store";
 
 interface Props {

@@ -1,4 +1,4 @@
-import { Route } from "@utils/route";
+import { Route } from "@utils/routes";
 import { createSeedPhrase, createWallet } from "@engine/keypair";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";

@@ -3,7 +3,7 @@ import ArrowDownBGIcon from "@/icons/ArrowDownBG";
 import GoogleIcon from "@/icons/Google";
 import PaperPlusIcon from "@/icons/PaperPlus";
 import PlusIcon from "@/icons/Plus";
-import { Route } from "@utils/route";
+import { Route } from "@utils/routes";
 import largeStrawberry from "@assets/large-strawberry.svg";
 
 const SignInScreen = () => {

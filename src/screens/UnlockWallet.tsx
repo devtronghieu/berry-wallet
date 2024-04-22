@@ -2,7 +2,7 @@ import { deriveKeypair } from "@engine/keypair";
 import { getActiveKeypairIndex, getPassword } from "@engine/store";
 import { appActions } from "@state/index";
 import { hash } from "@utils/crypto";
-import { Route } from "@utils/route";
+import { Route } from "@utils/routes";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
