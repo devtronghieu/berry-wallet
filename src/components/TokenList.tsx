@@ -4,6 +4,9 @@ import { FC } from "react";
 
 import solLogo from "@assets/tokens/sol.svg";
 import unknownLogo from "@assets/tokens/unknown.svg";
+import { appState } from "@state/index";
+import { useSnapshot } from "valtio";
+import { getSafeMintAddressForPriceAPI } from "@utils/tokens";
 
 interface Props {
   className?: string;
@@ -24,13 +27,15 @@ const getLocalLogo = (symbol: string) => {
 };
 
 const TokenList: FC<Props> = ({ className, tokens }) => {
+  const { prices } = useSnapshot(appState);
+
   return (
     <div className={`token-list no-scrollbar ${className}`}>
       {tokens.map((token) => {
         const symbol = token.metadata?.symbol || "Unknown";
         const logo = token.metadata?.logo || getLocalLogo(symbol);
         const friendlyAmount = getFriendlyAmount(token.amount, token.decimals);
-        const price = 0;
+        const price = prices[getSafeMintAddressForPriceAPI(token.mint)] || 0;
         const totalPrice = friendlyAmount * price;
 
         return (

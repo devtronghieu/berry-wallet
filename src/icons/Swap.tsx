@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { IconProps } from "./types";
 
-const CopyIcon: FC<IconProps> = ({ size = 20, color = "#267578" }) => {
+const SwapIcon: FC<IconProps> = ({ size = 20, color = "#267578" }) => {
   return (
     <svg width={size} height={(size * 18) / 20} viewBox="0 0 20 18" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
@@ -14,4 +14,4 @@ const CopyIcon: FC<IconProps> = ({ size = 20, color = "#267578" }) => {
   );
 };
 
-export default CopyIcon;
+export default SwapIcon;

@@ -8,7 +8,7 @@ dotenv.config({ path: envPath });
 
 const config: CodegenConfig = {
   overwrite: true,
-  schema: process.env.GRAPHQL_ENDPOINT,
+  schema: process.env.VITE_GRAPHQL_ENDPOINT,
   generates: {
     "./src/utils/gqlTypes.ts": {
       plugins: ["typescript", "typescript-resolvers"],
