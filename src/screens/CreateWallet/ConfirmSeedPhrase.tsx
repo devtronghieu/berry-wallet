@@ -1,7 +1,7 @@
-import ArrowLeft from "@/icons/ArrowLeft";
-import ArrowRight from "@/icons/ArrowRight";
-import Correct from "@/icons/Correct";
-import Wrong from "@/icons/Wrong";
+import ArrowLeftIcon from "@/icons/ArrowLeft";
+import ArrowRightIcon from "@/icons/ArrowRight";
+import CorrectIcon from "@/icons/Correct";
+import WrongIcon from "@/icons/Wrong";
 
 import { FC, useState } from "react";
 import Dialog from "./Dialog";
@@ -23,7 +23,7 @@ const ConfirmSeedPhrase: FC<Props> = ({ seedPhraseWords, setIsSeedPhraseConfirme
   const [questions, setQuestions] = useState<Question[]>(() => {
     const questions: Question[] = [];
     for (let i = 0; i < 3; i++) {
-      questions.push(newQuestion());
+      questions.push(newQuestion(questions.map((question) => question.seedPhraseIndex)));
     }
     return questions;
   });
@@ -35,8 +35,11 @@ const ConfirmSeedPhrase: FC<Props> = ({ seedPhraseWords, setIsSeedPhraseConfirme
   const isChosen = currentQuestion.chosenIndex !== -1;
   const isCorrect = currentQuestion.chosenIndex === currentQuestion.correctAnswerPosition;
 
-  function newQuestion(): Question {
-    const seedPhraseIndex = randomIndex(12);
+  function newQuestion(existedSeedPhraseIndexes: number[]): Question {
+    let seedPhraseIndex;
+    do {
+      seedPhraseIndex = randomIndex(12);
+    } while (existedSeedPhraseIndexes.includes(seedPhraseIndex));
     const correctAnswerPosition = randomIndex(4);
     const answerList = randomAnswerList(seedPhraseIndex, correctAnswerPosition);
     return {
@@ -81,13 +84,13 @@ const ConfirmSeedPhrase: FC<Props> = ({ seedPhraseWords, setIsSeedPhraseConfirme
   }
 
   function handlePrevQuestion(): void {
-    if (currentQuestionIndex > 0) {
+    if ((!isChosen || isCorrect) && currentQuestionIndex > 0) {
       setCurrentQuestionIndex(currentQuestionIndex - 1);
     }
   }
 
   function handleNextQuestion(): void {
-    if (currentQuestionIndex < 2) {
+    if ((!isChosen || isCorrect) && currentQuestionIndex < 2) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     }
   }
@@ -108,7 +111,7 @@ const ConfirmSeedPhrase: FC<Props> = ({ seedPhraseWords, setIsSeedPhraseConfirme
                 } ${currentQuestion.chosenIndex === index ? "visible" : "invisible"} 
             `}
               >
-                {index === currentQuestion.correctAnswerPosition ? <Correct size={12} /> : <Wrong size={12} />}
+                {index === currentQuestion.correctAnswerPosition ? <CorrectIcon size={12} /> : <WrongIcon size={12} />}
               </p>
             </div>
           );
@@ -116,15 +119,15 @@ const ConfirmSeedPhrase: FC<Props> = ({ seedPhraseWords, setIsSeedPhraseConfirme
         <div className="flex justify-between">
           <button
             className={`rounded-button ${currentQuestionIndex === 0 ? "bg-gray-200" : "bg-primary-200"}`}
-            onClick={!isChosen || isCorrect ? handlePrevQuestion : () => {}}
+            onClick={handlePrevQuestion}
           >
-            <ArrowLeft size={18} />
+            <ArrowLeftIcon size={18} />
           </button>
           <button
             className={`rounded-button ${currentQuestionIndex === 2 ? "bg-gray-200" : "bg-primary-200"}`}
-            onClick={!isChosen || isCorrect ? handleNextQuestion : () => {}}
+            onClick={handleNextQuestion}
           >
-            <ArrowRight size={18} />
+            <ArrowRightIcon size={18} />
           </button>
         </div>
       </div>
@@ -134,7 +137,7 @@ const ConfirmSeedPhrase: FC<Props> = ({ seedPhraseWords, setIsSeedPhraseConfirme
           onCancel={() => {
             // Change the current question
             const newQuestions = [...questions];
-            newQuestions[currentQuestionIndex] = newQuestion();
+            newQuestions[currentQuestionIndex] = newQuestion(newQuestions.map((question) => question.seedPhraseIndex));
             setQuestions(newQuestions);
             setShowDialog(false);
           }}
