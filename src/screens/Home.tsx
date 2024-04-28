@@ -1,4 +1,6 @@
+import { fetchOnchainData } from "@engine/index";
 import { appState } from "@state/index";
+import { useEffect } from "react";
 import { useSnapshot } from "valtio";
 import strawberry from "@assets/large-strawberry.svg";
 import SettingIcon from "@/icons/Setting";
@@ -18,6 +20,15 @@ function formatCurrency(num: number) {
 const HomeScreen = () => {
   const { keypair } = useSnapshot(appState);
   const [dataBlurred, setDataBlurred] = useState<boolean>(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!keypair) return;
+      await fetchOnchainData(keypair.publicKey);
+    };
+    fetchData().catch(console.error);
+  }, [keypair]);
+
   return (
     <div className="extension-container flex flex-col">
       <div className="px-4 py-2 gap-1.5 flex justify-between bg-primary-300">
