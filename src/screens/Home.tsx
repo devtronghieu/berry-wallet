@@ -1,5 +1,5 @@
 import { fetchOnchainData } from "@engine/index";
-import { appState } from "@state/index";
+import { appActions, appState } from "@state/index";
 import { useEffect } from "react";
 import { useSnapshot } from "valtio";
 import strawberry from "@assets/large-strawberry.svg";
@@ -10,21 +10,23 @@ import EyeCloseIcon from "@/icons/EyeClose";
 import EyeOpenIcon from "@/icons/EyeOpen";
 import SwapIcon from "@/icons/Swap";
 import { useState } from "react";
-import Navbar from "@/components/Navbar";
-import TokensList from "@components/TokensList";
+import TabBar from "@components/TabBar";
+import TokenList from "@components/TokenList";
+import { Token } from "@engine/types";
 
 function formatCurrency(num: number) {
   return num.toLocaleString("en-US", { style: "currency", currency: "USD" });
 }
 
 const HomeScreen = () => {
-  const { keypair } = useSnapshot(appState);
+  const { keypair, tokens } = useSnapshot(appState);
   const [dataBlurred, setDataBlurred] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchData = async () => {
       if (!keypair) return;
-      await fetchOnchainData(keypair.publicKey);
+      const tokens = await fetchOnchainData(keypair.publicKey);
+      appActions.setTokens(tokens);
     };
     fetchData().catch(console.error);
   }, [keypair]);
@@ -34,13 +36,15 @@ const HomeScreen = () => {
       <div className="px-4 py-2 gap-1.5 flex justify-between bg-primary-300">
         <div className="flex items-center">
           <img className="w-9 h-9" src={strawberry} alt="strawberry logo" />
-          <p className="font-bold text-lg text-primary-500">Account: {keypair?.publicKey.toBase58()}</p>
+          <p className="font-bold text-lg text-primary-500">Account 1</p>
         </div>
+
         <button>
           <SettingIcon size={20} />
         </button>
       </div>
-      <div className="mx-4 my-3 flex flex-col flex-1 items-center mt-4 mb-10">
+
+      <div className="flex-grow flex flex-col items-center px-5 pt-2 pb-4 overflow-hidden no-scrollbar">
         <div>
           <div className="flex items-center">
             <h2 className="text-lg text-secondary-200 font-bold me-2">TOTAL BALANCE</h2>
@@ -54,6 +58,7 @@ const HomeScreen = () => {
             {formatCurrency(1000000)}
           </h1>
         </div>
+
         <div className="mt-6 flex items-center gap-10">
           <div className="flex flex-col flex-1 items-center">
             <button className="icon-button">
@@ -75,8 +80,9 @@ const HomeScreen = () => {
           </div>
         </div>
 
-        <Navbar className="mt-4" navTitle={["Tokens", "Collectibles", "Activities"]} />
-        <TokensList className="mt-2" />
+        <TabBar className="mt-4" navTitle={["Tokens", "Collectibles", "Activities"]} />
+
+        <TokenList className="mt-4" tokens={tokens as Token[]} />
       </div>
     </div>
   );

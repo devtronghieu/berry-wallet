@@ -89,22 +89,17 @@
     @apply bg-primary-300 text-secondary-200;
   }
 
-  .tokens-list {
-    @apply w-full h-64 flex flex-col gap-4;
-    overflow-y: auto;
-  }
-
-  .tokens-list::-webkit-scrollbar {
-    display: none;
-  }
-
-  .tokens-list {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+  .token-list {
+    @apply w-full flex-grow overflow-y-scroll flex flex-col gap-3;
   }
 
   .token-item {
     @apply w-full rounded-xl flex items-center justify-between px-4 py-3 bg-primary-200;
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
   }
 }
 

@@ -6,7 +6,7 @@ interface Props {
   navLink?: string[];
 }
 
-const Navbar: FC<Props> = ({ navTitle = [], className }) => {
+const TabBar: FC<Props> = ({ navTitle = [], className }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   return (
     <nav className={`nav-background ${className} ${"active-" + activeIndex}`}>
@@ -27,4 +27,4 @@ const Navbar: FC<Props> = ({ navTitle = [], className }) => {
   );
 };
 
-export default Navbar;
+export default TabBar;

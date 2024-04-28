@@ -44,4 +44,6 @@ export const fetchOnchainData = async (pubkey: PublicKey) => {
   });
   const metadata = await Promise.all(metadataPromises);
   console.log("Metadata:", metadata);
+
+  return tokens;
 };
