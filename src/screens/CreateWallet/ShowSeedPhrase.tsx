@@ -30,7 +30,7 @@ const ShowSeedPhrase: FC<Props> = ({ seedPhrase }) => {
         </button>
       </div>
 
-      <SeedPhrase className="mt-4" seedPhrase={seedPhrase} readonly blurred={dataBlurred} />
+      <SeedPhrase className="mt-4" seedPhrase={seedPhrase.split(" ")} readonly blurred={dataBlurred} />
     </>
   );
 };

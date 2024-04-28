@@ -10,7 +10,7 @@ import ProtectedRoute from "@components/ProtectedRoute.tsx";
 import App from "./App.tsx";
 import SignInScreen from "@screens/SignIn.tsx";
 import CreateWalletScreen from "@screens/CreateWallet";
-import ImportSeedPhraseScreen from "@screens/ImportSeedPhrase.tsx";
+import ImportSeedPhraseScreen from "@screens/ImportSeedPhrase";
 import ImportPrivateKeyScreen from "@screens/ImportPrivateKey.tsx";
 import NotFoundScreen from "@screens/NotFound.tsx";
 import UnlockWalletScreen from "@screens/UnlockWallet.tsx";

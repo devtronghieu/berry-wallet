@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import OnboardingContainer, { OnboardingContainerProps } from "@/components/OnboardingContainer";
 import ShowSeedPhrase from "./ShowSeedPhrase";
-import CreatePassword from "./CreatePassword";
+import CreatePassword from "../CreatePassword";
 import { appActions } from "@/state";
 import ConfirmSeedPhrase from "./ConfirmSeedPhrase";
 import { hash } from "@utils/crypto";
