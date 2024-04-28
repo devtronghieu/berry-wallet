@@ -2,6 +2,9 @@ import { Token } from "@engine/types";
 import { getFriendlyAmount } from "@engine/utils";
 import { FC } from "react";
 
+import solLogo from "@assets/tokens/sol.svg";
+import unknownLogo from "@assets/tokens/unknown.svg";
+
 interface Props {
   className?: string;
   tokens: Token[];
@@ -11,11 +14,21 @@ const formatCurrency = (num: number) => {
   return num.toLocaleString("en-US", { style: "currency", currency: "USD" });
 };
 
+const getLocalLogo = (symbol: string) => {
+  switch (symbol) {
+    case "SOL":
+      return solLogo;
+    default:
+      return unknownLogo;
+  }
+};
+
 const TokenList: FC<Props> = ({ className, tokens }) => {
-  const test_logo = "https://upload.wikimedia.org/wikipedia/en/b/b9/Solana_logo.png";
   return (
     <div className={`token-list no-scrollbar ${className}`}>
       {tokens.map((token) => {
+        const symbol = token.metadata?.symbol || "Unknown";
+        const logo = token.metadata?.logo || getLocalLogo(symbol);
         const friendlyAmount = getFriendlyAmount(token.amount, token.decimals);
         const price = 0;
         const totalPrice = friendlyAmount * price;
@@ -23,9 +36,9 @@ const TokenList: FC<Props> = ({ className, tokens }) => {
         return (
           <div key={token.mint} className="token-item">
             <div className="flex gap-1.5 items-center">
-              <img src={test_logo} alt="Solana" className="w-8 h-8" />
+              <img src={logo} alt={token.metadata?.name || "Unknown"} className="w-8 h-8 rounded-full" />
               <div className="flex flex-col">
-                <p className="text-secondary-200 text-sm font-semibold">SOL</p>
+                <p className="text-secondary-200 text-sm font-semibold">{symbol}</p>
                 <p className="text-sm font-semibold">{formatCurrency(price)}</p>
               </div>
             </div>

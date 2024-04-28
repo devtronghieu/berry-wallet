@@ -1,7 +1,8 @@
 import { Connection, clusterApiUrl, PublicKey } from "@solana/web3.js";
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
-import { SOL_MINT } from "./constants";
-import { Token } from "./types";
+import { Metadata, PROGRAM_ID as METADATA_PROGRAM_ID } from "@metaplex-foundation/mpl-token-metadata";
+import { WRAPPED_SOL_MINT } from "./constants";
+import { Token, TokenMetadata } from "./types";
 
 const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
 
@@ -12,7 +13,7 @@ export const fetchOnchainData = async (pubkey: PublicKey) => {
   const balance = await connection.getBalance(pubkey);
   tokens.push({
     pubkey,
-    mint: SOL_MINT,
+    mint: WRAPPED_SOL_MINT,
     owner: pubkey.toBase58(),
     amount: balance.toString(),
     decimals: 9,
@@ -36,14 +37,46 @@ export const fetchOnchainData = async (pubkey: PublicKey) => {
     });
   });
 
-  console.log("Tokens:", tokens);
-
-  const metadataPromises: Promise<unknown>[] = [];
+  const metadataPromises: Promise<TokenMetadata | undefined>[] = [];
   tokens.forEach((token) => {
-    if (token.mint === SOL_MINT) return;
+    const fetchTokenMetadata = async () => {
+      const mint = new PublicKey(token.mint);
+
+      const [pda] = PublicKey.findProgramAddressSync(
+        [Buffer.from("metadata"), METADATA_PROGRAM_ID.toBuffer(), mint.toBuffer()],
+        METADATA_PROGRAM_ID,
+      );
+
+      try {
+        const onchainData = await Metadata.fromAccountAddress(connection, pda);
+        const metadata: TokenMetadata = {
+          name: onchainData.data.name.replaceAll("\u0000", ""),
+          symbol: onchainData.data.symbol.replaceAll("\u0000", ""),
+          logo: "",
+        };
+
+        const onchainJson = onchainData.data.uri.replaceAll("\u0000", "");
+        if (onchainJson.startsWith("https://")) {
+          const response = await fetch(onchainJson);
+          const offChainData = await response.json();
+          metadata.logo = offChainData.image;
+        }
+
+        return metadata;
+      } catch (error) {
+        console.error("Error fetching metadata for", token.mint, ":", error);
+        return undefined;
+      }
+    };
+
+    metadataPromises.push(fetchTokenMetadata());
   });
-  const metadata = await Promise.all(metadataPromises);
-  console.log("Metadata:", metadata);
+  const metadataList = await Promise.all(metadataPromises);
+  metadataList.forEach((metadata, index) => {
+    tokens[index].metadata = metadata;
+  });
+
+  console.log("Tokens with metadata:", tokens);
 
   return tokens;
 };

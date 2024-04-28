@@ -12,7 +12,7 @@ const TabBar: FC<Props> = ({ navTitle = [], className }) => {
     <nav className={`nav-background ${className} ${"active-" + activeIndex}`}>
       <ul className="flex gap-1">
         {navTitle.map((title, index) => (
-          <li className="nav-item">
+          <li key={title} className="nav-item">
             <button
               key={index}
               className={`nav-link ${index === activeIndex ? "nav-active" : ""}`}
