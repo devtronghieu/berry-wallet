@@ -8,10 +8,12 @@ export interface AppState {
   keypair?: Keypair;
   hashedPassword?: string;
   tokens: Token[];
+  prices: Record<string, number>;
 }
 
 export const appState = proxy<AppState>({
   tokens: [],
+  prices: {},
 });
 
 export const appActions = {
@@ -26,5 +28,8 @@ export const appActions = {
   },
   setTokens: (tokens: Token[]) => {
     appState.tokens = tokens;
+  },
+  setPrices: (prices: Record<string, number>) => {
+    appState.prices = prices;
   },
 };
