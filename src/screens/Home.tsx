@@ -1,4 +1,3 @@
-import { fetchOnchainData } from "@engine/index";
 import { appActions, appState } from "@state/index";
 import { useEffect } from "react";
 import { useSnapshot } from "valtio";
@@ -13,6 +12,7 @@ import { useState } from "react";
 import TabBar from "@components/TabBar";
 import TokenList from "@components/TokenList";
 import { Token } from "@engine/types";
+import { fetchTokens } from "@engine/tokens";
 
 function formatCurrency(num: number) {
   return num.toLocaleString("en-US", { style: "currency", currency: "USD" });
@@ -25,7 +25,7 @@ const HomeScreen = () => {
   useEffect(() => {
     const fetchData = async () => {
       if (!keypair) return;
-      const tokens = await fetchOnchainData(keypair.publicKey);
+      const tokens = await fetchTokens(keypair.publicKey);
       appActions.setTokens(tokens);
     };
     fetchData().catch(console.error);

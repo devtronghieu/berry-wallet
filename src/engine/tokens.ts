@@ -1,12 +1,13 @@
-import { Connection, clusterApiUrl, PublicKey } from "@solana/web3.js";
+import { PublicKey } from "@solana/web3.js";
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { Metadata, PROGRAM_ID as METADATA_PROGRAM_ID } from "@metaplex-foundation/mpl-token-metadata";
 import { WRAPPED_SOL_MINT } from "./constants";
 import { Token, TokenMetadata } from "./types";
+import { getConnection } from "./connection";
 
-const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
+export const fetchTokens = async (pubkey: PublicKey) => {
+  const connection = getConnection();
 
-export const fetchOnchainData = async (pubkey: PublicKey) => {
   const tokens: Token[] = [];
 
   // Native token aka SOL
@@ -37,6 +38,7 @@ export const fetchOnchainData = async (pubkey: PublicKey) => {
     });
   });
 
+  // Token Metadata
   const metadataPromises: Promise<TokenMetadata | undefined>[] = [];
   tokens.forEach((token) => {
     const fetchTokenMetadata = async () => {
@@ -64,7 +66,7 @@ export const fetchOnchainData = async (pubkey: PublicKey) => {
 
         return metadata;
       } catch (error) {
-        console.error("Error fetching metadata for", token.mint, ":", error);
+        console.error(`Error fetching metadata for token ${token.mint}: ${error}`);
         return undefined;
       }
     };
@@ -75,8 +77,6 @@ export const fetchOnchainData = async (pubkey: PublicKey) => {
   metadataList.forEach((metadata, index) => {
     tokens[index].metadata = metadata;
   });
-
-  console.log("Tokens with metadata:", tokens);
 
   return tokens;
 };
