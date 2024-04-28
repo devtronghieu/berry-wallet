@@ -1,6 +1,6 @@
 import { FC, ReactNode, useEffect } from "react";
 import strawberry from "@assets/strawberry.svg";
-import ArrowLeft from "@/icons/ArrowLeft";
+import ArrowLeftIcon from "@/icons/ArrowLeft";
 
 export interface OnboardingContainerProps {
   children: ReactNode;
@@ -35,7 +35,7 @@ const OnboardingContainer: FC<OnboardingContainerProps> = (props) => {
 
       <div className="mx-4 my-3 flex flex-col flex-1">
         <button onClick={props.onGoBack}>
-          <ArrowLeft size={24} />
+          <ArrowLeftIcon size={24} />
         </button>
 
         <div className="flex flex-col flex-1 items-center mt-3 mb-10 mx-6">
