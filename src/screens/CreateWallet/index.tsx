@@ -44,6 +44,7 @@ const CreateWalletScreen = () => {
           <ConfirmSeedPhrase
             seedPhraseWords={seedPhrase.split(" ")}
             setIsSeedPhraseConfirmed={setIsSeedPhraseConfirmed}
+            onGoBack={() => setScreenProgress(ScreenProgress.ShowSeedPhrase)}
           />
         ),
         title: "Confirm your seed phrase",

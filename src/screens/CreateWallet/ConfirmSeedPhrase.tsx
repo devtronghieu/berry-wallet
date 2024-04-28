@@ -1,59 +1,146 @@
-import { ChangeEvent, FC, useEffect, useState } from "react";
+import ArrowLeft from "@/icons/ArrowLeft";
+import ArrowRight from "@/icons/ArrowRight";
+import Correct from "@/icons/Correct";
+import Wrong from "@/icons/Wrong";
+
+import { FC, useState } from "react";
+import Dialog from "./Dialog";
 
 interface Props {
   seedPhraseWords: string[];
   setIsSeedPhraseConfirmed: (valid: boolean) => void;
+  onGoBack: () => void;
 }
 
-const ConfirmSeedPhrase: FC<Props> = ({ seedPhraseWords, setIsSeedPhraseConfirmed }) => {
-  const [errorText, setErrorText] = useState<string>("");
-  const [words, setWords] = useState<Map<number, string>>(
-    new Map([
-      [1, ""],
-      [4, ""],
-      [7, ""],
-    ]),
-  );
+interface Question {
+  seedPhraseIndex: number;
+  correctAnswerPosition: number;
+  answerList: number[];
+  chosenIndex: number;
+}
 
-  const handleInputChange = (index: number) => (e: ChangeEvent<HTMLInputElement>) => {
-    const newWords = new Map(words);
-    newWords.set(index, e.target.value.toLowerCase());
-    setWords(newWords);
-  };
+const ConfirmSeedPhrase: FC<Props> = ({ seedPhraseWords, setIsSeedPhraseConfirmed, onGoBack }) => {
+  const [questions, setQuestions] = useState<Question[]>(() => {
+    const questions: Question[] = [];
+    for (let i = 0; i < 3; i++) {
+      questions.push(newQuestion());
+    }
+    return questions;
+  });
 
-  useEffect(() => {
-    const invalidWords: string[] = [];
-    words.forEach((word, index) => {
-      if (word === "") return;
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [showDialog, setShowDialog] = useState(false);
 
-      if (seedPhraseWords[index] !== word) {
-        invalidWords.push(word);
+  const currentQuestion = questions[currentQuestionIndex];
+  const isChosen = currentQuestion.chosenIndex !== -1;
+  const isCorrect = currentQuestion.chosenIndex === currentQuestion.correctAnswerPosition;
+
+  function newQuestion(): Question {
+    const seedPhraseIndex = randomIndex(12);
+    const correctAnswerPosition = randomIndex(4);
+    const answerList = randomAnswerList(seedPhraseIndex, correctAnswerPosition);
+    return {
+      seedPhraseIndex,
+      correctAnswerPosition,
+      answerList,
+      chosenIndex: -1,
+    };
+  }
+
+  function randomIndex(n: number): number {
+    return Math.floor(Math.random() * n);
+  }
+
+  function randomAnswerList(seedPhraseIndex: number, correctAnswerPosition: number): number[] {
+    const numbers: number[] = [seedPhraseIndex];
+    while (numbers.length < 4) {
+      const anotherSeedPhraseIndex = randomIndex(12);
+      if (!numbers.includes(anotherSeedPhraseIndex) && anotherSeedPhraseIndex !== seedPhraseIndex) {
+        numbers.push(anotherSeedPhraseIndex);
       }
-    });
-
-    if (invalidWords.length > 0) {
-      setErrorText("Invalid words: " + invalidWords.join(", "));
-      setIsSeedPhraseConfirmed(false);
-      return;
     }
+    [numbers[correctAnswerPosition], numbers[0]] = [numbers[0], numbers[correctAnswerPosition]];
+    return numbers;
+  }
 
-    const hasEmptyWords = Array.from(words.values()).some((word) => word === "");
-    if (!hasEmptyWords) {
-      setErrorText("");
-      setIsSeedPhraseConfirmed(true);
+  // Function Hanlders
+  function handleClickOption(chosenIndex: number): void {
+    const newQuestions = [...questions];
+    newQuestions[currentQuestionIndex].chosenIndex = chosenIndex;
+    setQuestions(newQuestions);
+    if (chosenIndex !== currentQuestion.correctAnswerPosition) {
+      setTimeout(() => {
+        setShowDialog(true);
+      }, 2000);
     } else {
-      setErrorText("Please fill in all the words");
-      setIsSeedPhraseConfirmed(false);
+      // Check if all questions are correct in questions
+      questions.every((question) => question.chosenIndex === question.correctAnswerPosition)
+        ? setIsSeedPhraseConfirmed(true)
+        : setIsSeedPhraseConfirmed(false);
     }
-  }, [seedPhraseWords, setIsSeedPhraseConfirmed, words]);
+  }
+
+  function handlePrevQuestion(): void {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(currentQuestionIndex - 1);
+    }
+  }
+
+  function handleNextQuestion(): void {
+    if (currentQuestionIndex < 2) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+    }
+  }
 
   return (
-    <div className="flex flex-col gap-5 w-full mt-8">
-      <input className="input" placeholder="2nd word" value={words.get(1)} onChange={handleInputChange(1)} />
-      <input className="input" placeholder="5th word" value={words.get(4)} onChange={handleInputChange(4)} />
-      <input className="input" placeholder="8th word" value={words.get(7)} onChange={handleInputChange(7)} />
-      {errorText && <p className="text-error text-xs">{errorText}</p>}
-    </div>
+    <>
+      <div className="flex flex-col gap-5 w-full mt-7 mb-4">
+        <p className="font-semibold text-primary-400">
+          {currentQuestionIndex + 1}. What is the {currentQuestion.seedPhraseIndex + 1}th word of your seed phrase?
+        </p>
+        {currentQuestion.answerList.map((anwer, index) => {
+          return (
+            <div className="option" key={index} onClick={!isChosen ? () => handleClickOption(index) : () => {}}>
+              <span>{seedPhraseWords[anwer]}</span>
+              <p
+                className={`rounded-button ${
+                  index === currentQuestion.correctAnswerPosition ? "bg-secondary-100" : "bg-primary-200"
+                } ${currentQuestion.chosenIndex === index ? "visible" : "invisible"} 
+            `}
+              >
+                {index === currentQuestion.correctAnswerPosition ? <Correct size={12} /> : <Wrong size={12} />}
+              </p>
+            </div>
+          );
+        })}
+        <div className="flex justify-between">
+          <button
+            className={`rounded-button ${currentQuestionIndex === 0 ? "bg-gray-200" : "bg-primary-200"}`}
+            onClick={!isChosen || isCorrect ? handlePrevQuestion : () => {}}
+          >
+            <ArrowLeft size={18} />
+          </button>
+          <button
+            className={`rounded-button ${currentQuestionIndex === 2 ? "bg-gray-200" : "bg-primary-200"}`}
+            onClick={!isChosen || isCorrect ? handleNextQuestion : () => {}}
+          >
+            <ArrowRight size={18} />
+          </button>
+        </div>
+      </div>
+      <div className={showDialog ? "visible" : "invisible"}>
+        <Dialog
+          onView={onGoBack}
+          onCancel={() => {
+            // Change the current question
+            const newQuestions = [...questions];
+            newQuestions[currentQuestionIndex] = newQuestion();
+            setQuestions(newQuestions);
+            setShowDialog(false);
+          }}
+        />
+      </div>
+    </>
   );
 };
 
