@@ -9,5 +9,20 @@
   "action": {
     "default_popup": "index.html"
   },
-  "host_permissions": ["http://*/*", "https://*/*"]
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "file://*/*",
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "contentScript.js"
+      ]
+    }
+  ]
 }
