@@ -63,6 +63,18 @@
     @apply w-full px-4 py-2 rounded-xl outline-none border border-primary-500 bg-primary-300 text-primary-100 placeholder:text-primary-100 font-semibold;
   }
 
+  .option {
+    @apply w-full px-4 py-2 rounded-xl outline-none bg-primary-300 text-primary-100 placeholder:text-primary-100 font-semibold  h-10 flex items-center cursor-pointer justify-between;
+  }
+
+  .rounded-button {
+    @apply rounded-full h-6 w-6 flex items-center justify-center;
+  }
+
+  .dialog-button {
+    @apply px-7 py-2 rounded-xl  font-semibold;
+  }
+
   .glass-background {
     background-color: #fcebeeab;
     backdrop-filter: blur(8px);

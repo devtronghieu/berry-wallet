@@ -14,6 +14,7 @@ export default {
       secondary: {
         100: "#A6D9DA",
         200: "#267578",
+        300: "#73B1B3",
       },
       tertiary: {
         100: "#FFDFBE",
