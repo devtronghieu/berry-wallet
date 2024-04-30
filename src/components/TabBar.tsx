@@ -1,12 +1,13 @@
 import { FC, useState } from "react";
 
+type onClick = () => void;
 interface Props {
   className?: string;
   navTitle?: string[];
-  navLink?: string[];
+  navOnClick?: onClick[];
 }
 
-const TabBar: FC<Props> = ({ navTitle = [], className }) => {
+const TabBar: FC<Props> = ({ navTitle = [], className, navOnClick }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   return (
     <nav className={`nav-background ${className} ${"active-" + activeIndex}`}>
@@ -16,7 +17,10 @@ const TabBar: FC<Props> = ({ navTitle = [], className }) => {
             <button
               key={index}
               className={`nav-link ${index === activeIndex ? "nav-active" : ""}`}
-              onClick={() => setActiveIndex(index)}
+              onClick={() => {
+                setActiveIndex(index);
+                if (navOnClick) navOnClick[index]();
+              }}
             >
               {title}
             </button>
