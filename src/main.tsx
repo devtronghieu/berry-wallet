@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import { createHashRouter, RouterProvider } from "react-router-dom";
 
 import "./index.css";
+import "react-spring-bottom-sheet/dist/style.css";
 
 import { Route } from "@utils/routes.ts";
 import ProtectedRoute from "@components/ProtectedRoute.tsx";
@@ -14,7 +15,7 @@ import ImportSeedPhraseScreen from "@screens/ImportSeedPhrase";
 import ImportPrivateKeyScreen from "@screens/ImportPrivateKey.tsx";
 import NotFoundScreen from "@screens/NotFound.tsx";
 import UnlockWalletScreen from "@screens/UnlockWallet.tsx";
-import HomeScreen from "@screens/Home.tsx";
+import HomeScreen from "@screens/Receive/Home/index.tsx";
 
 const router = createHashRouter([
   {
