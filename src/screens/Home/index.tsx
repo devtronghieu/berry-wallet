@@ -1,5 +1,5 @@
 import { appActions, appState } from "@state/index";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo } from "react";
 import { useSnapshot } from "valtio";
 import strawberry from "@assets/strawberry.svg";
 import SettingIcon from "@/icons/Setting";
@@ -20,8 +20,10 @@ import { queryTokenPrice } from "@utils/graphql";
 import { getFriendlyAmount } from "@engine/utils";
 import HoveredAddress from "./HoveredAddress";
 import FeatureButton from "@components/FeatureButton";
-import { BottomSheet, BottomSheetRef } from "react-spring-bottom-sheet";
-import Receive from "..";
+import Modal from "react-modal";
+import Sheet, { SheetRef } from "react-modal-sheet";
+import Receive from "../Receive";
+import "./index.css";
 
 function formatCurrency(num: number) {
   return num.toLocaleString("en-US", { style: "currency", currency: "USD" });
@@ -31,9 +33,26 @@ const HomeScreen = () => {
   const { keypair, tokens, prices } = useSnapshot(appState);
   const [isWalletHovered, setIsWalletHovered] = useState<boolean>(false);
   const [dataBlurred, setDataBlurred] = useState<boolean>(true);
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<string>("Tokens");
 
-  const sheetRef = useRef<BottomSheetRef>();
+  const navOnClickList = useMemo(() => {
+    return [() => setActiveTab("Tokens"), () => setActiveTab("Collectibles"), () => setActiveTab("Activities")];
+  }, []);
+
+  const customStyles = {
+    content: {
+      top: "50%",
+      left: "50%",
+      right: "auto",
+      bottom: "auto",
+      marginBottom: 0,
+      marginRight: "-50%",
+      transform: "translate(-50%, -50%)",
+      width: "400px",
+      height: "572px",
+    },
+  };
 
   useEffect(() => {
     const fetchOnchainTokens = async () => {
@@ -105,19 +124,36 @@ const HomeScreen = () => {
 
         <div className="mt-6 flex items-center gap-10">
           <FeatureButton Icon={SendIcon} title="Send" />
-          <FeatureButton Icon={WalletIcon} title="Receive" onClick={() => setIsOpen(true)} />
+          <FeatureButton
+            Icon={WalletIcon}
+            title="Receive"
+            onClick={() => {
+              setModalIsOpen(true);
+            }}
+          />
           <FeatureButton Icon={SwapIcon} title="Swap" />
         </div>
 
-        <TabBar className="mt-4" navTitle={["Tokens", "Collectibles", "Activities"]} />
+        <TabBar className="mt-4" navTitle={["Tokens", "Collectibles", "Activities"]} navOnClick={navOnClickList} />
 
-        <TokenList className="mt-4" tokens={tokens as Token[]} />
+        {activeTab === "Tokens" ? (
+          <TokenList className="mt-4" tokens={tokens as Token[]} />
+        ) : activeTab === "Collectibles" ? (
+          <div>Collectibles</div>
+        ) : (
+          <div>Activities</div>
+        )}
       </div>
 
-      <BottomSheet open={isOpen} onDismiss={() => setIsOpen(false)} ref={sheetRef}>
-        <button onClick={() => sheetRef.current.snapTo(({ maxHeight }) => maxHeight)} />
-        <Receive />
-      </BottomSheet>
+      <Sheet isOpen={modalIsOpen} onClose={() => setModalIsOpen(false)}>
+        <Sheet.Container>
+          <Sheet.Header></Sheet.Header>
+          <Sheet.Content>
+            <Receive />
+          </Sheet.Content>
+        </Sheet.Container>
+        <Sheet.Backdrop />
+      </Sheet>
     </div>
   );
 };
