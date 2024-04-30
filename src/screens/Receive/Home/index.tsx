@@ -1,8 +1,7 @@
 import { appActions, appState } from "@state/index";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useSnapshot } from "valtio";
 import strawberry from "@assets/strawberry.svg";
-import solanaLogo from "@assets/tokens/sol.svg";
 import SettingIcon from "@/icons/Setting";
 import SendIcon from "@/icons/Send";
 import WalletIcon from "@/icons/Wallet";
@@ -19,6 +18,10 @@ import { fetchTokens } from "@engine/tokens";
 import { getSafeMintAddressForPriceAPI } from "@utils/tokens";
 import { queryTokenPrice } from "@utils/graphql";
 import { getFriendlyAmount } from "@engine/utils";
+import HoveredAddress from "./HoveredAddress";
+import FeatureButton from "@components/FeatureButton";
+import { BottomSheet, BottomSheetRef } from "react-spring-bottom-sheet";
+import Receive from "..";
 
 function formatCurrency(num: number) {
   return num.toLocaleString("en-US", { style: "currency", currency: "USD" });
@@ -28,6 +31,9 @@ const HomeScreen = () => {
   const { keypair, tokens, prices } = useSnapshot(appState);
   const [isWalletHovered, setIsWalletHovered] = useState<boolean>(false);
   const [dataBlurred, setDataBlurred] = useState<boolean>(true);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+
+  const sheetRef = useRef<BottomSheetRef>();
 
   useEffect(() => {
     const fetchOnchainTokens = async () => {
@@ -66,20 +72,7 @@ const HomeScreen = () => {
     <div className="extension-container flex flex-col">
       <div className="h-[60px] px-4 py-2 gap-1.5 flex justify-between bg-primary-300">
         {isWalletHovered ? (
-          <div
-            className="w-[200px] flex items-center p-2 rounded-full bg-primary-200 cursor-pointer"
-            onMouseLeave={() => setIsWalletHovered(false)}
-            onClick={() => keypair && navigator.clipboard.writeText(keypair.publicKey.toBase58())}
-          >
-            <img className="w-6 h-6" src={solanaLogo} alt="solana logo" />
-            <p className="ml-2 font-semibold text-primary-400">
-              {keypair?.publicKey.toBase58().slice(0, 6)}...
-              {keypair?.publicKey.toBase58().slice(-4)}
-            </p>
-            <div className="ml-auto">
-              <CopyIcon />
-            </div>
-          </div>
+          <HoveredAddress setIsWalletHovered={setIsWalletHovered} />
         ) : (
           <div className="flex items-center gap-2" onMouseEnter={() => setIsWalletHovered(true)}>
             <img className="w-10 h-10" src={strawberry} alt="strawberry logo" />
@@ -111,30 +104,20 @@ const HomeScreen = () => {
         </div>
 
         <div className="mt-6 flex items-center gap-10">
-          <div className="flex flex-col flex-1 items-center">
-            <button className="icon-button">
-              <SendIcon size={20} />
-            </button>
-            <p className="font-semibold text-secondary-200 mt-1">Send</p>
-          </div>
-          <div className="flex flex-col flex-1 items-center">
-            <button className="icon-button">
-              <WalletIcon size={20} />
-            </button>
-            <p className="font-semibold text-secondary-200 mt-1">Receive</p>
-          </div>
-          <div className="flex flex-col flex-1 items-center">
-            <button className="icon-button">
-              <SwapIcon size={20} />
-            </button>
-            <p className="font-semibold text-secondary-200 mt-1">Swap</p>
-          </div>
+          <FeatureButton Icon={SendIcon} title="Send" />
+          <FeatureButton Icon={WalletIcon} title="Receive" onClick={() => setIsOpen(true)} />
+          <FeatureButton Icon={SwapIcon} title="Swap" />
         </div>
 
         <TabBar className="mt-4" navTitle={["Tokens", "Collectibles", "Activities"]} />
 
         <TokenList className="mt-4" tokens={tokens as Token[]} />
       </div>
+
+      <BottomSheet open={isOpen} onDismiss={() => setIsOpen(false)} ref={sheetRef}>
+        <button onClick={() => sheetRef.current.snapTo(({ maxHeight }) => maxHeight)} />
+        <Receive />
+      </BottomSheet>
     </div>
   );
 };
