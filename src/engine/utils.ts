@@ -1,8 +1,8 @@
-import BN from "bn.js";
+import DC from "decimal.js";
 
 export const getFriendlyAmount = (amount: string, decimals: number) => {
-  const amountBN = new BN(amount);
-  const divisor = new BN(10).pow(new BN(decimals));
-  const amountScaled = amountBN.div(divisor);
+  const amountDC = new DC(amount);
+  const divisor = new DC(10).pow(new DC(decimals));
+  const amountScaled = amountDC.div(divisor);
   return amountScaled.toNumber();
 };

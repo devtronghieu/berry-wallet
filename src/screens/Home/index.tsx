@@ -24,6 +24,7 @@ import Modal from "react-modal";
 import Sheet, { SheetRef } from "react-modal-sheet";
 import Receive from "../Receive";
 import "./index.css";
+import Send from "@screens/Send";
 
 function formatCurrency(num: number) {
   return num.toLocaleString("en-US", { style: "currency", currency: "USD" });
@@ -123,7 +124,13 @@ const HomeScreen = () => {
         </div>
 
         <div className="mt-6 flex items-center gap-10">
-          <FeatureButton Icon={SendIcon} title="Send" />
+          <FeatureButton
+            Icon={SendIcon}
+            title="Send"
+            onClick={() => {
+              setModalIsOpen(true);
+            }}
+          />
           <FeatureButton
             Icon={WalletIcon}
             title="Receive"
@@ -149,7 +156,8 @@ const HomeScreen = () => {
         <Sheet.Container>
           <Sheet.Header></Sheet.Header>
           <Sheet.Content>
-            <Receive />
+            {/* <Receive /> */}
+            <Send onClose={() => setModalIsOpen(false)} />
           </Sheet.Content>
         </Sheet.Container>
         <Sheet.Backdrop />

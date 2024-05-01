@@ -9,6 +9,7 @@ export interface AppState {
   hashedPassword?: string;
   tokens: Token[];
   prices: Record<string, number>;
+  transactionFees?: number[];
 }
 
 export const appState = proxy<AppState>({
@@ -31,5 +32,8 @@ export const appActions = {
   },
   setPrices: (prices: Record<string, number>) => {
     appState.prices = prices;
+  },
+  setTransactionFees(fees: number[]) {
+    appState.transactionFees = fees;
   },
 };
