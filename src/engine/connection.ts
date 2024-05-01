@@ -4,7 +4,7 @@ let connection: Connection;
 
 export const getConnection = () => {
   if (!connection) {
-    connection = new Connection(clusterApiUrl("devnet"), "confirmed");
+    connection = new Connection(clusterApiUrl("mainnet-beta"), "confirmed");
   }
   return connection;
 };

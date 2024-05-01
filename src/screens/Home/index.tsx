@@ -20,10 +20,9 @@ import { queryTokenPrice } from "@utils/graphql";
 import { getFriendlyAmount } from "@engine/utils";
 import HoveredAddress from "./HoveredAddress";
 import FeatureButton from "@components/FeatureButton";
-import Modal from "react-modal";
-import Sheet, { SheetRef } from "react-modal-sheet";
-import Receive from "../Receive";
 import "./index.css";
+import { swap } from "@utils/transaction/swap";
+import { Keypair } from "@solana/web3.js";
 
 function formatCurrency(num: number) {
   return num.toLocaleString("en-US", { style: "currency", currency: "USD" });
@@ -33,26 +32,11 @@ const HomeScreen = () => {
   const { keypair, tokens, prices } = useSnapshot(appState);
   const [isWalletHovered, setIsWalletHovered] = useState<boolean>(false);
   const [dataBlurred, setDataBlurred] = useState<boolean>(true);
-  const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("Tokens");
 
   const navOnClickList = useMemo(() => {
     return [() => setActiveTab("Tokens"), () => setActiveTab("Collectibles"), () => setActiveTab("Activities")];
   }, []);
-
-  const customStyles = {
-    content: {
-      top: "50%",
-      left: "50%",
-      right: "auto",
-      bottom: "auto",
-      marginBottom: 0,
-      marginRight: "-50%",
-      transform: "translate(-50%, -50%)",
-      width: "400px",
-      height: "572px",
-    },
-  };
 
   useEffect(() => {
     const fetchOnchainTokens = async () => {
@@ -86,6 +70,21 @@ const HomeScreen = () => {
       return acc + totalPrice;
     }, 0);
   }, [tokens, prices]);
+
+  const handleSwap = async () => {
+    swap(
+      keypair as Keypair,
+      "So11111111111111111111111111111111111111112",
+      "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+      1000,
+    )
+      .then((signatures) => {
+        const decoder = new TextDecoder();
+        const signature = decoder.decode(signatures[0]);
+        console.log(signature.toString());
+      })
+      .catch(console.error);
+  };
 
   return (
     <div className="extension-container flex flex-col">
@@ -124,14 +123,8 @@ const HomeScreen = () => {
 
         <div className="mt-6 flex items-center gap-10">
           <FeatureButton Icon={SendIcon} title="Send" />
-          <FeatureButton
-            Icon={WalletIcon}
-            title="Receive"
-            onClick={() => {
-              setModalIsOpen(true);
-            }}
-          />
-          <FeatureButton Icon={SwapIcon} title="Swap" />
+          <FeatureButton Icon={WalletIcon} title="Receive" />
+          <FeatureButton Icon={SwapIcon} title="Swap" onClick={handleSwap} />
         </div>
 
         <TabBar className="mt-4" navTitle={["Tokens", "Collectibles", "Activities"]} navOnClick={navOnClickList} />
@@ -144,16 +137,6 @@ const HomeScreen = () => {
           <div>Activities</div>
         )}
       </div>
-
-      <Sheet isOpen={modalIsOpen} onClose={() => setModalIsOpen(false)}>
-        <Sheet.Container>
-          <Sheet.Header></Sheet.Header>
-          <Sheet.Content>
-            <Receive />
-          </Sheet.Content>
-        </Sheet.Container>
-        <Sheet.Backdrop />
-      </Sheet>
     </div>
   );
 };
