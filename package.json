@@ -36,9 +36,9 @@
     "bip39": "^3.1.0",
     "bn.js": "^5.2.1",
     "bs58": "^5.0.0",
-    "eventemitter3": "^5.0.1",
     "cross-fetch": "^4.0.0",
     "ed25519-hd-key": "^1.3.0",
+    "eventemitter3": "^5.0.1",
     "framer-motion": "^11.1.7",
     "graphql": "^16.8.1",
     "graphql-request": "^6.1.0",
@@ -54,6 +54,7 @@
   "devDependencies": {
     "@graphql-codegen/typescript-resolvers": "^4.0.6",
     "@types/bn.js": "^5.1.5",
+    "@types/chrome": "^0.0.267",
     "@types/node": "^20.12.7",
     "@types/pouchdb-adapter-idb": "^6.1.7",
     "@types/pouchdb-core": "^7.0.14",

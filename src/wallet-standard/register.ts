@@ -12,20 +12,12 @@ export function registerWallet(wallet: Wallet): void {
   const callback: WindowRegisterWalletEventCallback = ({ register }) => register(wallet);
   try {
     const registerEvent = new RegisterWalletEvent(callback);
-    console.log("--> berry: dispatch wallet-standard:register-wallet event", registerEvent);
     (window as WalletEventsWindow).dispatchEvent(registerEvent);
   } catch (error) {
     console.error("wallet-standard:register-wallet event could not be dispatched\n", error);
   }
   try {
-    console.log("--> berry: add wallet-standard:app-ready event listener");
-
-    (window as WalletEventsWindow).addEventListener("wallet-standard:app-ready", ({ detail: api }) => {
-      console.log("--> berry: wallet-standard:app-ready event listener called");
-      callback(api);
-    });
-
-    console.log("--> berry: wallet-standard:app-ready event listener added");
+    (window as WalletEventsWindow).addEventListener("wallet-standard:app-ready", ({ detail: api }) => callback(api));
   } catch (error) {
     console.error("wallet-standard:app-ready event listener could not be added\n", error);
   }
