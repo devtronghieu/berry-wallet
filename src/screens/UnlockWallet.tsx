@@ -4,9 +4,10 @@ import { appActions } from "@state/index";
 import { hash } from "@utils/crypto";
 import { Route } from "@utils/routes";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const UnlockWalletScreen = () => {
+  const location = useLocation();
   const navigate = useNavigate();
   const [password, setPassword] = useState("");
 
@@ -23,7 +24,7 @@ const UnlockWalletScreen = () => {
       const keypair = await deriveKeypair(hashedPassword, activeKeypairIndex ?? 0);
       appActions.setHashedPassword(hashedPassword);
       appActions.setKeypair(keypair);
-      navigate(Route.Home);
+      navigate(location.state.from || Route.Home);
     };
 
     fetchKeypair().catch(console.error);

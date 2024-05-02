@@ -15,6 +15,7 @@ import ImportPrivateKeyScreen from "@screens/ImportPrivateKey.tsx";
 import NotFoundScreen from "@screens/NotFound.tsx";
 import UnlockWalletScreen from "@screens/UnlockWallet.tsx";
 import HomeScreen from "@screens/Home/index.tsx";
+import RequestsScreen from "@screens/Requests.tsx";
 
 const router = createHashRouter([
   {
@@ -29,6 +30,10 @@ const router = createHashRouter([
         path: Route.Home,
         element: <HomeScreen />,
         index: true,
+      },
+      {
+        path: `${Route.Requests}/:event`,
+        element: <RequestsScreen />,
       },
     ],
   },
