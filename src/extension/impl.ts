@@ -11,7 +11,7 @@ export class BerryImpl extends EventEmitter implements Berry {
     this.publicKey = null;
   }
 
-  connect(options?: { onlyIfTrusted?: boolean | undefined } | undefined): Promise<{ publicKey: PublicKey }> {
+  async connect(options?: { onlyIfTrusted?: boolean | undefined } | undefined): Promise<{ publicKey: PublicKey }> {
     console.log("connect", options);
     throw new Error("Method not implemented.");
   }
@@ -43,8 +43,11 @@ export class BerryImpl extends EventEmitter implements Berry {
     throw new Error("Method not implemented.");
   }
 
-  signIn(input?: SolanaSignInInput | undefined): Promise<SolanaSignInOutput> {
+  async signIn(input?: SolanaSignInInput | undefined): Promise<SolanaSignInOutput> {
     console.log("signIn", input);
+
+    window.postMessage({ type: "signIn", data: "Hello, World!" });
+
     throw new Error("Method not implemented.");
   }
 }
