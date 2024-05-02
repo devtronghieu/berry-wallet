@@ -9,7 +9,7 @@ interface Props {
   children: ReactNode;
 }
 
-const ProtectedRoute: FC<Props> = ({ children }) => {
+export const ProtectedRoute: FC<Props> = ({ children }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const { encryptedSeedPhrase, hashedPassword: password } = useSnapshot(appState);
 

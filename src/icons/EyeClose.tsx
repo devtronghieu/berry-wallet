@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { IconProps } from "./types";
 
-const EyeCloseIcon: FC<IconProps> = ({ size = 20, color = "#267578" }) => {
+export const EyeCloseIcon: FC<IconProps> = ({ size = 20, color = "#267578" }) => {
   return (
     <svg width={size} height={(size * 18) / 16} viewBox="0 0 18 16" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path

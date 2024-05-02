@@ -2,16 +2,9 @@ import { appActions, appState } from "@state/index";
 import { useEffect, useMemo } from "react";
 import { useSnapshot } from "valtio";
 import strawberry from "@assets/strawberry.svg";
-import SettingIcon from "@/icons/Setting";
-import SendIcon from "@/icons/Send";
-import WalletIcon from "@/icons/Wallet";
-import EyeCloseIcon from "@/icons/EyeClose";
-import EyeOpenIcon from "@/icons/EyeOpen";
-import SwapIcon from "@/icons/Swap";
-import CopyIcon from "@/icons/Copy";
+import { CopyIcon, EyeCloseIcon, EyeOpenIcon, SettingIcon, SendIcon, SwapIcon, WalletIcon } from "@/icons/index";
 import { useState } from "react";
-import TabBar from "@components/TabBar";
-import TokenList from "@components/TokenList";
+import { FeatureButton, TabBar, TokenList } from "@components/index";
 import { Token } from "@engine/types";
 import { Token as GqlToken } from "@utils/gqlTypes";
 import { fetchTokens } from "@engine/tokens";
@@ -19,10 +12,9 @@ import { getSafeMintAddressForPriceAPI } from "@utils/tokens";
 import { queryTokenPrice } from "@utils/graphql";
 import { getFriendlyAmount } from "@engine/utils";
 import HoveredAddress from "./HoveredAddress";
-import FeatureButton from "@components/FeatureButton";
-import "./index.css";
-import { swap } from "@utils/transaction/swap";
+import { swap } from "@engine/transaction/swap";
 import { Keypair } from "@solana/web3.js";
+import "./index.css";
 
 function formatCurrency(num: number) {
   return num.toLocaleString("en-US", { style: "currency", currency: "USD" });
@@ -78,10 +70,10 @@ const HomeScreen = () => {
       "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
       1000,
     )
-      .then((signatures) => {
+      .then((signature) => {
         const decoder = new TextDecoder();
-        const signature = decoder.decode(signatures[0]);
-        console.log(signature.toString());
+        const decodedSignature = decoder.decode(signature);
+        console.log(decodedSignature.toString());
       })
       .catch(console.error);
   };
