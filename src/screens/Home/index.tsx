@@ -21,7 +21,7 @@ import { getFriendlyAmount } from "@engine/utils";
 import HoveredAddress from "./HoveredAddress";
 import FeatureButton from "@components/FeatureButton";
 import "./index.css";
-import { swap } from "@utils/transaction/swap";
+import { swap } from "@engine/transaction/swap";
 import { Keypair } from "@solana/web3.js";
 
 function formatCurrency(num: number) {
@@ -78,10 +78,10 @@ const HomeScreen = () => {
       "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
       1000,
     )
-      .then((signatures) => {
+      .then((signature) => {
         const decoder = new TextDecoder();
-        const signature = decoder.decode(signatures[0]);
-        console.log(signature.toString());
+        const decodedSignature = decoder.decode(signature);
+        console.log(decodedSignature.toString());
       })
       .catch(console.error);
   };
