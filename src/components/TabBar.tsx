@@ -7,7 +7,7 @@ interface Props {
   navOnClick?: onClick[];
 }
 
-const TabBar: FC<Props> = ({ navTitle = [], className, navOnClick }) => {
+export const TabBar: FC<Props> = ({ navTitle = [], className, navOnClick }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   return (
     <nav className={`nav-background ${className} ${"active-" + activeIndex}`}>
