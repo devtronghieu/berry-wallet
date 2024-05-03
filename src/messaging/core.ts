@@ -34,7 +34,13 @@ export class WebKernel implements Kernel {
 
       if (event.data.id && this.handleRequest) {
         const request = event.data as Request;
-        const response = await this.handleRequest(request);
+        const payload = await this.handleRequest(request);
+        const response: Response = {
+          requestId: request.id,
+          from: this.channel,
+          to: request.from,
+          payload,
+        };
         window.postMessage(response, "*");
       }
     });
@@ -50,8 +56,70 @@ export class WebKernel implements Kernel {
         payload,
       };
 
-      this.requestPool.set(request.id, { resolve, reject });
+      this.requestPool.set(request.id, { resolve, reject, source: this.channel, destination });
       window.postMessage(request, "*");
+    });
+  };
+
+  handleRequest?: HandleRequestSignature | undefined;
+}
+
+export class ChromeKernel implements Kernel {
+  channel: Channel;
+  requestPool: Map<string, ResolverContext>;
+
+  portName = "@berry/chrome-port";
+  port = chrome.runtime.connect({ name: this.portName });
+
+  constructor(channel: Channel) {
+    this.channel = channel;
+    this.requestPool = new Map();
+
+    chrome.runtime.onConnect.addListener((port) => {
+      if (port.name !== this.portName) return;
+
+      port.onMessage.addListener(async (message) => {
+        if (message.to !== this.channel) return;
+
+        if (message.id && this.handleRequest) {
+          const request = message as Request;
+          const payload = await this.handleRequest(request);
+          const response: Response = {
+            requestId: request.id,
+            from: this.channel,
+            to: request.from,
+            payload,
+          };
+          port.postMessage(response);
+        }
+      });
+    });
+
+    this.port.onMessage.addListener((message) => {
+      if (message.to !== this.channel) return;
+
+      if (message.requestId) {
+        const response = message as Response;
+        const resolver = this.requestPool.get(response.requestId);
+        if (!resolver) return;
+        resolver.resolve(response);
+      }
+    });
+  }
+
+  sendRequest: SendRequestSignature = async ({ destination, event, payload }) => {
+    return new Promise<Response>((resolve, reject) => {
+      const requestId = crypto.randomUUID();
+      const request: Request = {
+        id: requestId,
+        from: this.channel,
+        to: destination,
+        event,
+        payload,
+      };
+
+      this.requestPool.set(requestId, { resolve, reject, source: this.channel, destination });
+      this.port.postMessage(request);
     });
   };
 

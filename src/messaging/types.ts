@@ -15,6 +15,8 @@ export enum Channel {
 
 export type RequestId = string;
 
+export type Payload = unknown;
+
 export interface Request {
   id: RequestId;
   from: Channel;
@@ -33,12 +35,14 @@ export interface Response {
 export type SendRequestSignature = (params: {
   destination: Channel;
   event: Event;
-  payload: unknown;
+  payload: Payload;
 }) => Promise<Response>;
 
-export type HandleRequestSignature = (request: Request) => Promise<Response>;
+export type HandleRequestSignature = (request: Request) => Promise<Payload>;
 
 export interface ResolverContext {
   resolve: (response: Response) => void;
   reject: (error: Error) => void;
+  source: Channel;
+  destination: Channel;
 }
