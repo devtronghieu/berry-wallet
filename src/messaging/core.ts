@@ -8,60 +8,26 @@ import {
   ResolverContext,
 } from "./types";
 
-interface KernelConstructor {
-  name: string;
+interface Kernel {
   channel: Channel;
+  requestPool: Map<RequestId, ResolverContext>;
   sendRequest: SendRequestSignature;
   handleRequest?: HandleRequestSignature;
 }
 
-class Kernel {
-  name: string;
+export class WebKernel implements Kernel {
+  requestPool = new Map<RequestId, ResolverContext>();
   channel: Channel;
-  messagePool: Map<RequestId, ResolverContext>;
-  sendRequest: SendRequestSignature;
-  handleRequest?: HandleRequestSignature;
 
-  constructor(params: KernelConstructor) {
-    this.name = params.name;
-    this.channel = params.channel;
-    this.messagePool = new Map();
-    this.sendRequest = params.sendRequest;
-    this.handleRequest = params.handleRequest;
-  }
-
-  setRequestHandler(requestHandler: HandleRequestSignature) {
-    this.handleRequest = requestHandler;
-  }
-}
-
-export class WebKernel extends Kernel {
   constructor(channel: Channel) {
-    super({
-      name: "@berry/web-kernel",
-      channel,
-      sendRequest: ({ destination, event, payload }) => {
-        return new Promise<Response>((resolve, reject) => {
-          const request: Request = {
-            id: crypto.randomUUID(),
-            from: channel,
-            to: destination,
-            event,
-            payload,
-          };
-
-          this.messagePool.set(request.id, { resolve, reject });
-          window.postMessage(request, "*");
-        });
-      },
-    });
+    this.channel = channel;
 
     window.addEventListener("message", async (event) => {
       if (event.data.to !== this.channel) return;
 
       if (event.data.requestId) {
         const response = event.data as Response;
-        const resolver = this.messagePool.get(response.requestId);
+        const resolver = this.requestPool.get(response.requestId);
         if (!resolver) return;
         resolver.resolve(response);
       }
@@ -73,4 +39,21 @@ export class WebKernel extends Kernel {
       }
     });
   }
+
+  sendRequest: SendRequestSignature = ({ destination, event, payload }) => {
+    return new Promise<Response>((resolve, reject) => {
+      const request: Request = {
+        id: crypto.randomUUID(),
+        from: this.channel,
+        to: destination,
+        event,
+        payload,
+      };
+
+      this.requestPool.set(request.id, { resolve, reject });
+      window.postMessage(request, "*");
+    });
+  };
+
+  handleRequest?: HandleRequestSignature | undefined;
 }

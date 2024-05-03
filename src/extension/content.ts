@@ -5,15 +5,14 @@ import { Keypair } from "@solana/web3.js";
 
 (async () => {
   const webKernel = new WebKernel(Channel.Content);
-
-  webKernel.setRequestHandler(async (request) => {
+  webKernel.handleRequest = async (request) => {
     return {
       requestId: request.id,
       from: Channel.Content,
       to: Channel.Injection,
       payload: Keypair.generate().publicKey.toBase58(),
     };
-  });
+  };
 
   injectScript("injection.js");
 })();
