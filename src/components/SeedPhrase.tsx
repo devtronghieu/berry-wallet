@@ -9,7 +9,7 @@ interface Props {
   setSeedPhrase?: (seedPhrase: string[]) => void;
 }
 
-const SeedPhrase: FC<Props> = ({ className, readonly = true, blurred = false, seedPhrase, setSeedPhrase }) => {
+export const SeedPhrase: FC<Props> = ({ className, readonly = true, blurred = false, seedPhrase, setSeedPhrase }) => {
   const handleChange = (index: number, value: string) => {
     const newSeedPhrase = [...seedPhrase];
     const words = value.split(" ");

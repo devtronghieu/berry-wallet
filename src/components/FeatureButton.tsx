@@ -7,7 +7,7 @@ interface FeatureButtonProps {
   onClick?: () => void;
 }
 
-const FeatureButton: FC<FeatureButtonProps> = ({ Icon, title, onClick }) => {
+export const FeatureButton: FC<FeatureButtonProps> = ({ Icon, title, onClick }) => {
   return (
     <div className="flex flex-col flex-1 items-center">
       <button className="icon-button" onClick={onClick}>

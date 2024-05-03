@@ -26,7 +26,7 @@ const getLocalLogo = (symbol: string) => {
   }
 };
 
-const TokenList: FC<Props> = ({ className, tokens }) => {
+export const TokenList: FC<Props> = ({ className, tokens }) => {
   const { prices } = useSnapshot(appState);
 
   return (

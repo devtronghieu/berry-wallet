@@ -1,24 +1,19 @@
-import CopyIcon from "@/icons/Copy";
-import EyeCloseIcon from "@/icons/EyeClose";
-import EyeOpenIcon from "@/icons/EyeOpen";
-import SendIcon from "@/icons/Send";
-import SettingIcon from "@/icons/Setting";
-import SwapIcon from "@/icons/Swap";
-import WalletIcon from "@/icons/Wallet";
+import { appActions, appState } from "@state/index";
+import { useEffect, useMemo } from "react";
+import { useSnapshot } from "valtio";
 import strawberry from "@assets/strawberry.svg";
-import FeatureButton from "@components/FeatureButton";
-import TabBar from "@components/TabBar";
-import TokenList from "@components/TokenList";
+import { CopyIcon, EyeCloseIcon, EyeOpenIcon, SettingIcon, SendIcon, SwapIcon, WalletIcon } from "@/icons/index";
+import { useState } from "react";
+import { FeatureButton, TabBar, TokenList } from "@components/index";
 import { fetchTokens } from "@engine/tokens";
 import { Token } from "@engine/types";
 import { getFriendlyAmount } from "@engine/utils";
-import { appActions, appState } from "@state/index";
 import { Token as GqlToken } from "@utils/gqlTypes";
 import { queryTokenPrice } from "@utils/graphql";
 import { getSafeMintAddressForPriceAPI } from "@utils/tokens";
-import { useEffect, useMemo, useState } from "react";
-import { useSnapshot } from "valtio";
 import HoveredAddress from "./HoveredAddress";
+import { swap } from "@engine/transaction/swap";
+import { Keypair } from "@solana/web3.js";
 import "./index.css";
 
 function formatCurrency(num: number) {
@@ -29,26 +24,11 @@ const HomeScreen = () => {
   const { keypair, tokens, prices } = useSnapshot(appState);
   const [isWalletHovered, setIsWalletHovered] = useState<boolean>(false);
   const [dataBlurred, setDataBlurred] = useState<boolean>(true);
-  // const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("Tokens");
 
   const navOnClickList = useMemo(() => {
     return [() => setActiveTab("Tokens"), () => setActiveTab("Collectibles"), () => setActiveTab("Activities")];
   }, []);
-
-  // const customStyles = {
-  //   content: {
-  //     top: "50%",
-  //     left: "50%",
-  //     right: "auto",
-  //     bottom: "auto",
-  //     marginBottom: 0,
-  //     marginRight: "-50%",
-  //     transform: "translate(-50%, -50%)",
-  //     width: "400px",
-  //     height: "572px",
-  //   },
-  // };
 
   useEffect(() => {
     const fetchOnchainTokens = async () => {
@@ -82,6 +62,21 @@ const HomeScreen = () => {
       return acc + totalPrice;
     }, 0);
   }, [tokens, prices]);
+
+  const handleSwap = async () => {
+    swap(
+      keypair as Keypair,
+      "So11111111111111111111111111111111111111112",
+      "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+      1000,
+    )
+      .then((signature) => {
+        const decoder = new TextDecoder();
+        const decodedSignature = decoder.decode(signature);
+        console.log(decodedSignature.toString());
+      })
+      .catch(console.error);
+  };
 
   return (
     <div className="extension-container flex flex-col">
@@ -120,14 +115,8 @@ const HomeScreen = () => {
 
         <div className="mt-6 flex items-center gap-10">
           <FeatureButton Icon={SendIcon} title="Send" />
-          <FeatureButton
-            Icon={WalletIcon}
-            title="Receive"
-            onClick={() => {
-              // setModalIsOpen(true);
-            }}
-          />
-          <FeatureButton Icon={SwapIcon} title="Swap" />
+          <FeatureButton Icon={WalletIcon} title="Receive" />
+          <FeatureButton Icon={SwapIcon} title="Swap" onClick={handleSwap} />
         </div>
 
         <TabBar className="mt-4" navTitle={["Tokens", "Collectibles", "Activities"]} navOnClick={navOnClickList} />
@@ -140,16 +129,6 @@ const HomeScreen = () => {
           <div>Activities</div>
         )}
       </div>
-
-      {/* <Sheet isOpen={modalIsOpen} onClose={() => setModalIsOpen(false)}>
-        <Sheet.Container>
-          <Sheet.Header></Sheet.Header>
-          <Sheet.Content>
-            <Receive />
-          </Sheet.Content>
-        </Sheet.Container>
-        <Sheet.Backdrop />
-      </Sheet> */}
     </div>
   );
 };

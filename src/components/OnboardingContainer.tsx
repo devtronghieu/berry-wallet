@@ -12,7 +12,7 @@ export interface OnboardingContainerProps {
   onCTAClick: () => void;
 }
 
-const OnboardingContainer: FC<OnboardingContainerProps> = (props) => {
+export const OnboardingContainer: FC<OnboardingContainerProps> = (props) => {
   useEffect(() => {
     const handleEnter = (e: KeyboardEvent) => {
       if (e.key === "Enter" && !props.ctaDisabled) {
