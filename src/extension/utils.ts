@@ -1,4 +1,5 @@
 import { Event } from "@messaging/types";
+import { WINDOW_HEIGHT, WINDOW_WIDTH } from "@utils/constants";
 
 export const injectScript = (scriptUri: string) => {
   try {
@@ -16,14 +17,14 @@ export const injectScript = (scriptUri: string) => {
 export const openPopup = async (event: Event) => {
   const lastFocusedWindow = await chrome.windows.getLastFocused();
   const { top, left = 0, width = 0 } = lastFocusedWindow;
-  const leftPos = left + width - 420;
+  const leftPos = left + width - WINDOW_WIDTH;
 
   return await chrome.windows.create({
     top,
     left: leftPos,
     type: "popup",
-    width: 400,
-    height: 600,
+    width: WINDOW_WIDTH,
+    height: WINDOW_HEIGHT,
     url: `index.html#/requests/${event}`,
     focused: true,
   });
