@@ -1,15 +1,37 @@
 import { deriveKeypair } from "@engine/keypair";
-import { getActiveKeypairIndex, getPassword } from "@engine/store";
+import { getActiveKeypairIndex, getPassword, getPasswordExpiredAt, setPasswordExpiredAt } from "@engine/store";
 import { appActions } from "@state/index";
 import { hash } from "@utils/crypto";
 import { Route } from "@utils/routes";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const UnlockWalletScreen = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [password, setPassword] = useState("");
+
+  useEffect(() => {
+    const restoreWalletSession = async () => {
+      const passwordExpiredAt = await getPasswordExpiredAt();
+      if (!passwordExpiredAt || passwordExpiredAt < Date.now()) {
+        return;
+      }
+
+      const storedPassword = await getPassword();
+      if (!storedPassword) {
+        return navigate(Route.SignIn);
+      }
+
+      const activeKeypairIndex = await getActiveKeypairIndex();
+      const keypair = await deriveKeypair(storedPassword, activeKeypairIndex ?? 0);
+      appActions.setHashedPassword(storedPassword);
+      appActions.setKeypair(keypair);
+      navigate(location.state.from || Route.Home);
+    };
+
+    restoreWalletSession().catch(console.error);
+  }, [location.state.from, navigate]);
 
   const handleUnlockWallet = () => {
     const fetchKeypair = async () => {
@@ -19,6 +41,9 @@ const UnlockWalletScreen = () => {
         alert("Incorrect password");
         return;
       }
+
+      // Set password expired after 30 minutes
+      await setPasswordExpiredAt(Date.now() + 30 * 60 * 1000);
 
       const activeKeypairIndex = await getActiveKeypairIndex();
       const keypair = await deriveKeypair(hashedPassword, activeKeypairIndex ?? 0);

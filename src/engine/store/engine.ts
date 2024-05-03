@@ -50,6 +50,30 @@ export const getPassword = async () => {
   }
 };
 
+const passwordExpiredAtId = "passwordExpiredAt";
+
+export const setPasswordExpiredAt = async (expiredAt: number) => {
+  const doc = {
+    _id: passwordExpiredAtId,
+    expiredAt,
+  };
+
+  await getDB().put(doc);
+};
+
+export const getPasswordExpiredAt = async () => {
+  try {
+    const doc = await getDB().get<{ expiredAt: number }>(passwordExpiredAtId);
+    return doc.expiredAt;
+  } catch (error) {
+    if ((error as PouchDB.Core.Error).status === 404) {
+      return null;
+    }
+
+    throw error;
+  }
+};
+
 const activeKeypairIndexId = "activeKeypairIndex";
 
 export const setActiveKeypairIndex = async (index: number) => {
