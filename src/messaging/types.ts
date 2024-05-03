@@ -19,7 +19,6 @@ export type Payload = unknown;
 
 export interface Request {
   id: RequestId;
-  from: Channel;
   to: Channel;
   event: Event;
   payload: unknown;
@@ -27,8 +26,6 @@ export interface Request {
 
 export interface Response {
   requestId: RequestId;
-  from: Channel;
-  to: Channel;
   payload: unknown;
 }
 
@@ -43,6 +40,4 @@ export type HandleRequestSignature = (request: Request) => Promise<Payload>;
 export interface ResolverContext {
   resolve: (response: Response) => void;
   reject: (error: Error) => void;
-  source: Channel;
-  destination: Channel;
 }

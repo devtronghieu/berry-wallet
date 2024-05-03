@@ -22,23 +22,25 @@ export class WebKernel implements Kernel {
   constructor(channel: Channel) {
     this.channel = channel;
 
-    window.addEventListener("message", async (event) => {
-      if (event.data.to !== this.channel) return;
+    window.addEventListener("message", async ({ data }) => {
+      const isRequest = data.id && data.event && !data.requestId;
+      const isResponse = data.requestId;
 
-      if (event.data.requestId) {
-        const response = event.data as Response;
+      if (isResponse) {
+        console.log(`[WebKernel/${this.channel}] Received response`, data);
+        const response = data as Response;
         const resolver = this.requestPool.get(response.requestId);
         if (!resolver) return;
         resolver.resolve(response);
       }
 
-      if (event.data.id && this.handleRequest) {
-        const request = event.data as Request;
+      if (isRequest && this.handleRequest) {
+        console.log(`[WebKernel/${this.channel}] Received request`, data);
+        const request = data as Request;
+        if (request.to !== this.channel) return;
         const payload = await this.handleRequest(request);
         const response: Response = {
           requestId: request.id,
-          from: this.channel,
-          to: request.from,
           payload,
         };
         window.postMessage(response, "*");
@@ -50,13 +52,12 @@ export class WebKernel implements Kernel {
     return new Promise<Response>((resolve, reject) => {
       const request: Request = {
         id: crypto.randomUUID(),
-        from: this.channel,
         to: destination,
         event,
         payload,
       };
 
-      this.requestPool.set(request.id, { resolve, reject, source: this.channel, destination });
+      this.requestPool.set(request.id, { resolve, reject });
       window.postMessage(request, "*");
     });
   };
@@ -66,7 +67,7 @@ export class WebKernel implements Kernel {
 
 export class ChromeKernel implements Kernel {
   channel: Channel;
-  requestPool: Map<string, ResolverContext>;
+  requestPool: Map<RequestId, ResolverContext>;
 
   portName = "@berry/chrome-port";
   port = chrome.runtime.connect({ name: this.portName });
@@ -79,15 +80,12 @@ export class ChromeKernel implements Kernel {
       if (port.name !== this.portName) return;
 
       port.onMessage.addListener(async (message) => {
-        if (message.to !== this.channel) return;
-
-        if (message.id && this.handleRequest) {
+        console.log(`[ChromeKernel/${this.channel}] Received request`, message);
+        if (message.to === this.channel && this.handleRequest) {
           const request = message as Request;
           const payload = await this.handleRequest(request);
           const response: Response = {
             requestId: request.id,
-            from: this.channel,
-            to: request.from,
             payload,
           };
           port.postMessage(response);
@@ -96,14 +94,11 @@ export class ChromeKernel implements Kernel {
     });
 
     this.port.onMessage.addListener((message) => {
-      if (message.to !== this.channel) return;
-
-      if (message.requestId) {
-        const response = message as Response;
-        const resolver = this.requestPool.get(response.requestId);
-        if (!resolver) return;
-        resolver.resolve(response);
-      }
+      console.log(`[ChromeKernel/${this.channel}] Received response`, message);
+      const response = message as Response;
+      const resolver = this.requestPool.get(response.requestId);
+      if (!resolver) return;
+      resolver.resolve(response);
     });
   }
 
@@ -112,13 +107,12 @@ export class ChromeKernel implements Kernel {
       const requestId = crypto.randomUUID();
       const request: Request = {
         id: requestId,
-        from: this.channel,
         to: destination,
         event,
         payload,
       };
 
-      this.requestPool.set(requestId, { resolve, reject, source: this.channel, destination });
+      this.requestPool.set(requestId, { resolve, reject });
       this.port.postMessage(request);
     });
   };
