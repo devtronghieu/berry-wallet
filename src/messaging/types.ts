@@ -7,7 +7,38 @@ export enum Event {
 }
 
 export enum Channel {
-  Background = "background",
-  Content = "content",
-  Popup = "popup",
+  Background = "@berry/background",
+  Content = "@berry/content",
+  Injection = "@berry/injection",
+  Popup = "@berry/popup",
+}
+
+export type RequestId = string;
+
+export interface Request {
+  id: RequestId;
+  from: Channel;
+  to: Channel;
+  event: Event;
+  payload: unknown;
+}
+
+export interface Response {
+  requestId: RequestId;
+  from: Channel;
+  to: Channel;
+  payload: unknown;
+}
+
+export type SendRequestSignature = (params: {
+  destination: Channel;
+  event: Event;
+  payload: unknown;
+}) => Promise<Response>;
+
+export type HandleRequestSignature = (request: Request) => Promise<Response>;
+
+export interface ResolverContext {
+  resolve: (response: Response) => void;
+  reject: (error: Error) => void;
 }

@@ -3,10 +3,10 @@ import {
   type SolanaSignAndSendTransactionFeature,
   type SolanaSignAndSendTransactionMethod,
   type SolanaSignAndSendTransactionOutput,
-  SolanaSignIn,
-  type SolanaSignInFeature,
-  type SolanaSignInMethod,
-  type SolanaSignInOutput,
+  // SolanaSignIn,
+  // type SolanaSignInFeature,
+  // type SolanaSignInMethod,
+  // type SolanaSignInOutput,
   SolanaSignMessage,
   type SolanaSignMessageFeature,
   type SolanaSignMessageMethod,
@@ -77,7 +77,7 @@ export class BerryWallet implements Wallet {
     SolanaSignAndSendTransactionFeature &
     SolanaSignTransactionFeature &
     SolanaSignMessageFeature &
-    SolanaSignInFeature &
+    // SolanaSignInFeature &
     BerryFeature {
     return {
       [StandardConnect]: {
@@ -106,10 +106,10 @@ export class BerryWallet implements Wallet {
         version: "1.0.0",
         signMessage: this.#signMessage,
       },
-      [SolanaSignIn]: {
-        version: "1.0.0",
-        signIn: this.#signIn,
-      },
+      // [SolanaSignIn]: {
+      //   version: "1.0.0",
+      //   signIn: this.#signIn,
+      // },
       [BerryNamespace]: {
         berry: this.#berry,
       },
@@ -302,17 +302,17 @@ export class BerryWallet implements Wallet {
     return outputs;
   };
 
-  #signIn: SolanaSignInMethod = async (...inputs) => {
-    const outputs: SolanaSignInOutput[] = [];
+  // #signIn: SolanaSignInMethod = async (...inputs) => {
+  //   const outputs: SolanaSignInOutput[] = [];
 
-    if (inputs.length > 1) {
-      for (const input of inputs) {
-        outputs.push(await this.#berry.signIn(input));
-      }
-    } else {
-      return [await this.#berry.signIn(inputs[0])];
-    }
+  //   if (inputs.length > 1) {
+  //     for (const input of inputs) {
+  //       outputs.push(await this.#berry.signIn(input));
+  //     }
+  //   } else {
+  //     return [await this.#berry.signIn(inputs[0])];
+  //   }
 
-    return outputs;
-  };
+  //   return outputs;
+  // };
 }

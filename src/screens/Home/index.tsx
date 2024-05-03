@@ -1,28 +1,24 @@
-import { appActions, appState } from "@state/index";
-import { useEffect, useMemo } from "react";
-import { useSnapshot } from "valtio";
-import strawberry from "@assets/strawberry.svg";
-import SettingIcon from "@/icons/Setting";
-import SendIcon from "@/icons/Send";
-import WalletIcon from "@/icons/Wallet";
+import CopyIcon from "@/icons/Copy";
 import EyeCloseIcon from "@/icons/EyeClose";
 import EyeOpenIcon from "@/icons/EyeOpen";
+import SendIcon from "@/icons/Send";
+import SettingIcon from "@/icons/Setting";
 import SwapIcon from "@/icons/Swap";
-import CopyIcon from "@/icons/Copy";
-import { useState } from "react";
+import WalletIcon from "@/icons/Wallet";
+import strawberry from "@assets/strawberry.svg";
+import FeatureButton from "@components/FeatureButton";
 import TabBar from "@components/TabBar";
 import TokenList from "@components/TokenList";
-import { Token } from "@engine/types";
-import { Token as GqlToken } from "@utils/gqlTypes";
 import { fetchTokens } from "@engine/tokens";
-import { getSafeMintAddressForPriceAPI } from "@utils/tokens";
-import { queryTokenPrice } from "@utils/graphql";
+import { Token } from "@engine/types";
 import { getFriendlyAmount } from "@engine/utils";
+import { appActions, appState } from "@state/index";
+import { Token as GqlToken } from "@utils/gqlTypes";
+import { queryTokenPrice } from "@utils/graphql";
+import { getSafeMintAddressForPriceAPI } from "@utils/tokens";
+import { useEffect, useMemo, useState } from "react";
+import { useSnapshot } from "valtio";
 import HoveredAddress from "./HoveredAddress";
-import FeatureButton from "@components/FeatureButton";
-import Modal from "react-modal";
-import Sheet, { SheetRef } from "react-modal-sheet";
-import Receive from "../Receive";
 import "./index.css";
 
 function formatCurrency(num: number) {
@@ -33,26 +29,26 @@ const HomeScreen = () => {
   const { keypair, tokens, prices } = useSnapshot(appState);
   const [isWalletHovered, setIsWalletHovered] = useState<boolean>(false);
   const [dataBlurred, setDataBlurred] = useState<boolean>(true);
-  const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
+  // const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("Tokens");
 
   const navOnClickList = useMemo(() => {
     return [() => setActiveTab("Tokens"), () => setActiveTab("Collectibles"), () => setActiveTab("Activities")];
   }, []);
 
-  const customStyles = {
-    content: {
-      top: "50%",
-      left: "50%",
-      right: "auto",
-      bottom: "auto",
-      marginBottom: 0,
-      marginRight: "-50%",
-      transform: "translate(-50%, -50%)",
-      width: "400px",
-      height: "572px",
-    },
-  };
+  // const customStyles = {
+  //   content: {
+  //     top: "50%",
+  //     left: "50%",
+  //     right: "auto",
+  //     bottom: "auto",
+  //     marginBottom: 0,
+  //     marginRight: "-50%",
+  //     transform: "translate(-50%, -50%)",
+  //     width: "400px",
+  //     height: "572px",
+  //   },
+  // };
 
   useEffect(() => {
     const fetchOnchainTokens = async () => {
@@ -128,7 +124,7 @@ const HomeScreen = () => {
             Icon={WalletIcon}
             title="Receive"
             onClick={() => {
-              setModalIsOpen(true);
+              // setModalIsOpen(true);
             }}
           />
           <FeatureButton Icon={SwapIcon} title="Swap" />
@@ -145,7 +141,7 @@ const HomeScreen = () => {
         )}
       </div>
 
-      <Sheet isOpen={modalIsOpen} onClose={() => setModalIsOpen(false)}>
+      {/* <Sheet isOpen={modalIsOpen} onClose={() => setModalIsOpen(false)}>
         <Sheet.Container>
           <Sheet.Header></Sheet.Header>
           <Sheet.Content>
@@ -153,7 +149,7 @@ const HomeScreen = () => {
           </Sheet.Content>
         </Sheet.Container>
         <Sheet.Backdrop />
-      </Sheet>
+      </Sheet> */}
     </div>
   );
 };

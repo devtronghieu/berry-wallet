@@ -1,7 +1,19 @@
+import { WebKernel } from "@messaging/core";
 import { injectScript } from "./utils";
+import { Channel } from "@messaging/types";
+import { Keypair } from "@solana/web3.js";
 
 (async () => {
-  // TODO: setup messaging engine
+  const webKernel = new WebKernel(Channel.Content);
+
+  webKernel.setRequestHandler(async (request) => {
+    return {
+      requestId: request.id,
+      from: Channel.Content,
+      to: Channel.Injection,
+      payload: Keypair.generate().publicKey.toBase58(),
+    };
+  });
 
   injectScript("injection.js");
 })();
