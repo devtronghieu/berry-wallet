@@ -104,7 +104,7 @@ const HomeScreen = () => {
       <div className="flex-grow flex flex-col items-center px-5 pt-2 pb-4 overflow-hidden no-scrollbar">
         <div>
           <div className="flex items-center">
-            <h2 className="text-lg text-secondary-200 font-bold me-2">TOTAL BALANCE</h2>
+            <h2 className="text-lg text-secondary-500 font-bold me-2">TOTAL BALANCE</h2>
             <button className="trans-mini-icon-button" onClick={() => setDataBlurred(!dataBlurred)}>
               {dataBlurred ? <EyeCloseIcon size={20} /> : <EyeOpenIcon size={20} />}
             </button>

@@ -40,7 +40,7 @@ export const OnboardingContainer: FC<OnboardingContainerProps> = (props) => {
         </button>
 
         <div className="flex flex-col flex-1 items-center mt-3 mb-10 mx-6">
-          <h2 className="text-lg text-secondary-200 font-bold">{props.title}</h2>
+          <h2 className="text-lg text-secondary-500 font-bold">{props.title}</h2>
 
           <div className="my-2 text-sm text-gray-400">
             {props.desc.map((desc, index) => (

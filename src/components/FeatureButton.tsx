@@ -14,7 +14,7 @@ export const FeatureButton: FC<FeatureButtonProps> = ({ Icon, title, onClick }) 
       <button className="icon-button" onClick={onClick}>
         <Icon size={20} />
       </button>
-      <p className="font-semibold text-secondary-200 mt-1">{title}</p>
+      <p className="font-semibold text-secondary-500 mt-1">{title}</p>
     </div>
   );
 };
