@@ -1,6 +1,7 @@
 import { ChromeKernel, WebKernel } from "@messaging/core";
-import { injectScript } from "./utils";
 import { Channel } from "@messaging/types";
+
+import { injectScript } from "./utils";
 
 (async () => {
   const webKernel = new WebKernel(Channel.Content);

@@ -1,5 +1,6 @@
-import { IconProps } from "@/icons/types";
 import { FC } from "react";
+
+import { IconProps } from "@/icons/types";
 
 interface FeatureButtonProps {
   Icon: FC<IconProps>;

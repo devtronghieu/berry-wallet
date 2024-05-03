@@ -1,4 +1,5 @@
 import { EncryptedData } from "@utils/crypto";
+
 import { getDB } from "./connection";
 
 const seedPhraseId = "seedPhrase";

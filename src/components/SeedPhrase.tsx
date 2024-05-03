@@ -1,5 +1,6 @@
-import EyeClose2Icon from "@/icons/EyeClose2";
 import { FC } from "react";
+
+import EyeClose2Icon from "@/icons/EyeClose2";
 
 interface Props {
   className?: string;

@@ -1,11 +1,11 @@
 import {
   Channel,
-  Request,
   HandleRequestSignature,
+  Request,
   RequestId,
+  ResolverContext,
   Response,
   SendRequestSignature,
-  ResolverContext,
 } from "./types";
 
 interface Kernel {

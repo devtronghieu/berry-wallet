@@ -1,9 +1,10 @@
+import { FC, useState } from "react";
+
 import ArrowLeftIcon from "@/icons/ArrowLeft";
 import ArrowRightIcon from "@/icons/ArrowRight";
 import CorrectIcon from "@/icons/Correct";
 import WrongIcon from "@/icons/Wrong";
 
-import { FC, useState } from "react";
 import Dialog from "./Dialog";
 
 interface Props {

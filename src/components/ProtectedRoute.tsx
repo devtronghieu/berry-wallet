@@ -1,9 +1,10 @@
-import { FC, ReactNode, useEffect, useState } from "react";
-import { useSnapshot } from "valtio";
-import { Navigate, useLocation } from "react-router-dom";
-import { appActions, appState } from "@/state";
-import { Route } from "@utils/routes";
 import { getEncryptedSeedPhrase } from "@engine/store";
+import { Route } from "@utils/routes";
+import { FC, ReactNode, useEffect, useState } from "react";
+import { Navigate, useLocation } from "react-router-dom";
+import { useSnapshot } from "valtio";
+
+import { appActions, appState } from "@/state";
 
 interface Props {
   children: ReactNode;

@@ -6,6 +6,7 @@ import {
   SolanaSignTransaction,
 } from "@solana/wallet-standard-features";
 import type { WalletAccount } from "@wallet-standard/base";
+
 import { SOLANA_CHAINS } from "./solana.js";
 
 const chains = SOLANA_CHAINS;

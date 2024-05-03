@@ -1,4 +1,5 @@
 import { FC } from "react";
+
 import { IconProps } from "./types";
 
 export const WrongIcon: FC<IconProps> = ({ size = 20, color = "#EC044E" }) => {

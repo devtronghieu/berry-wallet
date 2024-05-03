@@ -1,20 +1,23 @@
-import { appActions, appState } from "@state/index";
-import { useEffect, useMemo } from "react";
-import { useSnapshot } from "valtio";
+import "./index.css";
+
 import strawberry from "@assets/strawberry.svg";
-import { CopyIcon, EyeCloseIcon, EyeOpenIcon, SettingIcon, SendIcon, SwapIcon, WalletIcon } from "@/icons/index";
-import { useState } from "react";
 import { FeatureButton, TabBar, TokenList } from "@components/index";
 import { fetchTokens } from "@engine/tokens";
+import { swap } from "@engine/transaction/swap";
 import { Token } from "@engine/types";
 import { getFriendlyAmount } from "@engine/utils";
+import { Keypair } from "@solana/web3.js";
+import { appActions, appState } from "@state/index";
 import { Token as GqlToken } from "@utils/gqlTypes";
 import { queryTokenPrice } from "@utils/graphql";
 import { getSafeMintAddressForPriceAPI } from "@utils/tokens";
+import { useEffect, useMemo } from "react";
+import { useState } from "react";
+import { useSnapshot } from "valtio";
+
+import { CopyIcon, EyeCloseIcon, EyeOpenIcon, SendIcon, SettingIcon, SwapIcon, WalletIcon } from "@/icons/index";
+
 import HoveredAddress from "./HoveredAddress";
-import { swap } from "@engine/transaction/swap";
-import { Keypair } from "@solana/web3.js";
-import "./index.css";
 
 function formatCurrency(num: number) {
   return num.toLocaleString("en-US", { style: "currency", currency: "USD" });

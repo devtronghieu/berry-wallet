@@ -1,5 +1,6 @@
-import ShieldFailIcon from "@/icons/ShieldFail";
 import { FC } from "react";
+
+import ShieldFailIcon from "@/icons/ShieldFail";
 
 interface DialogProps {
   onView: () => void;

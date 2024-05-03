@@ -1,7 +1,7 @@
 // This is copied from @solana/wallet-standard-chains
 
-import type { IdentifierString } from '@wallet-standard/base';
 import type { Transaction, VersionedTransaction } from '@solana/web3.js';
+import type { IdentifierString } from '@wallet-standard/base';
 
 /** Solana Mainnet (beta) cluster, e.g. https://api.mainnet-beta.solana.com */
 export const SOLANA_MAINNET_CHAIN = 'solana:mainnet';

@@ -1,5 +1,6 @@
-import { FC, ReactNode, useEffect } from "react";
 import strawberry from "@assets/strawberry.svg";
+import { FC, ReactNode, useEffect } from "react";
+
 import ArrowLeftIcon from "@/icons/ArrowLeft";
 
 export interface OnboardingContainerProps {

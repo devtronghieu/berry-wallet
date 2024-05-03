@@ -1,8 +1,9 @@
 import { Keypair } from "@solana/web3.js";
-import { derivePath } from "ed25519-hd-key";
-import { generateMnemonic, mnemonicToSeedSync } from "bip39";
 import { decryptWithPassword, encryptWithPassword } from "@utils/crypto";
-import { setEncryptedSeedPhrase, getEncryptedSeedPhrase, setPassword, setActiveKeypairIndex } from "./store";
+import { generateMnemonic, mnemonicToSeedSync } from "bip39";
+import { derivePath } from "ed25519-hd-key";
+
+import { getEncryptedSeedPhrase, setActiveKeypairIndex, setEncryptedSeedPhrase, setPassword } from "./store";
 
 export const getDerivedPath = (pathIndex: number) => `m/44'/501'/${pathIndex}'/0'`;
 

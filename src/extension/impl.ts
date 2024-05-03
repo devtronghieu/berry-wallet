@@ -1,9 +1,10 @@
-import { Berry } from "@/wallet-standard/window";
 import { WebKernel } from "@messaging/core";
 import { Channel, Event } from "@messaging/types";
 import { SolanaSignInInput, SolanaSignInOutput } from "@solana/wallet-standard-features";
 import { PublicKey, SendOptions, Transaction, VersionedTransaction } from "@solana/web3.js";
 import { EventEmitter } from "eventemitter3";
+
+import { Berry } from "@/wallet-standard/window";
 
 export class BerryImpl extends EventEmitter implements Berry {
   publicKey: PublicKey | null;

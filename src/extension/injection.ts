@@ -1,4 +1,5 @@
 import { initialize } from "@/wallet-standard";
+
 import { BerryImpl } from "./impl";
 
 const berry = new BerryImpl();

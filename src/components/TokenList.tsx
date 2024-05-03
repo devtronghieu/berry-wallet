@@ -1,12 +1,11 @@
-import { Token } from "@engine/types";
-import { getFriendlyAmount } from "@engine/utils";
-import { FC } from "react";
-
 import solLogo from "@assets/tokens/sol.svg";
 import unknownLogo from "@assets/tokens/unknown.svg";
+import { Token } from "@engine/types";
+import { getFriendlyAmount } from "@engine/utils";
 import { appState } from "@state/index";
-import { useSnapshot } from "valtio";
 import { getSafeMintAddressForPriceAPI } from "@utils/tokens";
+import { FC } from "react";
+import { useSnapshot } from "valtio";
 
 interface Props {
   className?: string;
