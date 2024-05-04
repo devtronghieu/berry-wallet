@@ -8,77 +8,61 @@ import { useSnapshot } from "valtio";
 import { appState } from "@state/index";
 import { getFriendlyAmount } from "@engine/utils";
 import { getSafeMintAddressForPriceAPI } from "@utils/tokens";
-import { fetchTransactionFee } from "@engine/transaction";
-import { LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction, sendAndConfirmRawTransaction } from "@solana/web3.js";
-import { getConnection } from "@engine/connection";
-import nacl from "tweetnacl";
+import { fetchTransactionFee, sendTransaction } from "@engine/transactions/send";
+import { PublicKey } from "@solana/web3.js";
 import { formatCurrency } from "@utils/general";
+import { transactionState, transactionActions as TxA } from "@state/transaction";
 
 const Send: FC = () => {
+  const {
+    transactionFee,
+    receiverPublicKey,
+    receiverError,
+    amountError,
+    amount,
+    isValidPublicKey,
+    isValidAmount,
+    total,
+  } = useSnapshot(transactionState);
+
   const { keypair, prices, tokens } = useSnapshot(appState);
   const balanceAmount = useRef<number>(0);
   const price = useRef<number>(0);
-  const [transactionFee, setTransactionFee] = useState<number>(0);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [receiverPublicKey, setReceiverPublicKey] = useState<string>("");
-  const [receiverError, setReceiverError] = useState<string>("");
-  const [amountError, setAmountError] = useState<string>("");
-  const [amount, setAmount] = useState<string>("");
-  const [isValidPublicKey, setIsValidPublicKey] = useState<boolean>(false);
-  const [isValidAmount, setIsValidAmount] = useState<boolean>(false);
-  const [total, setTotal] = useState<number>(0);
   const isValidTransaction = isValidPublicKey && isValidAmount;
 
   const handleSubmitButton = () => {
     if (!keypair) return;
-    const connection = getConnection();
-    connection.getRecentBlockhash().then((recentBlockhash) => {
-      const transaction = new Transaction({
-        recentBlockhash: recentBlockhash.blockhash,
-        feePayer: keypair?.publicKey,
-      });
-
-      transaction.add(
-        SystemProgram.transfer({
-          fromPubkey: keypair?.publicKey,
-          toPubkey: new PublicKey(receiverPublicKey),
-          lamports: LAMPORTS_PER_SOL * parseFloat(amount),
-        }),
-      );
-      const transactionBuffer = transaction.serializeMessage();
-      const signature = nacl.sign.detached(transactionBuffer, keypair.secretKey);
-      transaction.addSignature(keypair.publicKey, Buffer.from(signature));
-
-      const isVerifiedSignature = transaction.verifySignatures();
-      console.log(`The signatures were verified: ${isVerifiedSignature}`);
-      const rawTransaction = transaction.serialize();
-
-      sendAndConfirmRawTransaction(connection, rawTransaction);
+    sendTransaction({
+      senderPubkey: keypair.publicKey,
+      senderSerkey: keypair.secretKey,
+      receiverPubKey: new PublicKey(receiverPublicKey),
+      amount,
     });
   };
 
   const handleOnChangeReceiverPublicKey = (value: string) => {
-    setReceiverPublicKey(value);
-    setIsValidPublicKey(false);
+    TxA.setReceiverPublicKey(value);
+    TxA.setIsValidPublicKey(false);
     if (validatePublicKey(value)) {
-      setReceiverError("");
-      setIsValidPublicKey(true);
+      TxA.setReceiverError("");
+      TxA.setIsValidPublicKey(true);
     }
   };
 
   const handleOnChangeAmount = (value: string) => {
-    setAmount(value);
-    setIsValidAmount(false);
-    setTotal((parseFloat(value) || 0 + transactionFee) * price.current);
+    TxA.setAmount(value);
+    TxA.setIsValidAmount(false);
+    TxA.setTotal((parseFloat(value) || 0 + transactionFee) * price.current);
     if (validateAmount(value)) {
-      setAmountError("");
-      setIsValidAmount(true);
+      TxA.setAmountError("");
+      TxA.setIsValidAmount(true);
     }
   };
 
   const validatePublicKey = (value: string) => {
     if (value.length === 0) {
-      setReceiverError("");
+      TxA.setReceiverError("");
       return false;
     }
 
@@ -86,12 +70,12 @@ const Send: FC = () => {
     try {
       publicKey = new PublicKey(value);
     } catch (error) {
-      setReceiverError("Invalid receiver public key.");
+      TxA.setReceiverError("Invalid receiver public key.");
       return false;
     }
 
     if (!PublicKey.isOnCurve(publicKey.toBytes())) {
-      setReceiverError("Invalid receiver public key.");
+      TxA.setReceiverError("Invalid receiver public key.");
       return false;
     }
 
@@ -100,21 +84,21 @@ const Send: FC = () => {
 
   const validateAmount = (value: string) => {
     if (value.length === 0) {
-      setAmountError("");
+      TxA.setAmountError("");
       return false;
     }
 
     if (isNaN(parseFloat(value))) {
-      setAmountError("Amount must be a number.");
+      TxA.setAmountError("Amount must be a number.");
       return false;
     }
     if (parseFloat(value) <= 0) {
-      setAmountError("Amount must be greater than 0.");
+      TxA.setAmountError("Amount must be greater than 0.");
       return false;
     }
 
     if (parseFloat(value) > balanceAmount.current) {
-      setAmountError("Amount exceeds your balance.");
+      TxA.setAmountError("Amount exceeds your balance.");
       return false;
     }
 
@@ -123,7 +107,7 @@ const Send: FC = () => {
 
   useMemo(() => {
     if (!keypair) return;
-    fetchTransactionFee(setTransactionFee, keypair?.publicKey);
+    fetchTransactionFee(keypair?.publicKey);
   }, [keypair]);
 
   useMemo(() => {
@@ -132,17 +116,21 @@ const Send: FC = () => {
       tokens[selectedIndex]?.amount || "0",
       tokens[selectedIndex]?.decimals || 0,
     );
-    setAmount("");
-    setReceiverPublicKey("");
-    setAmountError("");
-    setReceiverError("");
-    setTotal(0);
+    TxA.setAmount("");
+    TxA.setReceiverPublicKey("");
+    TxA.setAmountError("");
+    TxA.setReceiverError("");
+    TxA.setTotal(0);
   }, [tokens, prices, selectedIndex]);
 
   return (
     <>
       <TabBar className="mt-4" navTitle={["Tokens", "Collectible"]} />
-      <Select tokens={tokens as Token[]} selectedIndex={selectedIndex} onSelectedIndex={setSelectedIndex} />
+      <Select
+        items={{ type: "tokens", data: tokens as Token[] }}
+        selectedItemIndex={selectedIndex}
+        onSelectedItem={setSelectedIndex}
+      />
       <Input
         placeholder="Receiver"
         value={receiverPublicKey}
