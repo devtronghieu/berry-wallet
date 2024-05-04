@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:mainnet": "VITE_ENV=mainnet vite",
     "build": "tsc && vite build && node tools/build-ext.js",
     "codegen": "graphql-codegen --config tools/codegen.ts",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
