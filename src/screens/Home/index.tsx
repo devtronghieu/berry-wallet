@@ -22,6 +22,26 @@ import HoveredAddress from "./HoveredAddress";
 import FeatureButton from "@components/FeatureButton";
 import Send from "@screens/Send";
 import BottomSheet from "@screens/BottomSheet";
+import "./index.css";
+
+import strawberry from "@assets/strawberry.svg";
+import { FeatureButton, TabBar, TokenList } from "@components/index";
+import { fetchTokens } from "@engine/tokens";
+import { swap } from "@engine/transaction/swap";
+import { Token } from "@engine/types";
+import { getFriendlyAmount } from "@engine/utils";
+import { Keypair } from "@solana/web3.js";
+import { appActions, appState } from "@state/index";
+import { Token as GqlToken } from "@utils/gqlTypes";
+import { queryTokenPrice } from "@utils/graphql";
+import { getSafeMintAddressForPriceAPI } from "@utils/tokens";
+import { useEffect, useMemo } from "react";
+import { useState } from "react";
+import { useSnapshot } from "valtio";
+
+import { CopyIcon, EyeCloseIcon, EyeOpenIcon, SendIcon, SettingIcon, SwapIcon, WalletIcon } from "@/icons/index";
+
+import HoveredAddress from "./HoveredAddress";
 
 function formatCurrency(num: number) {
   return num.toLocaleString("en-US", { style: "currency", currency: "USD" });
@@ -31,7 +51,6 @@ const HomeScreen = () => {
   const { keypair, tokens, prices } = useSnapshot(appState);
   const [isWalletHovered, setIsWalletHovered] = useState<boolean>(false);
   const [dataBlurred, setDataBlurred] = useState<boolean>(true);
-  const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("Tokens");
   const handleOnClick = (type: string) => {
     setBottomSheetType(type);
@@ -90,6 +109,21 @@ const HomeScreen = () => {
     }, 0);
   }, [tokens, prices]);
 
+  const handleSwap = async () => {
+    swap(
+      keypair as Keypair,
+      "So11111111111111111111111111111111111111112",
+      "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+      1000,
+    )
+      .then((signature) => {
+        const decoder = new TextDecoder();
+        const decodedSignature = decoder.decode(signature);
+        console.log(decodedSignature.toString());
+      })
+      .catch(console.error);
+  };
+
   return (
     <div className="extension-container flex flex-col">
       <div className="h-[60px] px-4 py-2 gap-1.5 flex justify-between bg-primary-300">
@@ -113,7 +147,7 @@ const HomeScreen = () => {
       <div className="flex-grow flex flex-col items-center px-5 pt-2 pb-4 overflow-hidden no-scrollbar">
         <div>
           <div className="flex items-center">
-            <h2 className="text-lg text-secondary-200 font-bold me-2">TOTAL BALANCE</h2>
+            <h2 className="text-lg text-secondary-500 font-bold me-2">TOTAL BALANCE</h2>
             <button className="trans-mini-icon-button" onClick={() => setDataBlurred(!dataBlurred)}>
               {dataBlurred ? <EyeCloseIcon size={20} /> : <EyeOpenIcon size={20} />}
             </button>
@@ -127,7 +161,14 @@ const HomeScreen = () => {
         <div className="mt-6 flex items-center gap-10">
           <FeatureButton Icon={SendIcon} title="Send" onClick={() => handleOnClick("Send")} />
           <FeatureButton Icon={WalletIcon} title="Receive" onClick={() => handleOnClick("Receive")} />
-          <FeatureButton Icon={SwapIcon} title="Swap" onClick={() => handleOnClick("Swap")} />
+          <FeatureButton
+            Icon={SwapIcon}
+            title="Swap"
+            onClick={() => {
+              handleOnClick("Swap");
+              handleSwap();
+            }}
+          />
         </div>
         <TabBar className="mt-4" navTitle={["Tokens", "Collectibles", "Activities"]} navOnClick={navOnClickList} />
         {activeTab === "Tokens" ? (

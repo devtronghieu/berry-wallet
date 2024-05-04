@@ -106,7 +106,7 @@
   }
 
   .nav-active {
-    @apply bg-primary-300 text-secondary-200;
+    @apply bg-primary-300 text-secondary-500;
   }
 
   .token-list {

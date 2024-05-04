@@ -1,7 +1,8 @@
 import { FC } from "react";
+
 import { IconProps } from "./types";
 
-const WalletIcon: FC<IconProps> = ({ size = 20, color = "#267578" }) => {
+export const WalletIcon: FC<IconProps> = ({ size = 20, color = "#267578" }) => {
   return (
     <svg
       width={(size * 21) / 20}

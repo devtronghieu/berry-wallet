@@ -1,9 +1,10 @@
-import { PublicKey } from "@solana/web3.js";
+import { Metadata,PROGRAM_ID as METADATA_PROGRAM_ID } from "@metaplex-foundation/mpl-token-metadata";
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
-import { Metadata, PROGRAM_ID as METADATA_PROGRAM_ID } from "@metaplex-foundation/mpl-token-metadata";
+import { PublicKey } from "@solana/web3.js";
+
+import { getConnection } from "./connection";
 import { WRAPPED_SOL_MINT } from "./constants";
 import { Token, TokenMetadata } from "./types";
-import { getConnection } from "./connection";
 
 const getBackupMetadata = (mint: string): TokenMetadata | undefined => {
   switch (mint) {

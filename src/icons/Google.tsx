@@ -1,7 +1,8 @@
 import { FC } from "react";
+
 import { IconProps } from "./types";
 
-const GoogleIcon: FC<IconProps> = ({ size = 20, color = "#267578" }) => {
+export const GoogleIcon: FC<IconProps> = ({ size = 20, color = "#267578" }) => {
   return (
     <svg width={size} height={size} viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g clipPath="url(#clip0_56_533)">

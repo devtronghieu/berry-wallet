@@ -1,7 +1,8 @@
+import solanaLogo from "@assets/tokens/sol.svg";
 import { appState } from "@state/index";
 import { FC } from "react";
 import { useSnapshot } from "valtio";
-import solanaLogo from "@assets/tokens/sol.svg";
+
 import CopyIcon from "@/icons/Copy";
 
 interface Props {

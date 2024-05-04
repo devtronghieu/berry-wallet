@@ -1,7 +1,8 @@
 import { FC } from "react";
+
 import { IconProps } from "./types";
 
-const WrongIcon: FC<IconProps> = ({ size = 20, color = "#EC044E" }) => {
+export const WrongIcon: FC<IconProps> = ({ size = 20, color = "#EC044E" }) => {
   return (
     <svg width={size} height={size} viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path

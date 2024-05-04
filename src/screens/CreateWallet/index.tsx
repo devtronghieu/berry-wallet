@@ -1,13 +1,15 @@
-import { Route } from "@utils/routes";
 import { createSeedPhrase, createWallet } from "@engine/keypair";
+import { hash } from "@utils/crypto";
+import { Route } from "@utils/routes";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import OnboardingContainer, { OnboardingContainerProps } from "@/components/OnboardingContainer";
-import ShowSeedPhrase from "./ShowSeedPhrase";
-import CreatePassword from "../CreatePassword";
 import { appActions } from "@/state";
+
+import CreatePassword from "../CreatePassword";
 import ConfirmSeedPhrase from "./ConfirmSeedPhrase";
-import { hash } from "@utils/crypto";
+import ShowSeedPhrase from "./ShowSeedPhrase";
 
 enum ScreenProgress {
   ShowSeedPhrase,

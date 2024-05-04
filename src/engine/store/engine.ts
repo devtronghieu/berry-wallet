@@ -1,4 +1,5 @@
 import { EncryptedData } from "@utils/crypto";
+
 import { getDB } from "./connection";
 
 const seedPhraseId = "seedPhrase";
@@ -40,6 +41,30 @@ export const getPassword = async () => {
   try {
     const doc = await getDB().get<{ password: string }>(passwordId);
     return doc.password;
+  } catch (error) {
+    if ((error as PouchDB.Core.Error).status === 404) {
+      return null;
+    }
+
+    throw error;
+  }
+};
+
+const passwordExpiredAtId = "passwordExpiredAt";
+
+export const setPasswordExpiredAt = async (expiredAt: number) => {
+  const doc = {
+    _id: passwordExpiredAtId,
+    expiredAt,
+  };
+
+  await getDB().put(doc);
+};
+
+export const getPasswordExpiredAt = async () => {
+  try {
+    const doc = await getDB().get<{ expiredAt: number }>(passwordExpiredAtId);
+    return doc.expiredAt;
   } catch (error) {
     if ((error as PouchDB.Core.Error).status === 404) {
       return null;

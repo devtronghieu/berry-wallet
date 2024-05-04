@@ -1,5 +1,5 @@
-import PouchDB from "pouchdb-core";
 import IDBPouch from "pouchdb-adapter-idb";
+import PouchDB from "pouchdb-core";
 
 let db: PouchDB.Database;
 
