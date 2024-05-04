@@ -6,12 +6,12 @@ import TickSquareIcon from "@/icons/TickSquareIcon";
 import ArrowUpCircleIcon from "@/icons/ArrowUpCircle";
 
 interface Props {
-  data: Token[];
+  tokens: Token[];
   selectedIndex: number;
   onSelectedIndex: (index: number) => void;
 }
 
-const Select: FC<Props> = ({ data, selectedIndex, onSelectedIndex }) => {
+const Select: FC<Props> = ({ tokens: data, selectedIndex, onSelectedIndex }) => {
   const [isOpen, setIsOpen] = useState(false);
   const symbol = data[selectedIndex]?.metadata?.symbol || "Unknown";
   const logo = data[selectedIndex]?.metadata?.logo || getLocalLogo(symbol);

@@ -155,7 +155,7 @@ const Send: FC<Props> = ({ onClose }) => {
         </div>
       </div>
       <TabBar className="mt-4" navTitle={["Tokens", "Collectible"]} />
-      <Select data={tokens as Token[]} selectedIndex={selectedIndex} onSelectedIndex={setSelectedIndex} />
+      <Select tokens={tokens as Token[]} selectedIndex={selectedIndex} onSelectedIndex={setSelectedIndex} />
       <Input
         placeholder="Receiver"
         value={receiverPublicKey}

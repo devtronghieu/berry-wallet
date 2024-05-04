@@ -124,20 +124,8 @@ const HomeScreen = () => {
         </div>
 
         <div className="mt-6 flex items-center gap-10">
-          <FeatureButton
-            Icon={SendIcon}
-            title="Send"
-            onClick={() => {
-              setModalIsOpen(true);
-            }}
-          />
-          <FeatureButton
-            Icon={WalletIcon}
-            title="Receive"
-            onClick={() => {
-              setModalIsOpen(true);
-            }}
-          />
+          <FeatureButton Icon={SendIcon} title="Send" onClick={() => setModalIsOpen(true)} />
+          <FeatureButton Icon={WalletIcon} title="Receive" onClick={() => setModalIsOpen(true)} />
           <FeatureButton Icon={SwapIcon} title="Swap" />
         </div>
 
