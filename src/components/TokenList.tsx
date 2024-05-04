@@ -14,14 +14,11 @@ interface Props {
 const TokenList: FC<Props> = ({ className, tokens }) => {
   const { prices } = useSnapshot(appState);
 
-  console.log("TokenList: ", tokens);
-
   return (
     <div className={`token-list no-scrollbar ${className}`}>
       {tokens.map((token) => {
         const symbol = token.metadata?.symbol || "Unknown";
         const logo = token.metadata?.logo || getLocalLogo(symbol);
-        console.log(token);
         const friendlyAmount = getFriendlyAmount(token.amount, token.decimals);
         const price = prices[getSafeMintAddressForPriceAPI(token.mint)] || 0;
         const totalPrice = friendlyAmount * price;
