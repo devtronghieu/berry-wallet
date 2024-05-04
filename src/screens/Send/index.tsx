@@ -1,4 +1,3 @@
-import CloseSquareIcon from "@/icons/CloseSquare";
 import TabBar from "@components/TabBar";
 import Input from "./Input";
 import { Token } from "@engine/types";
@@ -15,11 +14,7 @@ import { getConnection } from "@engine/connection";
 import nacl from "tweetnacl";
 import { formatCurrency } from "@utils/general";
 
-interface Props {
-  onClose: () => void;
-}
-
-const Send: FC<Props> = ({ onClose }) => {
+const Send: FC = () => {
   const { keypair, prices, tokens } = useSnapshot(appState);
   const balanceAmount = useRef<number>(0);
   const price = useRef<number>(0);
@@ -145,13 +140,7 @@ const Send: FC<Props> = ({ onClose }) => {
   }, [tokens, prices, selectedIndex]);
 
   return (
-    <div className="px-5 py-4 bg-primary-100 rounded-t-3xl">
-      <div className="flex items-center justify-between">
-        <span className="font-semibold text-secondary-500 text-2xl">Send</span>
-        <div onClick={onClose} className="cursor-pointer">
-          <CloseSquareIcon size={24} />
-        </div>
-      </div>
+    <>
       <TabBar className="mt-4" navTitle={["Tokens", "Collectible"]} />
       <Select tokens={tokens as Token[]} selectedIndex={selectedIndex} onSelectedIndex={setSelectedIndex} />
       <Input
@@ -185,7 +174,7 @@ const Send: FC<Props> = ({ onClose }) => {
           <ArrowRightBoldIcon size={20} />
         </button>
       </div>
-    </div>
+    </>
   );
 };
 

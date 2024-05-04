@@ -121,16 +121,6 @@
     scrollbar-width: none;
     -ms-overflow-style: none;
   }
-
-  input::-webkit-outer-spin-button,
-  input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-
-  input[type="number"] {
-    -moz-appearance: textfield;
-  }
 }
 
 body {
@@ -139,4 +129,23 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Bottom sheet  */
+.react-modal-sheet-container {
+  @apply bg-primary-100 !rounded-tr-3xl !rounded-tl-3xl;
+}
+
+.react-modal-sheet-content {
+  @apply bg-primary-100 !rounded-tr-3xl !rounded-tl-3xl;
 }
