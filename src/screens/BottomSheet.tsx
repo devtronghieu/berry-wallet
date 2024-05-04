@@ -1,6 +1,7 @@
-import CloseSquareIcon from "@/icons/CloseSquare";
 import { FC } from "react";
 import Sheet from "react-modal-sheet";
+
+import CloseSquareIcon from "@/icons/CloseSquare";
 
 interface Props {
   title: string;

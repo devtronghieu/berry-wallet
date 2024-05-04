@@ -1,57 +1,35 @@
-import { appActions, appState } from "@state/index";
-import { useEffect, useMemo } from "react";
-import { useSnapshot } from "valtio";
 import strawberry from "@assets/strawberry.svg";
-import SettingIcon from "@/icons/Setting";
-import SendIcon from "@/icons/Send";
-import WalletIcon from "@/icons/Wallet";
-import EyeCloseIcon from "@/icons/EyeClose";
-import EyeOpenIcon from "@/icons/EyeOpen";
-import SwapIcon from "@/icons/Swap";
-import CopyIcon from "@/icons/Copy";
-import { useState } from "react";
-import TabBar from "@components/TabBar";
-import TokenList from "@components/TokenList";
-import { Token } from "@engine/types";
-import { Token as GqlToken } from "@utils/gqlTypes";
-import { fetchTokens } from "@engine/tokens";
-import { getSafeMintAddressForPriceAPI } from "@utils/tokens";
-import { queryTokenPrice } from "@utils/graphql";
-import { getFriendlyAmount } from "@engine/utils";
-import HoveredAddress from "./HoveredAddress";
 import FeatureButton from "@components/FeatureButton";
-import Send from "@screens/Send";
-import BottomSheet from "@screens/BottomSheet";
-import "./index.css";
-
-import strawberry from "@assets/strawberry.svg";
-import { FeatureButton, TabBar, TokenList } from "@components/index";
+import { TabBar, TokenList } from "@components/index";
 import { fetchTokens } from "@engine/tokens";
 import { swap } from "@engine/transaction/swap";
 import { Token } from "@engine/types";
 import { getFriendlyAmount } from "@engine/utils";
+import BottomSheet from "@screens/BottomSheet";
+import Send from "@screens/Send";
 import { Keypair } from "@solana/web3.js";
 import { appActions, appState } from "@state/index";
+import { formatCurrency } from "@utils/general";
 import { Token as GqlToken } from "@utils/gqlTypes";
 import { queryTokenPrice } from "@utils/graphql";
 import { getSafeMintAddressForPriceAPI } from "@utils/tokens";
-import { useEffect, useMemo } from "react";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSnapshot } from "valtio";
 
-import { CopyIcon, EyeCloseIcon, EyeOpenIcon, SendIcon, SettingIcon, SwapIcon, WalletIcon } from "@/icons/index";
+import CopyIcon from "@/icons/Copy";
+import EyeCloseIcon from "@/icons/EyeClose";
+import EyeOpenIcon from "@/icons/EyeOpen";
+import { SendIcon, SettingIcon, SwapIcon, WalletIcon } from "@/icons/index";
 
 import HoveredAddress from "./HoveredAddress";
-
-function formatCurrency(num: number) {
-  return num.toLocaleString("en-US", { style: "currency", currency: "USD" });
-}
 
 const HomeScreen = () => {
   const { keypair, tokens, prices } = useSnapshot(appState);
   const [isWalletHovered, setIsWalletHovered] = useState<boolean>(false);
   const [dataBlurred, setDataBlurred] = useState<boolean>(true);
+  const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("Tokens");
+
   const handleOnClick = (type: string) => {
     setBottomSheetType(type);
     setModalIsOpen(true);

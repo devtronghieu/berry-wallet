@@ -1,17 +1,19 @@
 import TabBar from "@components/TabBar";
-import Input from "./Input";
-import { Token } from "@engine/types";
-import { FC, useMemo, useRef, useState } from "react";
-import Select from "./Select";
-import ArrowRightBoldIcon from "@/icons/ArrowRightBoldIcon";
-import { useSnapshot } from "valtio";
-import { appState } from "@state/index";
-import { getFriendlyAmount } from "@engine/utils";
-import { getSafeMintAddressForPriceAPI } from "@utils/tokens";
 import { fetchTransactionFee, sendTransaction } from "@engine/transactions/send";
+import { Token } from "@engine/types";
+import { getFriendlyAmount } from "@engine/utils";
 import { PublicKey } from "@solana/web3.js";
+import { appState } from "@state/index";
+import { transactionActions as TxA, transactionState } from "@state/transaction";
 import { formatCurrency } from "@utils/general";
-import { transactionState, transactionActions as TxA } from "@state/transaction";
+import { getSafeMintAddressForPriceAPI } from "@utils/tokens";
+import { FC, useMemo, useRef, useState } from "react";
+import { useSnapshot } from "valtio";
+
+import ArrowRightBoldIcon from "@/icons/ArrowRightBoldIcon";
+
+import Input from "./Input";
+import Select from "./Select";
 
 const Send: FC = () => {
   const {

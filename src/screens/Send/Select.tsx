@@ -1,9 +1,10 @@
 import { Token } from "@engine/types";
-import { FC, useState } from "react";
 import { getLocalLogo } from "@utils/general";
+import { FC, useState } from "react";
+
 import ArrowDownCircleIcon from "@/icons/ArrowDownCircle";
-import TickSquareIcon from "@/icons/TickSquareIcon";
 import ArrowUpCircleIcon from "@/icons/ArrowUpCircle";
+import TickSquareIcon from "@/icons/TickSquareIcon";
 
 interface Tokens {
   type: "tokens";
