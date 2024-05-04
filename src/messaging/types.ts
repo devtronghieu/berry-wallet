@@ -13,31 +13,33 @@ export enum Channel {
   Popup = "@berry/popup",
 }
 
-export type RequestId = string;
+export type MessageId = string;
 
 export type Payload = unknown;
 
-export interface Request {
-  id: RequestId;
+export interface DAppPayload {
+  event: Event;
+  data?: unknown;
+}
+
+export enum MessageType {
+  Request = "request",
+  Response = "response",
+}
+
+export interface Message {
+  id: MessageId;
+  type: MessageType;
+  from: Channel;
   to: Channel;
-  event: Event;
-  payload: unknown;
-}
-
-export interface Response {
-  requestId: RequestId;
-  payload: unknown;
-}
-
-export type SendRequestSignature = (params: {
-  destination: Channel;
-  event: Event;
   payload: Payload;
-}) => Promise<Response>;
+}
 
-export type HandleRequestSignature = (request: Request) => Promise<Payload>;
+export type SendRequestSignature = (params: { destination: Channel; payload: Payload }) => Promise<Message>;
+
+export type HandleRequestSignature = (message: Message) => Promise<Payload>;
 
 export interface ResolverContext {
-  resolve: (response: Response) => void;
+  resolve: (message: Message) => void;
   reject: (error: Error) => void;
 }

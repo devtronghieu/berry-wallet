@@ -1,46 +1,45 @@
 import {
   Channel,
   HandleRequestSignature,
-  Request,
-  RequestId,
+  Message,
+  MessageId,
+  MessageType,
   ResolverContext,
-  Response,
   SendRequestSignature,
 } from "./types";
 
 interface Kernel {
   channel: Channel;
-  requestPool: Map<RequestId, ResolverContext>;
+  requestPool: Map<MessageId, ResolverContext>;
   sendRequest: SendRequestSignature;
   handleRequest?: HandleRequestSignature;
 }
 
 export class WebKernel implements Kernel {
-  requestPool = new Map<RequestId, ResolverContext>();
+  requestPool = new Map<MessageId, ResolverContext>();
   channel: Channel;
 
   constructor(channel: Channel) {
     this.channel = channel;
 
     window.addEventListener("message", async ({ data }) => {
-      const isRequest = data.id && data.event && !data.requestId;
-      const isResponse = data.requestId;
+      const message = data as Message;
 
-      if (isResponse) {
+      if (message.type === MessageType.Response) {
         console.log(`[WebKernel/${this.channel}] Received response`, data);
-        const response = data as Response;
-        const resolver = this.requestPool.get(response.requestId);
+        const resolver = this.requestPool.get(message.id);
         if (!resolver) return;
-        resolver.resolve(response);
+        resolver.resolve(message);
       }
 
-      if (isRequest && this.handleRequest) {
+      if (message.type === MessageType.Request && message.to === this.channel && this.handleRequest) {
         console.log(`[WebKernel/${this.channel}] Received request`, data);
-        const request = data as Request;
-        if (request.to !== this.channel) return;
-        const payload = await this.handleRequest(request);
-        const response: Response = {
-          requestId: request.id,
+        const payload = await this.handleRequest(message);
+        const response: Message = {
+          id: message.id,
+          type: MessageType.Response,
+          from: this.channel,
+          to: message.from,
           payload,
         };
         window.postMessage(response, "*");
@@ -48,12 +47,13 @@ export class WebKernel implements Kernel {
     });
   }
 
-  sendRequest: SendRequestSignature = ({ destination, event, payload }) => {
-    return new Promise<Response>((resolve, reject) => {
-      const request: Request = {
+  sendRequest: SendRequestSignature = ({ destination, payload }) => {
+    return new Promise<Message>((resolve, reject) => {
+      const request: Message = {
         id: crypto.randomUUID(),
+        type: MessageType.Request,
+        from: this.channel,
         to: destination,
-        event,
         payload,
       };
 
@@ -67,7 +67,7 @@ export class WebKernel implements Kernel {
 
 export class ChromeKernel implements Kernel {
   channel: Channel;
-  requestPool: Map<RequestId, ResolverContext>;
+  requestPool: Map<MessageId, ResolverContext>;
 
   portName = "@berry/chrome-port";
   port = chrome.runtime.connect({ name: this.portName });
@@ -79,13 +79,15 @@ export class ChromeKernel implements Kernel {
     chrome.runtime.onConnect.addListener((port) => {
       if (port.name !== this.portName) return;
 
-      port.onMessage.addListener(async (message) => {
+      port.onMessage.addListener(async (message: Message) => {
         console.log(`[ChromeKernel/${this.channel}] Received request`, message);
-        if (message.to === this.channel && this.handleRequest) {
-          const request = message as Request;
-          const payload = await this.handleRequest(request);
-          const response: Response = {
-            requestId: request.id,
+        if (message.type === MessageType.Request && message.to === this.channel && this.handleRequest) {
+          const payload = await this.handleRequest(message);
+          const response: Message = {
+            id: message.id,
+            type: MessageType.Response,
+            from: this.channel,
+            to: message.from,
             payload,
           };
           port.postMessage(response);
@@ -93,27 +95,27 @@ export class ChromeKernel implements Kernel {
       });
     });
 
-    this.port.onMessage.addListener((message) => {
+    this.port.onMessage.addListener((message: Message) => {
       console.log(`[ChromeKernel/${this.channel}] Received response`, message);
-      const response = message as Response;
-      const resolver = this.requestPool.get(response.requestId);
+      if (message.type !== MessageType.Response) return;
+      const resolver = this.requestPool.get(message.id);
       if (!resolver) return;
-      resolver.resolve(response);
+      resolver.resolve(message);
     });
   }
 
-  sendRequest: SendRequestSignature = async ({ destination, event, payload }) => {
-    return new Promise<Response>((resolve, reject) => {
-      const requestId = crypto.randomUUID();
-      const request: Request = {
-        id: requestId,
+  sendRequest: SendRequestSignature = async ({ destination, payload }) => {
+    return new Promise<Message>((resolve, reject) => {
+      const message: Message = {
+        id: crypto.randomUUID(),
+        type: MessageType.Request,
+        from: this.channel,
         to: destination,
-        event,
         payload,
       };
 
-      this.requestPool.set(requestId, { resolve, reject });
-      this.port.postMessage(request);
+      this.requestPool.set(message.id, { resolve, reject });
+      this.port.postMessage(message);
     });
   };
 

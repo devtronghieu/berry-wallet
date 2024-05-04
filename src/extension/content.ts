@@ -10,7 +10,6 @@ import { injectScript } from "./utils";
   webKernel.handleRequest = async (request) => {
     const response = await chromeKernel.sendRequest({
       destination: Channel.Background,
-      event: request.event,
       payload: request.payload,
     });
 

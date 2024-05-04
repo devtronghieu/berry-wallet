@@ -1,5 +1,5 @@
 import { deriveKeypair } from "@engine/keypair";
-import { getActiveKeypairIndex, getPassword, getPasswordExpiredAt, setPasswordExpiredAt } from "@engine/store";
+import { getActiveKeypairIndex, getPassword, getPasswordExpiredAt, upsertPasswordExpiredAt } from "@engine/store";
 import { appActions } from "@state/index";
 import { hash } from "@utils/crypto";
 import { Route } from "@utils/routes";
@@ -43,7 +43,7 @@ const UnlockWalletScreen = () => {
       }
 
       // Set password expired after 30 minutes
-      await setPasswordExpiredAt(Date.now() + 30 * 60 * 1000);
+      await upsertPasswordExpiredAt(Date.now() + 30 * 60 * 1000);
 
       const activeKeypairIndex = await getActiveKeypairIndex();
       const keypair = await deriveKeypair(hashedPassword, activeKeypairIndex ?? 0);
