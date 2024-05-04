@@ -9,7 +9,7 @@ import { useSnapshot } from "valtio";
 import { appState } from "@state/index";
 import { getFriendlyAmount } from "@engine/utils";
 import { getSafeMintAddressForPriceAPI } from "@utils/tokens";
-import { fetchTransactionFees } from "@engine/transaction";
+import { fetchTransactionFee } from "@engine/transaction";
 import { LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction, sendAndConfirmRawTransaction } from "@solana/web3.js";
 import { getConnection } from "@engine/connection";
 import nacl from "tweetnacl";
@@ -20,10 +20,10 @@ interface Props {
 }
 
 const Send: FC<Props> = ({ onClose }) => {
-  const { keypair, prices, tokens, transactionFees } = useSnapshot(appState);
+  const { keypair, prices, tokens } = useSnapshot(appState);
   const balanceAmount = useRef<number>(0);
   const price = useRef<number>(0);
-  const transactionFee = useRef<number>(0);
+  const [transactionFee, setTransactionFee] = useState<number>(0);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [receiverPublicKey, setReceiverPublicKey] = useState<string>("");
   const [receiverError, setReceiverError] = useState<string>("");
@@ -65,7 +65,6 @@ const Send: FC<Props> = ({ onClose }) => {
   const handleOnChangeReceiverPublicKey = (value: string) => {
     setReceiverPublicKey(value);
     setIsValidPublicKey(false);
-    console.log("receiverPublicKey: ", value);
     if (validatePublicKey(value)) {
       setReceiverError("");
       setIsValidPublicKey(true);
@@ -75,7 +74,7 @@ const Send: FC<Props> = ({ onClose }) => {
   const handleOnChangeAmount = (value: string) => {
     setAmount(value);
     setIsValidAmount(false);
-    setTotal((parseFloat(value) || 0 + transactionFee.current) * price.current);
+    setTotal((parseFloat(value) || 0 + transactionFee) * price.current);
     if (validateAmount(value)) {
       setAmountError("");
       setIsValidAmount(true);
@@ -129,8 +128,8 @@ const Send: FC<Props> = ({ onClose }) => {
 
   useMemo(() => {
     if (!keypair) return;
-    fetchTransactionFees(tokens as Token[], keypair?.publicKey);
-  }, [keypair, tokens]);
+    fetchTransactionFee(setTransactionFee, keypair?.publicKey);
+  }, [keypair]);
 
   useMemo(() => {
     price.current = prices[getSafeMintAddressForPriceAPI(tokens[selectedIndex]?.mint)] || 0;
@@ -138,13 +137,12 @@ const Send: FC<Props> = ({ onClose }) => {
       tokens[selectedIndex]?.amount || "0",
       tokens[selectedIndex]?.decimals || 0,
     );
-    transactionFee.current = transactionFees ? transactionFees[selectedIndex] : 0;
     setAmount("");
     setReceiverPublicKey("");
     setAmountError("");
     setReceiverError("");
     setTotal(0);
-  }, [tokens, prices, selectedIndex, transactionFees]);
+  }, [tokens, prices, selectedIndex]);
 
   return (
     <div className="px-5 py-4 bg-primary-100 rounded-t-3xl">
@@ -170,7 +168,7 @@ const Send: FC<Props> = ({ onClose }) => {
         </p>
         <p className="flex justify-between">
           <span>Transaction fee</span>
-          <span>{transactionFee.current} SOL</span>
+          <span>{transactionFee} SOL</span>
         </p>
         <p className="flex justify-between">
           <span>Total</span>

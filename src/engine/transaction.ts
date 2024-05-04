@@ -1,10 +1,10 @@
-import { PublicKey, Transaction } from "@solana/web3.js";
+import { LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
 import { getConnection } from "./connection";
-import Decimal from "decimal.js";
-import { appActions } from "@state/index";
-import { Token } from "./types";
 
-export const fetchTransactionFees = async (tokens: Token[], feePayerPubKey: PublicKey) => {
+export const fetchTransactionFee = async (
+  setTransactionFee: (transactionFee: number) => void,
+  feePayerPubKey: PublicKey,
+) => {
   try {
     const connection = getConnection();
     const recentBlockhash = await connection.getRecentBlockhash();
@@ -12,12 +12,17 @@ export const fetchTransactionFees = async (tokens: Token[], feePayerPubKey: Publ
       recentBlockhash: recentBlockhash.blockhash,
       feePayer: feePayerPubKey,
     });
+    transaction.add(
+      SystemProgram.transfer({
+        fromPubkey: feePayerPubKey,
+        toPubkey: feePayerPubKey,
+        lamports: 0,
+      }),
+    );
     const fee = await transaction.getEstimatedFee(connection);
     if (!fee) throw new Error("No fee found.");
     console.log("fee", fee.toString());
-    appActions.setTransactionFees(
-      tokens.map((token) => new Decimal(fee).div(new Decimal(10).pow(token.decimals)).toNumber()),
-    );
+    setTransactionFee(fee / LAMPORTS_PER_SOL);
   } catch (error) {
     console.error("Error fetching transaction fees: ", error);
   }

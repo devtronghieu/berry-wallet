@@ -40,13 +40,7 @@ const Select: FC<Props> = ({ tokens: data, selectedIndex, onSelectedIndex }) => 
           const logo = token.metadata?.logo || getLocalLogo(symbol);
 
           return (
-            <div
-              key={token.mint}
-              className="select-option"
-              onClick={() => {
-                handleSelectOption(index);
-              }}
-            >
+            <div key={token.mint} className="select-option" onClick={() => handleSelectOption(index)}>
               <div className="flex items-center gap-1.5">
                 <img src={logo} alt={token.metadata?.name || "Unknown"} className="w-7 h-7 rounded-full" />
                 <p className="text-secondary-200 font-semibold">{symbol}</p>
