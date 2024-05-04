@@ -33,6 +33,7 @@ export interface DAppPayload {
 export enum MessageType {
   Request = "request",
   Response = "response",
+  Reject = "reject",
   ContextData = "context-data",
   CrossResolve = "cross-resolve",
   CrossReject = "cross-reject",

@@ -37,15 +37,27 @@ export class WebKernel implements Kernel {
       }
 
       if (message.type === MessageType.Request && message.to === this.channel && this.handleRequest) {
-        const payload = await this.handleRequest(message);
         const response: Message = {
           id: message.id,
           type: MessageType.Response,
           from: this.channel,
           to: message.from,
-          payload,
+          payload: null,
         };
+        try {
+          const payload = await this.handleRequest(message);
+          response.payload = payload;
+        } catch (error) {
+          response.type = MessageType.Reject;
+          response.payload = (error as Error).message;
+        }
         window.postMessage(response, "*");
+      }
+
+      if (message.type === MessageType.Reject) {
+        const resolver = this.requestPool.get(message.id);
+        if (!resolver) return;
+        resolver.reject(new Error(message.payload as string));
       }
     });
   }
@@ -86,20 +98,23 @@ export class ChromeKernel implements Kernel {
 
       port.onMessage.addListener(async (message: Message) => {
         console.log(`[ChromeKernel/${this.channel}] Received message`, message);
+
         if (message.type === MessageType.Request && message.to === this.channel && this.handleRequest) {
-          let payload;
-          try {
-            payload = await this.handleRequest(message);
-          } catch (error) {
-            payload = error;
-          }
           const response: Message = {
             id: message.id,
             type: MessageType.Response,
             from: this.channel,
             to: message.from,
-            payload,
+            payload: null,
           };
+          try {
+            const payload = await this.handleRequest(message);
+            response.payload = payload;
+          } catch (error) {
+            response.type = MessageType.Reject;
+            response.payload = (error as Error).message;
+          }
+
           port.postMessage(response);
         }
 
@@ -112,7 +127,7 @@ export class ChromeKernel implements Kernel {
         if (message.type === MessageType.CrossReject) {
           const resolver = this.requestPool.get(message.id);
           if (!resolver) return;
-          resolver.reject(message.payload as Error);
+          resolver.reject(new Error(message.payload as string));
         }
 
         if (message.type === MessageType.ContextData) {
@@ -135,6 +150,12 @@ export class ChromeKernel implements Kernel {
         const resolver = this.requestPool.get(message.id);
         if (!resolver) return;
         resolver.resolve(message);
+      }
+
+      if (message.type === MessageType.Reject) {
+        const resolver = this.requestPool.get(message.id);
+        if (!resolver) return;
+        resolver.reject(new Error(message.payload as string));
       }
     });
   }

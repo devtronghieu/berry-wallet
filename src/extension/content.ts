@@ -12,7 +12,6 @@ import { injectScript } from "./utils";
       destination: Channel.Background,
       payload: request.payload,
     });
-
     return response.payload;
   };
 
