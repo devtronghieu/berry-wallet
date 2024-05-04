@@ -52,13 +52,17 @@ export const getPassword = async () => {
 
 const passwordExpiredAtId = "passwordExpiredAt";
 
-export const setPasswordExpiredAt = async (expiredAt: number) => {
-  const doc = {
-    _id: passwordExpiredAtId,
-    expiredAt,
-  };
-
-  await getDB().put(doc);
+export const upsertPasswordExpiredAt = async (expiredAt: number) => {
+  try {
+    const doc = await getDB().get<{ expiredAt: number }>(passwordExpiredAtId);
+    await getDB().put({ ...doc, expiredAt });
+  } catch (error) {
+    if ((error as PouchDB.Core.Error).status === 404) {
+      await getDB().put({ _id: passwordExpiredAtId, expiredAt });
+    } else {
+      throw error;
+    }
+  }
 };
 
 export const getPasswordExpiredAt = async () => {
