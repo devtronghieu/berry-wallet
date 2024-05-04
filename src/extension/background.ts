@@ -1,6 +1,7 @@
 import { ChromeKernel } from "@messaging/core";
 import { Channel, DAppPayload, Event } from "@messaging/types";
-import { Keypair } from "@solana/web3.js";
+
+import { openPopup } from "./utils";
 
 console.log("Background script loaded");
 
@@ -11,7 +12,15 @@ chromeKernel.handleRequest = async (request) => {
 
   switch (payload.event) {
     case Event.Connect: {
-      return Keypair.generate().publicKey.toBase58();
+      const resolveId = crypto.randomUUID();
+      openPopup(payload.event, resolveId);
+      const response = await chromeKernel.waitForResolve({
+        id: resolveId,
+        contextData: {
+          hello: "world",
+        },
+      });
+      return response.payload;
     }
 
     default:

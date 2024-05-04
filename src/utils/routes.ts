@@ -6,5 +6,8 @@ export enum Route {
   ImportPrivateKey = "/import-private-key",
   Home = "/",
 
-  Requests = "/requests",
+  Request = "/request",
+  RequestConnect = "/request/connect",
+  RequestSignMessage = "/request/sign-message",
+  RequestSignTransaction = "/request/sign-transaction",
 }
