@@ -33,20 +33,25 @@ const HomeScreen = () => {
   const [dataBlurred, setDataBlurred] = useState<boolean>(true);
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("Tokens");
-  const BottomSheetChidren: Record<string, React.ElementType> = {
-    Send() {
-      return <Send />;
-    },
-    Receive() {
-      return <div>Receive</div>;
-    },
-    Swap() {
-      return <div>Swap</div>;
-    },
+  const handleOnClick = (type: string) => {
+    setBottomSheetType(type);
+    setModalIsOpen(true);
   };
-
-  const [BottomSheetType, setBottomSheetType] = useState<string>("Send");
-  const CurrentBottomSheetChildren = BottomSheetChidren[BottomSheetType];
+  const [bottomSheetType, setBottomSheetType] = useState<string>("Send");
+  const CurrentBottomSheetChildren = useMemo(() => {
+    const BottomSheetChidren: Record<string, React.ElementType> = {
+      Send() {
+        return <Send />;
+      },
+      Receive() {
+        return <div>Receive</div>;
+      },
+      Swap() {
+        return <div>Swap</div>;
+      },
+    };
+    return BottomSheetChidren[bottomSheetType];
+  }, [bottomSheetType]);
 
   const navOnClickList = useMemo(() => {
     return [() => setActiveTab("Tokens"), () => setActiveTab("Collectibles"), () => setActiveTab("Activities")];
@@ -120,30 +125,9 @@ const HomeScreen = () => {
           </h1>
         </div>
         <div className="mt-6 flex items-center gap-10">
-          <FeatureButton
-            Icon={SendIcon}
-            title="Send"
-            onClick={() => {
-              setBottomSheetType("Send");
-              setModalIsOpen(true);
-            }}
-          />
-          <FeatureButton
-            Icon={WalletIcon}
-            title="Receive"
-            onClick={() => {
-              setBottomSheetType("Receive");
-              setModalIsOpen(true);
-            }}
-          />
-          <FeatureButton
-            Icon={SwapIcon}
-            title="Swap"
-            onClick={() => {
-              setBottomSheetType("Swap");
-              setModalIsOpen(true);
-            }}
-          />
+          <FeatureButton Icon={SendIcon} title="Send" onClick={() => handleOnClick("Send")} />
+          <FeatureButton Icon={WalletIcon} title="Receive" onClick={() => handleOnClick("Receive")} />
+          <FeatureButton Icon={SwapIcon} title="Swap" onClick={() => handleOnClick("Swap")} />
         </div>
         <TabBar className="mt-4" navTitle={["Tokens", "Collectibles", "Activities"]} navOnClick={navOnClickList} />
         {activeTab === "Tokens" ? (
@@ -155,7 +139,7 @@ const HomeScreen = () => {
         )}
       </div>
 
-      <BottomSheet title={BottomSheetType} isOpen={modalIsOpen} onClose={() => setModalIsOpen(false)}>
+      <BottomSheet title={bottomSheetType} isOpen={modalIsOpen} onClose={() => setModalIsOpen(false)}>
         <CurrentBottomSheetChildren />
       </BottomSheet>
     </div>

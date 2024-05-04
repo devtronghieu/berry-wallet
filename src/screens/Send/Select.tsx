@@ -5,19 +5,38 @@ import ArrowDownCircleIcon from "@/icons/ArrowDownCircle";
 import TickSquareIcon from "@/icons/TickSquareIcon";
 import ArrowUpCircleIcon from "@/icons/ArrowUpCircle";
 
-interface Props {
-  tokens: Token[];
-  selectedIndex: number;
-  onSelectedIndex: (index: number) => void;
+interface Tokens {
+  type: "tokens";
+  data: Token[];
 }
 
-const Select: FC<Props> = ({ tokens: data, selectedIndex, onSelectedIndex }) => {
+interface Collectibles {
+  type: "collectibles";
+  data: Token[]; // Please change this to the collectibles type
+}
+
+interface Props {
+  items: Tokens | Collectibles; // Add more type if needed
+  selectedItemIndex: number;
+  onSelectedItem: (index: number) => void;
+}
+
+const Select: FC<Props> = ({ items, selectedItemIndex, onSelectedItem }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const symbol = data[selectedIndex]?.metadata?.symbol || "Unknown";
-  const logo = data[selectedIndex]?.metadata?.logo || getLocalLogo(symbol);
+
+  const getSymbolAndLogo = (item: Token) => {
+    let symbol, logo;
+    if (items.type === "tokens") {
+      symbol = item?.metadata?.symbol || "Unknown";
+      logo = item?.metadata?.logo || getLocalLogo(symbol);
+    }
+    return { symbol, logo };
+  };
+
+  const { symbol, logo } = getSymbolAndLogo(items.data[selectedItemIndex]);
 
   const handleSelectOption = (index: number) => {
-    onSelectedIndex(index);
+    onSelectedItem(index);
     setIsOpen(false);
   };
   return (
@@ -26,7 +45,7 @@ const Select: FC<Props> = ({ tokens: data, selectedIndex, onSelectedIndex }) => 
       onClick={() => setIsOpen(!isOpen)}
     >
       <div className="flex items-center gap-2">
-        <img src={logo} alt={data[selectedIndex]?.metadata?.name || "Unknown"} className="w-7 h-7 rounded-full" />
+        <img src={logo} alt={symbol} className="w-7 h-7 rounded-full" />
         <p>{symbol}</p>
       </div>
       {!isOpen ? <ArrowDownCircleIcon size={20} /> : <ArrowUpCircleIcon size={20} />}
@@ -35,17 +54,15 @@ const Select: FC<Props> = ({ tokens: data, selectedIndex, onSelectedIndex }) => 
           isOpen ? "visible" : "invisible"
         }`}
       >
-        {data.map((token, index) => {
-          const symbol = token.metadata?.symbol || "Unknown";
-          const logo = token.metadata?.logo || getLocalLogo(symbol);
-
+        {items.data.map((token, index) => {
+          const { symbol, logo } = getSymbolAndLogo(token);
           return (
             <div key={token.mint} className="select-option" onClick={() => handleSelectOption(index)}>
               <div className="flex items-center gap-1.5">
                 <img src={logo} alt={token.metadata?.name || "Unknown"} className="w-7 h-7 rounded-full" />
                 <p className="text-secondary-200 font-semibold">{symbol}</p>
               </div>
-              {index === selectedIndex ? <TickSquareIcon size={20} /> : null}
+              {index === selectedItemIndex && <TickSquareIcon size={20} />}
             </div>
           );
         })}
