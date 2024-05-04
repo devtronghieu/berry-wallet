@@ -1,23 +1,38 @@
-import { Berry } from "@/wallet-standard/window";
+import { WebKernel } from "@messaging/core";
+import { Channel, Event } from "@messaging/types";
 import { SolanaSignInInput, SolanaSignInOutput } from "@solana/wallet-standard-features";
 import { PublicKey, SendOptions, Transaction, VersionedTransaction } from "@solana/web3.js";
 import { EventEmitter } from "eventemitter3";
 
+import { Berry } from "@/wallet-standard/window";
+
 export class BerryImpl extends EventEmitter implements Berry {
   publicKey: PublicKey | null;
+  webKernel: WebKernel;
 
   constructor() {
     super();
     this.publicKey = null;
+    this.webKernel = new WebKernel(Channel.Injection);
   }
 
-  connect(options?: { onlyIfTrusted?: boolean | undefined } | undefined): Promise<{ publicKey: PublicKey }> {
-    console.log("connect", options);
-    throw new Error("Method not implemented.");
+  async connect(options?: { onlyIfTrusted?: boolean | undefined } | undefined): Promise<{ publicKey: PublicKey }> {
+    try {
+      const response = await this.webKernel.sendRequest({
+        destination: Channel.Content,
+        event: Event.Connect,
+        payload: options,
+      });
+      this.publicKey = new PublicKey(response.payload as string);
+      return { publicKey: this.publicKey };
+    } catch (error) {
+      console.error("Error connecting to wallet", error);
+      throw error;
+    }
   }
 
   disconnect(): Promise<void> {
-    throw new Error("Method not implemented.");
+    throw new Error("Method disconnect not implemented.");
   }
 
   signAndSendTransaction<T extends VersionedTransaction | Transaction>(
@@ -43,8 +58,8 @@ export class BerryImpl extends EventEmitter implements Berry {
     throw new Error("Method not implemented.");
   }
 
-  signIn(input?: SolanaSignInInput | undefined): Promise<SolanaSignInOutput> {
+  async signIn(input?: SolanaSignInInput | undefined): Promise<SolanaSignInOutput> {
     console.log("signIn", input);
-    throw new Error("Method not implemented.");
+    throw new Error("Method signIn not implemented.");
   }
 }

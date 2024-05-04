@@ -3,10 +3,10 @@ import {
   type SolanaSignAndSendTransactionFeature,
   type SolanaSignAndSendTransactionMethod,
   type SolanaSignAndSendTransactionOutput,
-  SolanaSignIn,
-  type SolanaSignInFeature,
-  type SolanaSignInMethod,
-  type SolanaSignInOutput,
+  // SolanaSignIn,
+  // type SolanaSignInFeature,
+  // type SolanaSignInMethod,
+  // type SolanaSignInOutput,
   SolanaSignMessage,
   type SolanaSignMessageFeature,
   type SolanaSignMessageMethod,
@@ -32,10 +32,11 @@ import {
   type StandardEventsOnMethod,
 } from "@wallet-standard/features";
 import bs58 from "bs58";
+
 import { BerryWalletAccount } from "./account.js";
 import { icon } from "./icon.js";
 import type { SolanaChain } from "./solana.js";
-import { isSolanaChain, isVersionedTransaction, SOLANA_CHAINS } from "./solana.js";
+import { isSolanaChain, isVersionedTransaction,SOLANA_CHAINS } from "./solana.js";
 import { bytesEqual } from "./util.js";
 import type { Berry } from "./window.js";
 
@@ -77,7 +78,7 @@ export class BerryWallet implements Wallet {
     SolanaSignAndSendTransactionFeature &
     SolanaSignTransactionFeature &
     SolanaSignMessageFeature &
-    SolanaSignInFeature &
+    // SolanaSignInFeature &
     BerryFeature {
     return {
       [StandardConnect]: {
@@ -106,10 +107,10 @@ export class BerryWallet implements Wallet {
         version: "1.0.0",
         signMessage: this.#signMessage,
       },
-      [SolanaSignIn]: {
-        version: "1.0.0",
-        signIn: this.#signIn,
-      },
+      // [SolanaSignIn]: {
+      //   version: "1.0.0",
+      //   signIn: this.#signIn,
+      // },
       [BerryNamespace]: {
         berry: this.#berry,
       },
@@ -151,7 +152,7 @@ export class BerryWallet implements Wallet {
   #connected = () => {
     const address = this.#berry.publicKey?.toBase58();
     if (address) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+       
       const publicKey = this.#berry.publicKey!.toBytes();
 
       const account = this.#account;
@@ -197,7 +198,7 @@ export class BerryWallet implements Wallet {
     const outputs: SolanaSignAndSendTransactionOutput[] = [];
 
     if (inputs.length === 1) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+       
       const { transaction, account, chain, options } = inputs[0]!;
       const { minContextSlot, preflightCommitment, skipPreflight, maxRetries } = options || {};
       if (account !== this.#account) throw new Error("invalid account");
@@ -226,7 +227,7 @@ export class BerryWallet implements Wallet {
     const outputs: SolanaSignTransactionOutput[] = [];
 
     if (inputs.length === 1) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+       
       const { transaction, account, chain } = inputs[0]!;
       if (account !== this.#account) throw new Error("invalid account");
       if (chain && !isSolanaChain(chain)) throw new Error("invalid chain");
@@ -286,7 +287,7 @@ export class BerryWallet implements Wallet {
     const outputs: SolanaSignMessageOutput[] = [];
 
     if (inputs.length === 1) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+       
       const { message, account } = inputs[0]!;
       if (account !== this.#account) throw new Error("invalid account");
 
@@ -302,17 +303,17 @@ export class BerryWallet implements Wallet {
     return outputs;
   };
 
-  #signIn: SolanaSignInMethod = async (...inputs) => {
-    const outputs: SolanaSignInOutput[] = [];
+  // #signIn: SolanaSignInMethod = async (...inputs) => {
+  //   const outputs: SolanaSignInOutput[] = [];
 
-    if (inputs.length > 1) {
-      for (const input of inputs) {
-        outputs.push(await this.#berry.signIn(input));
-      }
-    } else {
-      return [await this.#berry.signIn(inputs[0])];
-    }
+  //   if (inputs.length > 1) {
+  //     for (const input of inputs) {
+  //       outputs.push(await this.#berry.signIn(input));
+  //     }
+  //   } else {
+  //     return [await this.#berry.signIn(inputs[0])];
+  //   }
 
-    return outputs;
-  };
+  //   return outputs;
+  // };
 }

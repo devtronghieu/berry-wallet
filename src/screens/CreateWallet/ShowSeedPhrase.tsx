@@ -1,8 +1,9 @@
+import { FC, useState } from "react";
+
 import SeedPhrase from "@/components/SeedPhrase";
 import CopyIcon from "@/icons/Copy";
 import EyeCloseIcon from "@/icons/EyeClose";
 import EyeOpenIcon from "@/icons/EyeOpen";
-import { FC, useState } from "react";
 
 const iconSize = 18;
 

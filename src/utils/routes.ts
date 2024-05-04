@@ -4,5 +4,7 @@ export enum Route {
   SignIn = "/sign-in",
   ImportSeedPhrase = "/import-seed-phrase",
   ImportPrivateKey = "/import-private-key",
-  Home = "/home",
+  Home = "/",
+
+  Requests = "/requests",
 }

@@ -1,4 +1,5 @@
 import { FC } from "react";
+
 import { IconProps } from "./types";
 
 export const ShieldFailIcon: FC<IconProps> = ({ size = 20, color = "#267578" }) => {

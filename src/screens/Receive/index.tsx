@@ -1,8 +1,9 @@
+import solIcon from "@assets/tokens/sol.svg";
 import { appState } from "@state/index";
 import { FC } from "react";
-import { useSnapshot } from "valtio";
 import QRCode from "react-qr-code";
-import solIcon from "@assets/tokens/sol.svg";
+import { useSnapshot } from "valtio";
+
 import { CopyIcon } from "@/icons";
 
 const Receive: FC = () => {

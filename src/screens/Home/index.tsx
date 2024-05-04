@@ -1,20 +1,23 @@
-import { appActions, appState } from "@state/index";
-import { useEffect, useMemo } from "react";
-import { useSnapshot } from "valtio";
-import strawberry from "@assets/strawberry.svg";
-import { CopyIcon, EyeCloseIcon, EyeOpenIcon, SettingIcon, SendIcon, SwapIcon, WalletIcon } from "@/icons/index";
-import { useState } from "react";
-import { FeatureButton, TabBar, TokenList } from "@components/index";
-import { Token } from "@engine/types";
-import { Token as GqlToken } from "@utils/gqlTypes";
-import { fetchTokens } from "@engine/tokens";
-import { getSafeMintAddressForPriceAPI } from "@utils/tokens";
-import { queryTokenPrice } from "@utils/graphql";
-import { getFriendlyAmount } from "@engine/utils";
-import HoveredAddress from "./HoveredAddress";
-import { swap } from "@engine/transaction/swap";
-import { Keypair } from "@solana/web3.js";
 import "./index.css";
+
+import strawberry from "@assets/strawberry.svg";
+import { FeatureButton, TabBar, TokenList } from "@components/index";
+import { fetchTokens } from "@engine/tokens";
+import { swap } from "@engine/transaction/swap";
+import { Token } from "@engine/types";
+import { getFriendlyAmount } from "@engine/utils";
+import { Keypair } from "@solana/web3.js";
+import { appActions, appState } from "@state/index";
+import { Token as GqlToken } from "@utils/gqlTypes";
+import { queryTokenPrice } from "@utils/graphql";
+import { getSafeMintAddressForPriceAPI } from "@utils/tokens";
+import { useEffect, useMemo } from "react";
+import { useState } from "react";
+import { useSnapshot } from "valtio";
+
+import { CopyIcon, EyeCloseIcon, EyeOpenIcon, SendIcon, SettingIcon, SwapIcon, WalletIcon } from "@/icons/index";
+
+import HoveredAddress from "./HoveredAddress";
 
 function formatCurrency(num: number) {
   return num.toLocaleString("en-US", { style: "currency", currency: "USD" });
@@ -101,7 +104,7 @@ const HomeScreen = () => {
       <div className="flex-grow flex flex-col items-center px-5 pt-2 pb-4 overflow-hidden no-scrollbar">
         <div>
           <div className="flex items-center">
-            <h2 className="text-lg text-secondary-200 font-bold me-2">TOTAL BALANCE</h2>
+            <h2 className="text-lg text-secondary-500 font-bold me-2">TOTAL BALANCE</h2>
             <button className="trans-mini-icon-button" onClick={() => setDataBlurred(!dataBlurred)}>
               {dataBlurred ? <EyeCloseIcon size={20} /> : <EyeOpenIcon size={20} />}
             </button>

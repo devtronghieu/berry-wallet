@@ -1,6 +1,6 @@
 import type { CodegenConfig } from "@graphql-codegen/cli";
-import path from "path";
 import dotenv from "dotenv";
+import path from "path";
 
 const envPath = path.resolve(__dirname, "..", ".env.local");
 

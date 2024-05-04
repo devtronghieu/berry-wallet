@@ -1,4 +1,4 @@
-import { GraphQLClient, gql } from "graphql-request";
+import { gql,GraphQLClient } from "graphql-request";
 
 export const qlClient = new GraphQLClient(import.meta.env.VITE_GRAPHQL_ENDPOINT, {
   errorPolicy: "all",

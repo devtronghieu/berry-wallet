@@ -1,4 +1,5 @@
 import { FC } from "react";
+
 import { IconProps } from "./types";
 
 export const EyeClose2Icon: FC<IconProps> = ({ size = 20, color = "#F29AAA" }) => {

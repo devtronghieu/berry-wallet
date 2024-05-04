@@ -1,20 +1,20 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import { createHashRouter, RouterProvider } from "react-router-dom";
-
 import "./index.css";
 
-import { Route } from "@utils/routes.ts";
 import ProtectedRoute from "@components/ProtectedRoute.tsx";
+import CreateWalletScreen from "@screens/CreateWallet";
+import HomeScreen from "@screens/Home/index.tsx";
+import ImportPrivateKeyScreen from "@screens/ImportPrivateKey.tsx";
+import ImportSeedPhraseScreen from "@screens/ImportSeedPhrase";
+import NotFoundScreen from "@screens/NotFound.tsx";
+import RequestsScreen from "@screens/Requests.tsx";
+import SignInScreen from "@screens/SignIn.tsx";
+import UnlockWalletScreen from "@screens/UnlockWallet.tsx";
+import { Route } from "@utils/routes.ts";
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { createHashRouter,RouterProvider } from "react-router-dom";
 
 import App from "./App.tsx";
-import SignInScreen from "@screens/SignIn.tsx";
-import CreateWalletScreen from "@screens/CreateWallet";
-import ImportSeedPhraseScreen from "@screens/ImportSeedPhrase";
-import ImportPrivateKeyScreen from "@screens/ImportPrivateKey.tsx";
-import NotFoundScreen from "@screens/NotFound.tsx";
-import UnlockWalletScreen from "@screens/UnlockWallet.tsx";
-import HomeScreen from "@screens/Home/index.tsx";
 
 const router = createHashRouter([
   {
@@ -29,6 +29,10 @@ const router = createHashRouter([
         path: Route.Home,
         element: <HomeScreen />,
         index: true,
+      },
+      {
+        path: `${Route.Requests}/:event`,
+        element: <RequestsScreen />,
       },
     ],
   },
