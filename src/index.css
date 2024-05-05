@@ -19,7 +19,7 @@
 
 @layer utilities {
   .extension-container {
-    @apply font-poppins w-[400px] h-[600px] bg-primary-100;
+    @apply font-poppins max-w-[400px] max-h-[600px] w-screen h-screen bg-primary-100;
   }
 
   .gradient-background {
