@@ -17,24 +17,19 @@ export class BerryImpl extends EventEmitter implements Berry {
   }
 
   async connect(options?: { onlyIfTrusted?: boolean | undefined } | undefined): Promise<{ publicKey: PublicKey }> {
-    try {
-      const response = await this.webKernel.sendRequest({
-        destination: Channel.Content,
-        payload: {
-          event: Event.Connect,
-          data: options,
-        } as DAppPayload,
-      });
-      this.publicKey = new PublicKey(response.payload as string);
-      return { publicKey: this.publicKey };
-    } catch (error) {
-      console.error("Error connecting to wallet", error);
-      throw error;
-    }
+    const response = await this.webKernel.sendRequest({
+      destination: Channel.Content,
+      payload: {
+        event: Event.Connect,
+        data: options,
+      } as DAppPayload,
+    });
+    this.publicKey = new PublicKey(response.payload as string);
+    return { publicKey: this.publicKey };
   }
 
-  disconnect(): Promise<void> {
-    throw new Error("Method disconnect not implemented.");
+  async disconnect(): Promise<void> {
+    this.publicKey = null;
   }
 
   signAndSendTransaction<T extends VersionedTransaction | Transaction>(
@@ -60,6 +55,7 @@ export class BerryImpl extends EventEmitter implements Berry {
     throw new Error("Method not implemented.");
   }
 
+  // NOTE: I'm not sure if we need to implement this method, so I have removed it from the wallet-standard-features package. We may need to add it back if it is required.
   async signIn(input?: SolanaSignInInput | undefined): Promise<SolanaSignInOutput> {
     console.log("signIn", input);
     throw new Error("Method signIn not implemented.");
