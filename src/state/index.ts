@@ -1,4 +1,4 @@
-import { Token } from "@engine/types";
+import { Token } from "@engine/tokens/types";
 import { Keypair } from "@solana/web3.js";
 import { EncryptedData } from "@utils/crypto";
 import { proxy } from "valtio";
