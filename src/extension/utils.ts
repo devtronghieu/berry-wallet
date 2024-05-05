@@ -1,4 +1,4 @@
-import { Event } from "@messaging/types";
+import { Event, MessageId } from "@messaging/types";
 import { WINDOW_HEIGHT, WINDOW_WIDTH } from "@utils/constants";
 
 export const injectScript = (scriptUri: string) => {
@@ -14,7 +14,7 @@ export const injectScript = (scriptUri: string) => {
   }
 };
 
-export const openPopup = async (event: Event) => {
+export const openPopup = async (event: Event, messageId: MessageId) => {
   const lastFocusedWindow = await chrome.windows.getLastFocused();
   const { top, left = 0, width = 0 } = lastFocusedWindow;
   const leftPos = left + width - WINDOW_WIDTH;
@@ -25,7 +25,7 @@ export const openPopup = async (event: Event) => {
     type: "popup",
     width: WINDOW_WIDTH,
     height: WINDOW_HEIGHT,
-    url: `index.html#/requests/${event}`,
+    url: `index.html#/request/${event}/${messageId}`,
     focused: true,
   });
 };

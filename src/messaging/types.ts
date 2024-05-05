@@ -13,31 +13,48 @@ export enum Channel {
   Popup = "@berry/popup",
 }
 
-export type RequestId = string;
+export type MessageId = string;
 
 export type Payload = unknown;
 
-export interface Request {
-  id: RequestId;
-  to: Channel;
-  event: Event;
-  payload: unknown;
-}
-
-export interface Response {
-  requestId: RequestId;
-  payload: unknown;
-}
-
-export type SendRequestSignature = (params: {
-  destination: Channel;
-  event: Event;
-  payload: Payload;
-}) => Promise<Response>;
-
-export type HandleRequestSignature = (request: Request) => Promise<Payload>;
+export type ContextData = unknown;
 
 export interface ResolverContext {
-  resolve: (response: Response) => void;
+  resolve: (message: Message) => void;
   reject: (error: Error) => void;
+  data?: ContextData;
 }
+
+export interface DAppPayload {
+  event: Event;
+  data?: unknown;
+}
+
+export enum MessageType {
+  Request = "request",
+  Response = "response",
+  Reject = "reject",
+  ContextData = "context-data",
+  CrossResolve = "cross-resolve",
+  CrossReject = "cross-reject",
+}
+
+export interface Message {
+  id: MessageId;
+  type: MessageType;
+  from: Channel;
+  to: Channel;
+  payload: Payload;
+}
+
+export type SendRequestSignature = (params: { destination: Channel; payload: Payload }) => Promise<Message>;
+
+export type WaitForResolveSignature = (params: { id: MessageId; contextData?: ContextData }) => Promise<Message>;
+
+export type RequestContextDataSignature = (params: { from: Channel; id: MessageId }) => ContextData;
+
+export type CrossResolveSignature = (params: { id: MessageId; destination: Channel; payload: Payload }) => void;
+
+export type CrossRejectSignature = (params: { id: MessageId; destination: Channel; errorMessage: string }) => void;
+
+export type HandleRequestSignature = (message: Message) => Promise<Payload>;
