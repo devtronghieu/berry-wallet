@@ -1,8 +1,10 @@
-import { TransactionStatus, TransactionType } from "@screens/History/internal";
-import TransactionInfoItem from "./TransactionInfoItem";
-import { FC, useMemo } from "react";
-import { CorrectIcon } from "@/icons";
 import SeparatedLine from "@components/SeparatedLine";
+import { TransactionStatus, TransactionType } from "@engine/history/type";
+import { FC, useMemo } from "react";
+
+import { CorrectIcon } from "@/icons";
+
+import TransactionInfoItem from "./TransactionInfoItem";
 
 export interface TransactionInfoProps {
   transactionType: TransactionType;
@@ -13,7 +15,7 @@ export interface TransactionInfoProps {
   fee: number;
 }
 
-const TransactionInfo: FC<TransactionInfoProps> = ({ date, status, transactionType, receiver, sender, fee }) => {
+export const TransactionInfo: FC<TransactionInfoProps> = ({ date, status, transactionType, receiver, sender, fee }) => {
   const Address = useMemo(() => {
     let title = "";
     let value = "";
@@ -68,5 +70,3 @@ const TransactionInfo: FC<TransactionInfoProps> = ({ date, status, transactionTy
     </div>
   );
 };
-
-export default TransactionInfo;

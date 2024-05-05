@@ -1,6 +1,6 @@
 import solLogo from "@assets/tokens/sol.svg";
 import unknownLogo from "@assets/tokens/unknown.svg";
-import { Token } from "@engine/types";
+import { Token } from "@engine/tokens/types";
 import { getFriendlyAmount } from "@engine/utils";
 import { appState } from "@state/index";
 import { getSafeMintAddressForPriceAPI } from "@utils/tokens";
@@ -56,5 +56,3 @@ export const TokenList: FC<Props> = ({ className, tokens }) => {
     </div>
   );
 };
-
-export default TokenList;
