@@ -1,3 +1,5 @@
+import "./index.css";
+
 import { Outlet } from "react-router-dom";
 
 const RequestScreen = () => {
