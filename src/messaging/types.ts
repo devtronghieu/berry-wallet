@@ -25,11 +25,6 @@ export interface ResolverContext {
   data?: ContextData;
 }
 
-export interface DAppPayload {
-  event: Event;
-  data?: unknown;
-}
-
 export enum MessageType {
   Request = "request",
   Response = "response",

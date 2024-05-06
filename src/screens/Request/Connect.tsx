@@ -1,23 +1,29 @@
+import unknownLogo from "@assets/tokens/unknown.svg";
 import { ChromeKernel } from "@messaging/core";
-import { Channel } from "@messaging/types";
+import { Channel, Message } from "@messaging/types";
 import { appState } from "@state/index";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useSnapshot } from "valtio";
 
 const RequestConnectScreen = () => {
   const { messageId } = useParams<{ messageId: string }>();
   const { keypair } = useSnapshot(appState);
+  const [sender, setSender] = useState<chrome.runtime.MessageSender>();
   const chromeKernel = useMemo(() => new ChromeKernel(Channel.Popup), []);
 
   useEffect(() => {
     const requestContextData = async () => {
       if (!messageId) return;
-      const contextData = await chromeKernel.requestContextData({
+
+      const message = (await chromeKernel.requestContextData({
         from: Channel.Background,
         id: messageId,
-      });
-      console.log("Context data", contextData);
+      })) as Message;
+
+      const payload = message.payload as { sender: chrome.runtime.MessageSender };
+
+      setSender(payload.sender);
     };
 
     requestContextData().catch(console.error);
@@ -46,7 +52,11 @@ const RequestConnectScreen = () => {
   return (
     <div>
       <h1>Request Connect Screen</h1>
-      <p>Message ID: {messageId}</p>
+
+      <div className="flex items-center gap-2">
+        <img src={sender?.tab?.favIconUrl || unknownLogo} alt="Sender" className="w-8 h-8 rounded-full" />
+        <p>{sender?.origin}</p>
+      </div>
 
       <div className="flex items-center gap-4">
         <button className="gradient-button" onClick={handleReject}>

@@ -87,6 +87,8 @@ export class ChromeKernel implements Kernel {
   portName = "@berry/chrome-port";
   port = chrome.runtime.connect({ name: this.portName });
 
+  currentSender?: chrome.runtime.MessageSender;
+
   constructor(channel: Channel) {
     this.channel = channel;
     this.requestPool = new Map();
@@ -97,7 +99,7 @@ export class ChromeKernel implements Kernel {
       if (port.name !== this.portName) return;
 
       port.onMessage.addListener(async (message: Message) => {
-        console.log(`[ChromeKernel/${this.channel}] Received message`, message);
+        console.log(`[ChromeKernel/${this.channel}] Received message`, message, port.sender);
 
         if (message.type === MessageType.Request && message.to === this.channel && this.handleRequest) {
           const response: Message = {
@@ -107,9 +109,11 @@ export class ChromeKernel implements Kernel {
             to: message.from,
             payload: null,
           };
+
+          this.currentSender = port.sender;
+
           try {
-            const payload = await this.handleRequest(message);
-            response.payload = payload;
+            response.payload = await this.handleRequest(message);
           } catch (error) {
             response.type = MessageType.Reject;
             response.payload = (error as Error).message;

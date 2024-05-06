@@ -1,10 +1,12 @@
 import { WebKernel } from "@messaging/core";
-import { Channel, DAppPayload, Event } from "@messaging/types";
+import { Channel, Event } from "@messaging/types";
 import { SolanaSignInInput, SolanaSignInOutput } from "@solana/wallet-standard-features";
 import { PublicKey, SendOptions, Transaction, VersionedTransaction } from "@solana/web3.js";
 import { EventEmitter } from "eventemitter3";
 
 import { Berry } from "@/wallet-standard/window";
+
+import { ConnectPayload } from "./types";
 
 export class BerryImpl extends EventEmitter implements Berry {
   publicKey: PublicKey | null;
@@ -21,8 +23,8 @@ export class BerryImpl extends EventEmitter implements Berry {
       destination: Channel.Content,
       payload: {
         event: Event.Connect,
-        data: options,
-      } as DAppPayload,
+        options,
+      } as ConnectPayload,
     });
     this.publicKey = new PublicKey(response.payload as string);
     return { publicKey: this.publicKey };
