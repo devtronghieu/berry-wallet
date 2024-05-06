@@ -1,20 +1,5 @@
-export enum TransactionType {
-    SEND = "SEND",
-    RECEIVE = "RECEIVE",
-    SWAP = "SWAP",
-}
+import { TransactionType } from "@engine/history/type";
 
-export enum TokenType {
-    TOKEN = "TOKEN",
-    NFT = "NFT",
-}
-
-export enum TransactionStatus {
-    PENDING = "PENDING",
-    SUCCESS = "SUCCESS",
-    FAILED = "FAILED",
-}
-  
 export interface TokenHistoryItemProps {
     transactionType: TransactionType;
     amount: number;
