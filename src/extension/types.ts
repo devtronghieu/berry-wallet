@@ -7,3 +7,7 @@ export interface DAppPayload {
 export type ConnectPayload = DAppPayload & {
   options: { onlyIfTrusted?: boolean | undefined } | undefined;
 };
+
+export type SignTransactionPayload = DAppPayload & {
+  encodedTransaction: string;
+};
