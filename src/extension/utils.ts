@@ -14,6 +14,9 @@ export const injectScript = (scriptUri: string) => {
   }
 };
 
+const WINDOW_SCROLLBAR_WIDTH = 4;
+const WINDOW_TITLE_HEIGHT = 28;
+
 export const openPopup = async (event: Event, messageId: MessageId) => {
   const lastFocusedWindow = await chrome.windows.getLastFocused();
   const { top, left = 0, width = 0 } = lastFocusedWindow;
@@ -23,8 +26,8 @@ export const openPopup = async (event: Event, messageId: MessageId) => {
     top,
     left: leftPos,
     type: "popup",
-    width: WINDOW_WIDTH,
-    height: WINDOW_HEIGHT,
+    width: WINDOW_WIDTH + WINDOW_SCROLLBAR_WIDTH,
+    height: WINDOW_HEIGHT + WINDOW_TITLE_HEIGHT,
     url: `index.html#/request/${event}/${messageId}`,
     focused: true,
   });
