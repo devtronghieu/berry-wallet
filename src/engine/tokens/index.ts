@@ -128,3 +128,31 @@ export const getTokenDecimalsByMint = async (mint: string) => {
   if (!(mintData.value?.data as ParsedAccountInfoData).parsed) return getBackupDecimalsByMint(mint);
   return (mintData.value!.data as ParsedAccountInfoData).parsed.info.decimals;
 };
+
+export const getLocalToken = async (mint: string) => {
+  const response = await fetch("/localTokenList.json");
+  const tokenList = await response.json();
+
+  const localToken = tokenList.tokens.find((token) => {
+    if (token.address === mint){
+      return token;
+    }
+  });
+
+  if (!localToken) return;
+
+  const token: Token = {
+    pubkey: new PublicKey(localToken.address),
+    mint: localToken.address,
+    owner: "",
+    amount: "0",
+    decimals: localToken.decimals,
+    metadata: {
+      name: localToken.name,
+      symbol: localToken.symbol,
+      logo: localToken.logoURI,
+    },
+  }
+  
+  return token;
+}
