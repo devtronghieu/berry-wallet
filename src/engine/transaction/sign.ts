@@ -1,19 +1,19 @@
 import { getConnection } from "@engine/connection";
 import { Keypair, VersionedTransaction } from "@solana/web3.js";
 
-export const signTransaction = async (key: Keypair, serializedTransaction: string) => {
-    const transactionBuffer = Buffer.from(serializedTransaction, "base64");
+export const signTransaction = async (key: Keypair, serializedTransaction: Uint8Array) => {
+  const transaction = VersionedTransaction.deserialize(serializedTransaction);
 
-    const transaction = VersionedTransaction.deserialize(transactionBuffer);
+  transaction.sign([
+    {
+      publicKey: key.publicKey,
+      secretKey: key.secretKey,
+    },
+  ]);
 
-    transaction.sign([{
-        publicKey: key.publicKey,
-        secretKey: key.secretKey,
-    }]);
+  const connection = getConnection();
+  const blockhash = await connection.getLatestBlockhash("finalized");
+  transaction.message.recentBlockhash = blockhash.blockhash;
 
-    const connection = getConnection();
-    const blockhash = await connection.getLatestBlockhash('finalized');
-    transaction.message.recentBlockhash = blockhash.blockhash;
-    
-    return transaction.signatures[0];
-}
+  return transaction.signatures[0];
+};
