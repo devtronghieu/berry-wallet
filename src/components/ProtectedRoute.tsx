@@ -1,4 +1,4 @@
-import { getEncryptedSeedPhrase } from "@engine/store";
+import { getEncryptedSeedPhrase } from "@engine/storage";
 import { Route } from "@utils/routes";
 import { FC, ReactNode, useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
