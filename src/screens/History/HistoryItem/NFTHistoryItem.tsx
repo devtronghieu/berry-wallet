@@ -1,6 +1,9 @@
+import { TransactionType } from "@engine/history/type";
 import { FC, useMemo } from "react";
-import { NFTHistoryItemProps, TransactionType } from "../internal";
+
 import { ArrowDown, ArrowUp } from "@/icons";
+
+import { NFTHistoryItemProps } from "../internal";
 import HistoryItem from ".";
 
 const NFTHistoryItem: FC<NFTHistoryItemProps> = ({ nftImage, nftName, transactionType, receiver, sender }) => {

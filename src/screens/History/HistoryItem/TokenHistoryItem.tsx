@@ -1,6 +1,9 @@
-import { ArrowDown, ArrowUp } from "@/icons";
+import { TransactionType } from "@engine/history/type";
 import { FC, useMemo } from "react";
-import { TokenHistoryItemProps, TransactionType } from "../internal";
+
+import { ArrowDown, ArrowUp } from "@/icons";
+
+import { TokenHistoryItemProps } from "../internal";
 import HistoryItem from ".";
 
 const TokenHistoryItem: FC<TokenHistoryItemProps> = ({
