@@ -1,4 +1,6 @@
+import { getConnection } from "@engine/connection";
 import { fetchTokens } from "@engine/tokens";
+import { ParsedDataOfATA } from "@engine/tokens/types";
 import { appActions, appState } from "@state/index";
 import { Token as GqlToken } from "@utils/gqlTypes";
 import { queryTokenPrice } from "@utils/graphql";
@@ -11,6 +13,7 @@ export const useStartup = () => {
 
   useEffect(() => {
     if (!keypair) return;
+
     fetchTokens(keypair.publicKey)
       .then((tokens) => appActions.setTokens(tokens))
       .catch(console.error);
@@ -29,5 +32,37 @@ export const useStartup = () => {
       appActions.setPrices(priceMap);
     };
     fetchPrices().catch(console.error);
+
+    // Watch on-chain data
+    const connection = getConnection();
+
+    const subscriptionList: number[] = [];
+
+    tokens.forEach((token) => {
+      const subscriptionId = connection.onAccountChange(token.pubkey, async (info) => {
+        const isSOL = info.data.byteLength === 0;
+        if (isSOL) {
+          appState.tokens[0].amount = info.lamports.toString();
+        } else {
+          const parsedAccountValue = (await connection.getParsedAccountInfo(token.pubkey, "confirmed")).value;
+          if (!parsedAccountValue) return;
+          const parsedData = parsedAccountValue.data as ParsedDataOfATA;
+          const isNft = parsedData.parsed.info.tokenAmount.decimals === 0;
+
+          if (isNft) {
+            // Handle NFT
+            console.log("--> NFT Change", parsedData);
+          } else {
+            const ataIndex = appState.tokens.findIndex((t) => t.pubkey.equals(token.pubkey));
+            appState.tokens[ataIndex].amount = parsedData.parsed.info.tokenAmount.amount;
+          }
+        }
+      });
+      subscriptionList.push(subscriptionId);
+    });
+
+    return () => {
+      subscriptionList.forEach((id) => connection.removeAccountChangeListener(id));
+    };
   }, [tokens]);
 };

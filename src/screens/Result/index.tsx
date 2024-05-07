@@ -37,7 +37,7 @@ const TransactionResult: FC = () => {
           href={`https://explorer.solana.com/tx/${signature}${env === "mainnet" ? "" : "?cluster=devnet"}`}
           className="font-semibold text-base text-primary-400"
         >
-          View on explorer.solana.com
+          View on Solana Explorer
         </a>
       </div>
     </TransactionDetails>

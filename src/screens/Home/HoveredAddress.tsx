@@ -20,7 +20,7 @@ const HoveredAddress: FC<Props> = ({ setIsWalletHovered }) => {
     >
       <img className="w-6 h-6" src={solanaLogo} alt="solana logo" />
       <p className="ml-2 font-semibold text-primary-400">
-        {keypair?.publicKey.toBase58().slice(0, 6)}...
+        {keypair?.publicKey.toBase58().slice(0, 4)}...
         {keypair?.publicKey.toBase58().slice(-4)}
       </p>
       <div className="ml-auto">

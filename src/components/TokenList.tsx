@@ -29,12 +29,12 @@ export const TokenList: FC<Props> = ({ className, tokens }) => {
               <img src={logo} alt={token.metadata?.name || "Unknown"} className="w-8 h-8 rounded-full" />
               <div className="flex flex-col">
                 <p className="text-secondary-500 text-sm font-semibold">{symbol}</p>
-                <p className="text-sm font-semibold">{formatCurrency(price)}</p>
+                <p className="text-sm">{formatCurrency(price)}</p>
               </div>
             </div>
             <div className="flex flex-col items-end">
               <p className="text-secondary-500 text-sm font-semibold">{friendlyAmount}</p>
-              <p className="text-sm font-semibold">{formatCurrency(totalPrice)}</p>
+              <p className="text-sm">{formatCurrency(totalPrice)}</p>
             </div>
           </div>
         );

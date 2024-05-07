@@ -1,4 +1,4 @@
-import { Token, TokenMetadata } from "@engine/tokens/types";
+import { ParsedDataOfMint, Token, TokenMetadata } from "@engine/tokens/types";
 import { Metadata, PROGRAM_ID as METADATA_PROGRAM_ID } from "@metaplex-foundation/mpl-token-metadata";
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { PublicKey } from "@solana/web3.js";
@@ -98,21 +98,6 @@ export const fetchTokens = async (pubkey: PublicKey) => {
   return tokens;
 };
 
-interface ParsedAccountInfoData {
-  parsed: {
-    info: {
-      decimals: number;
-      freezeAuthority: string;
-      isInitialized: boolean;
-      mintAuthority: string;
-      supply: string;
-    };
-    type: string; // e.g. "mint"
-  };
-  program: string; // e.g. "spl-token"
-  space: number;
-}
-
 const getBackupDecimalsByMint = (mint: string) => {
   switch (mint) {
     case WRAPPED_SOL_MINT:
@@ -127,8 +112,8 @@ const getBackupDecimalsByMint = (mint: string) => {
 export const getTokenDecimalsByMint = async (mint: string) => {
   const connection = getConnection();
   const mintData = await connection.getParsedAccountInfo(new PublicKey(mint));
-  if (!(mintData.value?.data as ParsedAccountInfoData).parsed) return getBackupDecimalsByMint(mint);
-  return (mintData.value!.data as ParsedAccountInfoData).parsed.info.decimals;
+  if (!(mintData.value?.data as ParsedDataOfMint).parsed) return getBackupDecimalsByMint(mint);
+  return (mintData.value!.data as ParsedDataOfMint).parsed.info.decimals;
 };
 
 export const getLocalToken = async (mint: string) => {
