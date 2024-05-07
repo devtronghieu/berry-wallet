@@ -117,6 +117,14 @@
     @apply w-full rounded-xl flex items-center justify-between px-4 py-3 bg-primary-200;
   }
 
+  .transaction-result-item {
+    @apply flex justify-between text-sm text-secondary-500 font-semibold p-[14px] border-b-[1px] border-primary-400;
+  }
+
+  .transaction-result-item:last-child {
+    @apply border-b-0;
+  }
+
   .no-scrollbar {
     scrollbar-width: none;
     -ms-overflow-style: none;

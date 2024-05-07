@@ -1,4 +1,5 @@
 import { Token } from "@engine/types";
+import { transactionActions as TxA } from "@state/transaction";
 import { getLocalLogo } from "@utils/general";
 import { FC, useState } from "react";
 
@@ -6,18 +7,8 @@ import ArrowDownCircleIcon from "@/icons/ArrowDownCircle";
 import ArrowUpCircleIcon from "@/icons/ArrowUpCircle";
 import TickSquareIcon from "@/icons/TickSquareIcon";
 
-interface Tokens {
-  type: "tokens";
-  data: Token[];
-}
-
-interface Collectibles {
-  type: "collectibles";
-  data: Token[]; // Please change this to the collectibles type
-}
-
 interface Props {
-  items: Tokens | Collectibles; // Add more type if needed
+  items: Token[]; // Add Collectibles[] here
   selectedItemIndex: number;
   onSelectedItem: (index: number) => void;
 }
@@ -26,18 +17,17 @@ const Select: FC<Props> = ({ items, selectedItemIndex, onSelectedItem }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const getSymbolAndLogo = (item: Token) => {
-    let symbol, logo;
-    if (items.type === "tokens") {
-      symbol = item?.metadata?.symbol || "Unknown";
-      logo = item?.metadata?.logo || getLocalLogo(symbol);
-    }
+    const symbol = item?.metadata?.symbol || "Unknown";
+    const logo = item?.metadata?.logo || getLocalLogo(symbol);
+
     return { symbol, logo };
   };
 
-  const { symbol, logo } = getSymbolAndLogo(items.data[selectedItemIndex]);
+  const { symbol, logo } = getSymbolAndLogo(items[selectedItemIndex]);
 
   const handleSelectOption = (index: number) => {
     onSelectedItem(index);
+    TxA.setItem(items[index]);
     setIsOpen(false);
   };
   return (
@@ -55,12 +45,12 @@ const Select: FC<Props> = ({ items, selectedItemIndex, onSelectedItem }) => {
           isOpen ? "visible" : "invisible"
         }`}
       >
-        {items.data.map((token, index) => {
-          const { symbol, logo } = getSymbolAndLogo(token);
+        {items.map((item, index) => {
+          const { symbol, logo } = getSymbolAndLogo(item);
           return (
-            <div key={token.mint} className="select-option" onClick={() => handleSelectOption(index)}>
+            <div key={item.mint} className="select-option" onClick={() => handleSelectOption(index)}>
               <div className="flex items-center gap-1.5">
-                <img src={logo} alt={token.metadata?.name || "Unknown"} className="w-7 h-7 rounded-full" />
+                <img src={logo} alt={item.metadata?.name || "Unknown"} className="w-7 h-7 rounded-full" />
                 <p className="text-secondary-200 font-semibold">{symbol}</p>
               </div>
               {index === selectedItemIndex && <TickSquareIcon size={20} />}

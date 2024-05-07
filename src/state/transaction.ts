@@ -1,50 +1,67 @@
+import { Token } from "@engine/types";
 import { proxy } from "valtio";
 
+export enum TransactionStatus {
+  PENDING = "Pending",
+  SUCCESS = "Success",
+  FAILED = "Failed",
+}
+
 export interface TransactionState {
-  transactionFee: number;
+  senderPublicKey: string;
   receiverPublicKey: string;
-  receiverError: string;
-  amountError: string;
   amount: string;
-  isValidPublicKey: boolean;
-  isValidAmount: boolean;
-  total: number;
+  fee: number;
+  status: TransactionStatus;
+  date: string;
+  item: Token;
+  signature: string;
 }
 
 export const transactionState = proxy<TransactionState>({
-  transactionFee: 0,
+  senderPublicKey: "",
   receiverPublicKey: "",
-  receiverError: "",
-  amountError: "",
   amount: "",
-  isValidPublicKey: false,
-  isValidAmount: false,
-  total: 0,
+  fee: 0,
+  status: TransactionStatus.PENDING,
+  date: "",
+  item: {} as Token,
+  signature: "",
 });
 
 export const transactionActions = {
-  setTransactionFee: (fee: number) => {
-    transactionState.transactionFee = fee;
+  setSenderPublicKey: (senderPublicKey: string) => {
+    transactionState.senderPublicKey = senderPublicKey;
   },
   setReceiverPublicKey: (receiverPublicKey: string) => {
     transactionState.receiverPublicKey = receiverPublicKey;
   },
-  setReceiverError: (error: string) => {
-    transactionState.receiverError = error;
-  },
-  setAmountError: (error: string) => {
-    transactionState.amountError = error;
-  },
   setAmount: (amount: string) => {
     transactionState.amount = amount;
   },
-  setIsValidPublicKey: (isValid: boolean) => {
-    transactionState.isValidPublicKey = isValid;
+  setFee: (fee: number) => {
+    transactionState.fee = fee;
   },
-  setIsValidAmount: (isValid: boolean) => {
-    transactionState.isValidAmount = isValid;
+  setStatus: (status: TransactionStatus) => {
+    transactionState.status = status;
   },
-  setTotal: (total: number) => {
-    transactionState.total = total;
+  setDate: (date: string) => {
+    transactionState.date = date;
+  },
+  setItem: (item: Token) => {
+    transactionState.item = item;
+  },
+  setSignature: (signature: string) => {
+    transactionState.signature = signature;
+  },
+  resetTransactionState: () => {
+    transactionState.senderPublicKey = "";
+    transactionState.receiverPublicKey = "";
+    transactionState.amount = "";
+    transactionState.fee = 0;
+    transactionState.status = TransactionStatus.PENDING;
+    transactionState.date = "";
+    transactionState.item = {} as Token;
+    transactionState.signature = "";
   },
 };

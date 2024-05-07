@@ -6,6 +6,7 @@ import { swap } from "@engine/transaction/swap";
 import { Token } from "@engine/types";
 import { getFriendlyAmount } from "@engine/utils";
 import BottomSheet from "@screens/BottomSheet";
+import TransactionResult from "@screens/Result";
 import Send from "@screens/Send";
 import { Keypair } from "@solana/web3.js";
 import { appActions, appState } from "@state/index";
@@ -29,22 +30,26 @@ const HomeScreen = () => {
   const [dataBlurred, setDataBlurred] = useState<boolean>(true);
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("Tokens");
+  const [bottomSheetType, setBottomSheetType] = useState<string>("Send");
 
   const handleOnClick = (type: string) => {
     setBottomSheetType(type);
     setModalIsOpen(true);
   };
-  const [bottomSheetType, setBottomSheetType] = useState<string>("Send");
+
   const CurrentBottomSheetChildren = useMemo(() => {
     const BottomSheetChidren: Record<string, React.ElementType> = {
       Send() {
-        return <Send />;
+        return <Send onSubmit={setBottomSheetType} />;
       },
       Receive() {
         return <div>Receive</div>;
       },
       Swap() {
         return <div>Swap</div>;
+      },
+      Transaction() {
+        return <TransactionResult />;
       },
     };
     return BottomSheetChidren[bottomSheetType];

@@ -1,8 +1,8 @@
 import TabBar from "@components/TabBar";
-import { fetchTransactionFee, sendTransaction } from "@engine/transactions/send";
+import { fetchTransactionFee, sendTransaction } from "@engine/transaction/send";
 import { Token } from "@engine/types";
 import { getFriendlyAmount } from "@engine/utils";
-import { PublicKey } from "@solana/web3.js";
+import { Keypair, PublicKey } from "@solana/web3.js";
 import { appState } from "@state/index";
 import { transactionActions as TxA, transactionState } from "@state/transaction";
 import { formatCurrency } from "@utils/general";
@@ -15,56 +15,53 @@ import ArrowRightBoldIcon from "@/icons/ArrowRightBoldIcon";
 import Input from "./Input";
 import Select from "./Select";
 
-const Send: FC = () => {
-  const {
-    transactionFee,
-    receiverPublicKey,
-    receiverError,
-    amountError,
-    amount,
-    isValidPublicKey,
-    isValidAmount,
-    total,
-  } = useSnapshot(transactionState);
+interface Props {
+  onSubmit: (type: string) => void;
+}
 
+const Send: FC<Props> = ({ onSubmit }) => {
+  const { fee, receiverPublicKey, amount } = useSnapshot(transactionState);
   const { keypair, prices, tokens } = useSnapshot(appState);
   const balanceAmount = useRef<number>(0);
   const price = useRef<number>(0);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const isValidTransaction = isValidPublicKey && isValidAmount;
+  const [receiverError, setReceiverError] = useState<string>("");
+  const [amountError, setAmountError] = useState<string>("");
+  const [isValidReceiver, setIsValidReceiver] = useState<boolean>(false);
+  const [isValidAmount, setIsValidAmount] = useState<boolean>(false);
+  const isValidTransaction = isValidReceiver && isValidAmount;
 
   const handleSubmitButton = () => {
     if (!keypair) return;
+    onSubmit("Transaction");
     sendTransaction({
-      senderPubkey: keypair.publicKey,
-      senderSerkey: keypair.secretKey,
-      receiverPubKey: new PublicKey(receiverPublicKey),
+      keypair: keypair as Keypair,
+      receiverPublicKey: new PublicKey(receiverPublicKey),
       amount,
     });
   };
 
   const handleOnChangeReceiverPublicKey = (value: string) => {
     TxA.setReceiverPublicKey(value);
-    TxA.setIsValidPublicKey(false);
+    setIsValidReceiver(false);
     if (validatePublicKey(value)) {
-      TxA.setReceiverError("");
-      TxA.setIsValidPublicKey(true);
+      setReceiverError("");
+      setIsValidReceiver(true);
     }
   };
 
   const handleOnChangeAmount = (value: string) => {
     TxA.setAmount(value);
-    TxA.setIsValidAmount(false);
-    TxA.setTotal((parseFloat(value) || 0 + transactionFee) * price.current);
+    setIsValidAmount(false);
     if (validateAmount(value)) {
-      TxA.setAmountError("");
-      TxA.setIsValidAmount(true);
+      setAmountError("");
+      setIsValidAmount(true);
     }
   };
 
   const validatePublicKey = (value: string) => {
     if (value.length === 0) {
-      TxA.setReceiverError("");
+      setReceiverError("");
       return false;
     }
 
@@ -72,12 +69,12 @@ const Send: FC = () => {
     try {
       publicKey = new PublicKey(value);
     } catch (error) {
-      TxA.setReceiverError("Invalid receiver public key.");
+      setReceiverError("Invalid receiver public key.");
       return false;
     }
 
     if (!PublicKey.isOnCurve(publicKey.toBytes())) {
-      TxA.setReceiverError("Invalid receiver public key.");
+      setReceiverError("Invalid receiver public key.");
       return false;
     }
 
@@ -86,21 +83,21 @@ const Send: FC = () => {
 
   const validateAmount = (value: string) => {
     if (value.length === 0) {
-      TxA.setAmountError("");
+      setAmountError("");
       return false;
     }
 
     if (isNaN(parseFloat(value))) {
-      TxA.setAmountError("Amount must be a number.");
+      setAmountError("Amount must be a number.");
       return false;
     }
     if (parseFloat(value) <= 0) {
-      TxA.setAmountError("Amount must be greater than 0.");
+      setAmountError("Amount must be greater than 0.");
       return false;
     }
 
     if (parseFloat(value) > balanceAmount.current) {
-      TxA.setAmountError("Amount exceeds your balance.");
+      setAmountError("Amount exceeds your balance.");
       return false;
     }
 
@@ -109,7 +106,7 @@ const Send: FC = () => {
 
   useMemo(() => {
     if (!keypair) return;
-    fetchTransactionFee(keypair?.publicKey);
+    fetchTransactionFee(keypair.publicKey);
   }, [keypair]);
 
   useMemo(() => {
@@ -118,21 +115,18 @@ const Send: FC = () => {
       tokens[selectedIndex]?.amount || "0",
       tokens[selectedIndex]?.decimals || 0,
     );
-    TxA.setAmount("");
-    TxA.setReceiverPublicKey("");
-    TxA.setAmountError("");
-    TxA.setReceiverError("");
-    TxA.setTotal(0);
+    TxA.resetTransactionState();
+    TxA.setItem(tokens[selectedIndex]);
+    setAmountError("");
+    setReceiverError("");
+    setIsValidReceiver(false);
+    setIsValidAmount(false);
   }, [tokens, prices, selectedIndex]);
 
   return (
     <>
       <TabBar className="mt-4" navTitle={["Tokens", "Collectible"]} />
-      <Select
-        items={{ type: "tokens", data: tokens as Token[] }}
-        selectedItemIndex={selectedIndex}
-        onSelectedItem={setSelectedIndex}
-      />
+      <Select items={tokens as Token[]} selectedItemIndex={selectedIndex} onSelectedItem={setSelectedIndex} />
       <Input
         placeholder="Receiver"
         value={receiverPublicKey}
@@ -147,11 +141,11 @@ const Send: FC = () => {
         </p>
         <p className="flex justify-between">
           <span>Transaction fee</span>
-          <span>{transactionFee} SOL</span>
+          <span>{fee} SOL</span>
         </p>
         <p className="flex justify-between">
           <span>Total</span>
-          <span>{formatCurrency(total)} USD</span>
+          <span>{formatCurrency((parseFloat(amount) || 0 + fee) * price.current)} USD</span>
         </p>
       </div>
       <div className="px-3">

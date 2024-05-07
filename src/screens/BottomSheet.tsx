@@ -16,7 +16,7 @@ const BottomSheet: FC<Props> = ({ title, children, isOpen, onClose }) => {
       <Sheet.Container>
         <Sheet.Content className="px-5 py-4 bg-primary-100 rounded-t-3xl">
           <div className="flex items-center justify-between">
-            <span className="font-semibold text-secondary-500 text-2xl">{title}</span>
+            <span className="font-semibold text-secondary-500 text-[26px]">{title}</span>
             <div onClick={onClose} className="cursor-pointer">
               <CloseSquareIcon size={24} />
             </div>
