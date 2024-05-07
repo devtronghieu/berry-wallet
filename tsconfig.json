@@ -33,6 +33,9 @@
       "@engine/*": [
         "src/engine/*"
       ],
+      "@hooks/*": [
+        "src/hooks/*"
+      ],
       "@messaging/*": [
         "src/messaging/*"
       ],

@@ -1,12 +1,11 @@
 import { getSignatures, getTransaction } from "@engine/history";
+import { useHistory } from "@hooks/history";
 import { PublicKey } from "@solana/web3.js";
 import { historyActions } from "@state/history";
 import { appState } from "@state/index";
 import pThrottle from "p-throttle";
 import { useEffect } from "react";
 import { useSnapshot } from "valtio";
-
-import { useHistory } from "@/hooks/history";
 
 import TokenHistoryItem from "./HistoryItem/TokenHistoryItem";
 

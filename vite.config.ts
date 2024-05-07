@@ -11,6 +11,7 @@ export default defineConfig({
       "@assets": path.resolve(__dirname, "./src/assets"),
       "@components": path.resolve(__dirname, "./src/components"),
       "@engine": path.resolve(__dirname, "./src/engine"),
+      "@hooks": path.resolve(__dirname, "./src/hooks"),
       "@messaging": path.resolve(__dirname, "./src/messaging"),
       "@screens": path.resolve(__dirname, "./src/screens"),
       "@state": path.resolve(__dirname, "./src/state"),
