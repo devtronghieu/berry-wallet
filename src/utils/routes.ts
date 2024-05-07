@@ -5,6 +5,7 @@ export enum Route {
   ImportSeedPhrase = "/import-seed-phrase",
   ImportPrivateKey = "/import-private-key",
   Home = "/",
+  Nft = "/nft",
 
   Request = "/request",
   RequestConnect = "/request/connect",

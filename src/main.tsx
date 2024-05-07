@@ -5,6 +5,7 @@ import CreateWalletScreen from "@screens/CreateWallet";
 import HomeScreen from "@screens/Home/index.tsx";
 import ImportPrivateKeyScreen from "@screens/ImportPrivateKey.tsx";
 import ImportSeedPhraseScreen from "@screens/ImportSeedPhrase";
+import NftScreen from "@screens/Nft.tsx";
 import NotFoundScreen from "@screens/NotFound.tsx";
 import RequestConnectScreen from "@screens/Request/Connect.tsx";
 import RequestScreen from "@screens/Request/index.tsx";
@@ -33,6 +34,10 @@ const router = createHashRouter([
         path: Route.Home,
         element: <HomeScreen />,
         index: true,
+      },
+      {
+        path: `${Route.Nft}/:nftId`,
+        element: <NftScreen />,
       },
       {
         path: Route.Request,
