@@ -7,7 +7,7 @@ import { EventEmitter } from "eventemitter3";
 
 import { Berry } from "@/wallet-standard/window";
 
-import { ConnectPayload, SignTransactionPayload } from "./types";
+import { ConnectPayload, SignAndSendTransactionPayload, SignMessagePayload, SignTransactionPayload } from "./types";
 
 export class BerryImpl extends EventEmitter implements Berry {
   publicKey: PublicKey | null;
@@ -35,12 +35,19 @@ export class BerryImpl extends EventEmitter implements Berry {
     this.publicKey = null;
   }
 
-  signAndSendTransaction<T extends VersionedTransaction | Transaction>(
+  async signAndSendTransaction<T extends VersionedTransaction | Transaction>(
     transaction: T,
     options?: SendOptions | undefined,
   ): Promise<{ signature: string }> {
-    console.log("signAndSendTransaction", transaction, options);
-    throw new Error("Method not implemented.");
+    const signature = await this.webKernel.sendRequest({
+      destination: Channel.Content,
+      payload: {
+        event: Event.SignAndSendTransaction,
+        encodedTransaction: encode(transaction.serialize()),
+        options,
+      } as SignAndSendTransactionPayload,
+    });
+    return { signature: signature.payload as string };
   }
 
   async signTransaction<T extends VersionedTransaction | Transaction>(transaction: T): Promise<T> {
@@ -53,9 +60,8 @@ export class BerryImpl extends EventEmitter implements Berry {
     });
 
     const encodedSignedTransaction = message.payload as string;
-    const signedTransaction = decode(encodedSignedTransaction);
 
-    console.log("signedTransaction", signedTransaction, encodedSignedTransaction);
+    const signedTransaction = decode(encodedSignedTransaction);
 
     return VersionedTransaction.deserialize(signedTransaction) as T;
   }
@@ -65,9 +71,18 @@ export class BerryImpl extends EventEmitter implements Berry {
     throw new Error("Method not implemented.");
   }
 
-  signMessage(message: Uint8Array): Promise<{ signature: Uint8Array }> {
-    console.log("signMessage", message);
-    throw new Error("Method not implemented.");
+  async signMessage(message: Uint8Array): Promise<{ signature: Uint8Array }> {
+    const signature = await this.webKernel.sendRequest({
+      destination: Channel.Content,
+      payload: {
+        event: Event.SignMessage,
+        encodedMessage: encode(message),
+      } as SignMessagePayload,
+    });
+
+    const signatureBytes = decode(signature.payload as string);
+
+    return { signature: signatureBytes };
   }
 
   // NOTE: I'm not sure if we need to implement this method, so I have removed it from the wallet-standard-features package. We may need to add it back if it is required.

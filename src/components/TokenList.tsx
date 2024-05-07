@@ -1,4 +1,6 @@
-import { Token } from "@engine/types";
+import solLogo from "@assets/tokens/sol.svg";
+import unknownLogo from "@assets/tokens/unknown.svg";
+import { Token } from "@engine/tokens/types";
 import { getFriendlyAmount } from "@engine/utils";
 import { appState } from "@state/index";
 import { formatCurrency, getLocalLogo } from "@utils/general";
@@ -42,5 +44,3 @@ export const TokenList: FC<Props> = ({ className, tokens }) => {
     </div>
   );
 };
-
-export default TokenList;

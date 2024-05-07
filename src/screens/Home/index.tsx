@@ -1,11 +1,12 @@
 import strawberry from "@assets/strawberry.svg";
-import FeatureButton from "@components/FeatureButton";
+import { FeatureButton } from "@components/FeatureButton";
 import { TabBar, TokenList } from "@components/index";
 import { fetchTokens } from "@engine/tokens";
+import { Token } from "@engine/tokens/types";
 import { swap } from "@engine/transaction/swap";
-import { Token } from "@engine/types";
 import { getFriendlyAmount } from "@engine/utils";
 import BottomSheet from "@screens/BottomSheet";
+import History from "@screens/History";
 import TransactionResult from "@screens/Result";
 import Send from "@screens/Send";
 import { Keypair } from "@solana/web3.js";
@@ -159,7 +160,7 @@ const HomeScreen = () => {
         ) : activeTab === "Collectibles" ? (
           <div>Collectibles</div>
         ) : (
-          <div>Activities</div>
+          <History />
         )}
       </div>
 

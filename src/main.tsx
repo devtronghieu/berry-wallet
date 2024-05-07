@@ -8,6 +8,7 @@ import ImportSeedPhraseScreen from "@screens/ImportSeedPhrase";
 import NotFoundScreen from "@screens/NotFound.tsx";
 import RequestConnectScreen from "@screens/Request/Connect.tsx";
 import RequestScreen from "@screens/Request/index.tsx";
+import RequestSignAndSendTransactionScreen from "@screens/Request/SignAndSendTransaction.tsx";
 import RequestSignMessageScreen from "@screens/Request/SignMessage.tsx";
 import RequestSignTransactionScreen from "@screens/Request/SignTransaction.tsx";
 import SignInScreen from "@screens/SignIn.tsx";
@@ -48,6 +49,10 @@ const router = createHashRouter([
           {
             path: `${Route.RequestSignTransaction}/:messageId`,
             element: <RequestSignTransactionScreen />,
+          },
+          {
+            path: `${Route.RequestSignAndSendTransaction}/:messageId`,
+            element: <RequestSignAndSendTransactionScreen />,
           },
         ],
       },

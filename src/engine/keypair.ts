@@ -3,7 +3,7 @@ import { decryptWithPassword, encryptWithPassword } from "@utils/crypto";
 import { generateMnemonic, mnemonicToSeedSync } from "bip39";
 import { derivePath } from "ed25519-hd-key";
 
-import { getEncryptedSeedPhrase, setActiveKeypairIndex, setEncryptedSeedPhrase, setPassword } from "./store";
+import { getEncryptedSeedPhrase, setActiveKeypairIndex, setEncryptedSeedPhrase, setPassword } from "./storage";
 
 export const getDerivedPath = (pathIndex: number) => `m/44'/501'/${pathIndex}'/0'`;
 

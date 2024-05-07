@@ -4,6 +4,7 @@ export enum Event {
   SignIn = "sign-in",
   SignMessage = "sign-message",
   SignTransaction = "sign-transaction",
+  SignAndSendTransaction = "sign-and-send-transaction",
 }
 
 export enum Channel {

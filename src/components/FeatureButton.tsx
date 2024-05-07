@@ -18,5 +18,3 @@ export const FeatureButton: FC<FeatureButtonProps> = ({ Icon, title, onClick }) 
     </div>
   );
 };
-
-export default FeatureButton;

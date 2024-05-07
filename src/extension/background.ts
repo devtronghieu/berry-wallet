@@ -1,7 +1,13 @@
 import { ChromeKernel } from "@messaging/core";
 import { Channel, Event } from "@messaging/types";
 
-import { ConnectPayload, DAppPayload, SignTransactionPayload } from "./types";
+import {
+  ConnectPayload,
+  DAppPayload,
+  SignAndSendTransactionPayload,
+  SignMessagePayload,
+  SignTransactionPayload,
+} from "./types";
 import { openPopup } from "./utils";
 
 const chromeKernel = new ChromeKernel(Channel.Background);
@@ -45,6 +51,43 @@ chromeKernel.handleRequest = async (request) => {
         contextData: {
           sender: chromeKernel.currentSender,
           encodedTransaction: payload.encodedTransaction,
+        },
+      });
+
+      return response.payload;
+    }
+
+    case Event.SignAndSendTransaction: {
+      const payload = request.payload as SignAndSendTransactionPayload;
+
+      const resolveId = crypto.randomUUID();
+
+      openPopup(payload.event, resolveId);
+
+      const response = await chromeKernel.waitForResolve({
+        id: resolveId,
+        contextData: {
+          sender: chromeKernel.currentSender,
+          encodedTransaction: payload.encodedTransaction,
+          options: payload.options,
+        },
+      });
+
+      return response.payload;
+    }
+
+    case Event.SignMessage: {
+      const payload = request.payload as SignMessagePayload;
+
+      const resolveId = crypto.randomUUID();
+
+      openPopup(payload.event, resolveId);
+
+      const response = await chromeKernel.waitForResolve({
+        id: resolveId,
+        contextData: {
+          sender: chromeKernel.currentSender,
+          encodedMessage: payload.encodedMessage,
         },
       });
 

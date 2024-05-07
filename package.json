@@ -46,6 +46,7 @@
     "framer-motion": "^11.1.7",
     "graphql": "^16.8.1",
     "graphql-request": "^6.1.0",
+    "p-throttle": "^6.1.0",
     "pouchdb-adapter-idb": "^8.0.1",
     "pouchdb-core": "^8.0.1",
     "react": "^18.2.0",
