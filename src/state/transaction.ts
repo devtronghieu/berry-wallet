@@ -1,4 +1,4 @@
-import { Token } from "@engine/types";
+import { Token } from "@engine/tokens/types";
 import { proxy } from "valtio";
 
 export enum TransactionStatus {

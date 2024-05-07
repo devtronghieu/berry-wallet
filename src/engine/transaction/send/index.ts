@@ -1,6 +1,6 @@
 import { getConnection } from "@engine/connection";
 import { WRAPPED_SOL_MINT } from "@engine/constants";
-import { Token } from "@engine/types";
+import { Token } from "@engine/tokens/types";
 import { convertDateToReadable } from "@engine/utils";
 import {
   createAssociatedTokenAccountInstruction,

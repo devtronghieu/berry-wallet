@@ -1,6 +1,6 @@
 import TabBar from "@components/TabBar";
+import { Token } from "@engine/tokens/types";
 import { fetchTransactionFee, sendTransaction } from "@engine/transaction/send";
-import { Token } from "@engine/types";
 import { getFriendlyAmount } from "@engine/utils";
 import { Keypair, PublicKey } from "@solana/web3.js";
 import { appState } from "@state/index";
