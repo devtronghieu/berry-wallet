@@ -11,6 +11,7 @@ interface TokenInfoProps {
   receivedTokenImage?: string;
   receivedTokenName?: string;
   signature: string;
+  network?: "mainnet" | "devnet";
 }
 
 export const TokenInfo: FC<TokenInfoProps> = ({
@@ -23,6 +24,7 @@ export const TokenInfo: FC<TokenInfoProps> = ({
   receivedTokenImage,
   receivedTokenName,
   signature,
+  network = "devnet",
 }) => {
   const Icon = useMemo(() => {
     if (tokenType === TokenType.NFT) {
@@ -78,18 +80,14 @@ export const TokenInfo: FC<TokenInfoProps> = ({
     );
   }, [transactionType, tokenType, amount, tokenName, receiveAmount, receivedTokenName]);
 
-  const environment = useMemo(() => {
-    if (import.meta.env.VITE_ENV === "mainnet") {
-      return "";
-    }
-
-    return "?cluster=devnet";
-  }, []);
   return (
     <div className="flex flex-col items-center">
       {Icon}
       {Address}
-      <a href={`https://explorer.solana.com/tx/${signature}${environment}`} className="text-primary-500 font-semibold">
+      <a
+        href={`https://explorer.solana.com/tx/${signature}${network === "mainnet" ? "" : "?cluster=devnet"}`}
+        className="text-primary-500 font-semibold"
+      >
         View on Solana Explorer
       </a>
     </div>

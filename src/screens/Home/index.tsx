@@ -39,7 +39,7 @@ const HomeScreen = () => {
   };
 
   const CurrentBottomSheetChildren = useMemo(() => {
-    const BottomSheetChidren: Record<string, React.ElementType> = {
+    const BottomSheetChildren: Record<string, React.ElementType> = {
       Send() {
         return <Send onSubmit={setBottomSheetType} />;
       },
@@ -53,7 +53,7 @@ const HomeScreen = () => {
         return <TransactionResult />;
       },
     };
-    return BottomSheetChidren[bottomSheetType];
+    return BottomSheetChildren[bottomSheetType];
   }, [bottomSheetType]);
 
   const navOnClickList = useMemo(() => {
@@ -61,12 +61,11 @@ const HomeScreen = () => {
   }, []);
 
   useEffect(() => {
-    const fetchOnchainTokens = async () => {
-      if (!keypair) return;
-      const tokens = await fetchTokens(keypair.publicKey);
-      appActions.setTokens(tokens);
-    };
-    fetchOnchainTokens().catch(console.error);
+    if (!keypair) return;
+
+    fetchTokens(keypair.publicKey)
+      .then((tokens) => appActions.setTokens(tokens))
+      .catch(console.error);
   }, [keypair]);
 
   useEffect(() => {

@@ -4,6 +4,7 @@ import { EncryptedData } from "@utils/crypto";
 import { proxy } from "valtio";
 
 export interface AppState {
+  network: "mainnet" | "devnet";
   encryptedSeedPhrase?: EncryptedData;
   keypair?: Keypair;
   hashedPassword?: string;
@@ -12,6 +13,7 @@ export interface AppState {
 }
 
 export const appState = proxy<AppState>({
+  network: import.meta.env.VITE_ENV === "mainnet" ? "mainnet" : "devnet",
   tokens: [],
   prices: {},
 });

@@ -1,4 +1,5 @@
 import { Token } from "@engine/tokens/types";
+import { appState } from "@state/index";
 import { transactionState } from "@state/transaction";
 import { getLocalLogo } from "@utils/general";
 import { FC, useMemo } from "react";
@@ -7,6 +8,7 @@ import { useSnapshot } from "valtio";
 import TransactionDetails from "./TransactionDetails";
 
 const TransactionResult: FC = () => {
+  const { network: env } = useSnapshot(appState);
   const { amount, receiverPublicKey, date, status, fee, token, signature } = useSnapshot(transactionState);
   const transactionDetails = useMemo(() => {
     return [
@@ -32,7 +34,7 @@ const TransactionResult: FC = () => {
         <img src={logo} alt={symbol} className="w-[100px] h-[100px] rounded-full mt-4" />
         <p className="font-semibold text-base mt-2 text-secondary-500">{`${amount} ${symbol}`}</p>
         <a
-          href={`https://explorer.solana.com/tx/${signature}?cluster=devnet`}
+          href={`https://explorer.solana.com/tx/${signature}${env === "mainnet" ? "" : "?cluster=devnet"}`}
           className="font-semibold text-base text-primary-400"
         >
           View on explorer.solana.com
