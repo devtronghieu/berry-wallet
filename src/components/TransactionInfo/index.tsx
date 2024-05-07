@@ -1,5 +1,5 @@
 import SeparatedLine from "@components/SeparatedLine";
-import { TransactionStatus, TransactionType } from "@engine/history/type";
+import { TransactionStatus, TransactionType } from "@engine/history/types";
 import { FC, useMemo } from "react";
 
 import { CorrectIcon } from "@/icons";

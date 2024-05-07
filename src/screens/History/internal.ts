@@ -1,4 +1,4 @@
-import { TransactionType } from "@engine/history/type";
+import { TransactionType } from "@engine/history/types";
 
 export interface TokenHistoryItemProps {
     transactionType: TransactionType;

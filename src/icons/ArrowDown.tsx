@@ -1,7 +1,8 @@
 import { FC } from "react";
+
 import { IconProps } from "./types";
 
-export const ArrowDown: FC<IconProps> = ({ size = 20, color = "#267578" }) => {
+export const ArrowDownIcon: FC<IconProps> = ({ size = 20, color = "#267578" }) => {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <path d="M12.2744 19.75V4.75" stroke={color} stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
@@ -16,4 +17,4 @@ export const ArrowDown: FC<IconProps> = ({ size = 20, color = "#267578" }) => {
   );
 };
 
-export default ArrowDown;
+export default ArrowDownIcon;

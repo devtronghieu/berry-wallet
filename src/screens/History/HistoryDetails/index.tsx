@@ -1,6 +1,6 @@
 import { TokenInfo } from "@components/TokenInfo";
 import { TransactionInfo } from "@components/TransactionInfo";
-import { TokenType, TransactionStatus, TransactionType } from "@engine/history/type";
+import { TokenType, TransactionStatus, TransactionType } from "@engine/history/types";
 
 export interface HistoryDetailsProps {}
 

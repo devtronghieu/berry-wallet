@@ -1,8 +1,10 @@
 import { getSignatures, getTransaction } from "@engine/history";
 import { PublicKey } from "@solana/web3.js";
 import { historyActions } from "@state/history";
+import { appState } from "@state/index";
 import pThrottle from "p-throttle";
 import { useEffect } from "react";
+import { useSnapshot } from "valtio";
 
 import { useHistory } from "@/hooks/history";
 
@@ -10,13 +12,15 @@ import TokenHistoryItem from "./HistoryItem/TokenHistoryItem";
 
 const History = () => {
   const history = useHistory();
-  const throttle = pThrottle({ limit: 1, interval: 550 });
+  const { keypair } = useSnapshot(appState);
+  const solanaDelayTime = 550;
+  const throttle = pThrottle({ limit: 1, interval: solanaDelayTime });
 
   useEffect(() => {
-    const pubKey = new PublicKey("4JXCtjMDGS5PdXD3xG4cbEvZKvcJkYeQHLoWgTk14WjC");
+    const pubKey = keypair?.publicKey;
 
     const func = async () => {
-      const signatures = await getSignatures(pubKey);
+      const signatures = await getSignatures(pubKey as PublicKey);
       for (const signature of signatures) {
         throttle(async () => {
           console.log(signature);
@@ -28,7 +32,7 @@ const History = () => {
     };
 
     func();
-  }, [throttle]);
+  }, [throttle, keypair]);
 
   return (
     <div className="extension-container">

@@ -13,5 +13,5 @@ export const getFilteredTransferInstructions = (instructions: ParsedInstruction[
 }
 
 export const getFilteredRelatedInstructions = (instructions: ParsedInstruction[], userPubkey: PublicKey) => {
-    instructions.filter((instruction) => instruction.parsed.accounts.includes(userPubkey));
+    return instructions.filter((instruction) => instruction.parsed.accounts.includes(userPubkey));
 };

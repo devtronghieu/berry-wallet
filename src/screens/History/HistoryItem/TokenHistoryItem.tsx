@@ -1,7 +1,7 @@
-import { TransactionType } from "@engine/history/type";
+import { TransactionType } from "@engine/history/types";
 import { FC, useMemo } from "react";
 
-import { ArrowDown, ArrowUp } from "@/icons";
+import { ArrowDownIcon, ArrowUpIcon } from "@/icons";
 
 import { TokenHistoryItemProps } from "../internal";
 import HistoryItem from ".";
@@ -35,9 +35,9 @@ const TokenHistoryItem: FC<TokenHistoryItemProps> = ({
           <img src={tokenImage} alt="icon" className="h-10 w-10 rounded-full border-2 border-primary-200" />
           <div className="flex justify-center items-center w-5 h-5 bg-secondary-100 rounded-full border-2 border-primary-200 ml-[-12px]">
             {transactionType === TransactionType.SEND ? (
-              <ArrowUp size={16} color="#EF5385" />
+              <ArrowUpIcon size={16} color="#EF5385" />
             ) : (
-              <ArrowDown size={16} color="#267578" />
+              <ArrowDownIcon size={16} color="#267578" />
             )}
           </div>
         </div>

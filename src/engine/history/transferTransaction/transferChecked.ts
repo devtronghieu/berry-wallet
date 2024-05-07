@@ -1,11 +1,11 @@
 import { fetchTokenMetadata, getLocalToken } from "@engine/tokens";
 import { Token } from "@engine/tokens/types";
 import { getAccount } from "@solana/spl-token";
-import { ParsedInstruction, ParsedTransactionMeta, PublicKey } from "@solana/web3.js";
+import { LAMPORTS_PER_SOL, ParsedInstruction, ParsedTransactionMeta, PublicKey } from "@solana/web3.js";
 import { appState } from "@state/index";
 
 import { connection } from "..";
-import { TokenType, TransactionStatus, TransactionType, TransferTransaction } from "../type";
+import { TokenType, TransactionStatus, TransactionType, TransferTransaction } from "../types";
 
 export const getCheckedTokenType = (instruction: ParsedInstruction) => {
     if (!instruction.parsed.info.tokenAmount) return TokenType.TOKEN;
@@ -74,7 +74,7 @@ export const transferCheckedTransationDetail = async (instruction: ParsedInstruc
 
     const amount = getCheckedAmount(instruction);
     const date = new Date(blockTime * 1000);
-    const fee = (meta?.fee || 0) / Math.pow(10, 9);
+    const fee = (meta?.fee || 0) / LAMPORTS_PER_SOL;
     const status = meta?.err ? TransactionStatus.FAILED : TransactionStatus.SUCCESS;
     const transactionType = receiver === appState.keypair?.publicKey.toBase58() ? TransactionType.RECEIVE : TransactionType.SEND;
     const tokenType = getCheckedTokenType(instruction);

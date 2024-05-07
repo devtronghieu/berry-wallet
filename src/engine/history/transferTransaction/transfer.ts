@@ -4,7 +4,7 @@ import { ParsedInstruction, ParsedTransactionMeta, PublicKey } from "@solana/web
 import { appState } from "@state/index";
 
 import { connection } from "..";
-import { TokenType, TransactionStatus, TransactionType, TransferTransaction } from "../type";
+import { TokenType, TransactionStatus, TransactionType, TransferTransaction } from "../types";
 
 export const getAmount = async (instruction: ParsedInstruction, decimals: number) => {    
     return instruction.parsed.info.amount / Math.pow(10, decimals);
@@ -33,7 +33,7 @@ export const transferTokenTransationDetail = async (instruction: ParsedInstructi
             owner: "",
             amount: "0",
             decimals,
-            metadata: metadata,
+            metadata,
         }
     }
 

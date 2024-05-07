@@ -1,7 +1,7 @@
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { ParsedInstruction, ParsedTransactionWithMeta, PublicKey } from '@solana/web3.js';
 
-import { getConnection } from './../connection';
+import { getConnection } from '../connection';
 import { transferTokenTransationDetail } from './transferTransaction/transfer';
 import { transferCheckedTransationDetail } from './transferTransaction/transferChecked';
 

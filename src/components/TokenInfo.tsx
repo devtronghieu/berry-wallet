@@ -1,4 +1,4 @@
-import { TokenType, TransactionType } from "@engine/history/type";
+import { TokenType, TransactionType } from "@engine/history/types";
 import { FC, useMemo } from "react";
 
 interface TokenInfoProps {

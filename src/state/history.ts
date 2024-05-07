@@ -1,4 +1,4 @@
-import { Transaction } from "@engine/history/type";
+import { Transaction } from "@engine/history/types";
 import { proxy } from 'valtio';
 
 export interface HistoryState {
