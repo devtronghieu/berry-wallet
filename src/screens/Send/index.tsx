@@ -14,6 +14,7 @@ import ArrowRightBoldIcon from "@/icons/ArrowRightBoldIcon";
 
 import Select from "../../components/Select";
 import Input from "./Input";
+import { validateAmount, validatePublicKey } from "./utils";
 
 interface Props {
   onSubmit: (type: string) => void;
@@ -46,67 +47,18 @@ const Send: FC<Props> = ({ onSubmit }) => {
   const handleOnChangeReceiverPublicKey = (value: string) => {
     TxA.setReceiverPublicKey(value);
     setIsValidReceiver(false);
-    if (validatePublicKey(value)) {
-      setReceiverError("");
-      setIsValidReceiver(true);
-    }
+    const { isValid, errorMessage } = validatePublicKey(value);
+    isValid && setIsValidReceiver(true);
+    setReceiverError(errorMessage);
   };
 
   const handleOnChangeAmount = (value: string) => {
     TxA.setAmount(value);
     setIsValidAmount(false);
-    if (validateAmount(value)) {
-      setAmountError("");
-      setIsValidAmount(true);
-    }
+    const { isValid, errorMessage } = validateAmount(value, balanceAmount.current);
+    isValid && setIsValidAmount(true);
+    setAmountError(errorMessage);
   };
-
-  const validatePublicKey = (value: string) => {
-    if (value.length === 0) {
-      setReceiverError("");
-      return false;
-    }
-
-    let publicKey: PublicKey;
-    try {
-      publicKey = new PublicKey(value);
-    } catch (error) {
-      setReceiverError("Invalid receiver public key.");
-      return false;
-    }
-
-    if (!PublicKey.isOnCurve(publicKey.toBytes())) {
-      setReceiverError("Invalid receiver public key.");
-      return false;
-    }
-
-    return true;
-  };
-
-  const validateAmount = (value: string) => {
-    if (value.length === 0) {
-      setAmountError("");
-      return false;
-    }
-
-    if (isNaN(parseFloat(value))) {
-      setAmountError("Amount must be a number.");
-      return false;
-    }
-    if (parseFloat(value) <= 0) {
-      setAmountError("Amount must be greater than 0.");
-      return false;
-    }
-
-    if (parseFloat(value) > balanceAmount.current) {
-      setAmountError("Amount exceeds your balance.");
-      return false;
-    }
-
-    return true;
-  };
-
-  console.log("Re-render");
 
   useMemo(() => {
     if (!keypair) return;
