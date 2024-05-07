@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { GraphQLResolveInfo } from "graphql";
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
@@ -25,6 +26,12 @@ export type Counter = {
 
 export type CreateCounterInput = {
   name: Scalars["String"]["input"];
+};
+
+export type GeminiResponse = {
+  __typename?: "GeminiResponse";
+  response: Scalars["String"]["output"];
+  url: Scalars["String"]["output"];
 };
 
 export type LoginResponse = {
@@ -70,10 +77,15 @@ export type MutationRemoveCounterByNameArgs = {
 
 export type Query = {
   __typename?: "Query";
+  askGemini: GeminiResponse;
   counter?: Maybe<Counter>;
   counters: Array<Counter>;
   getTokenPricesByTokenAddresses: Array<Token>;
   user?: Maybe<User>;
+};
+
+export type QueryAskGeminiArgs = {
+  url: Scalars["String"]["input"];
 };
 
 export type QueryCounterArgs = {
@@ -183,6 +195,7 @@ export type ResolversTypes = {
   Counter: ResolverTypeWrapper<Counter>;
   CreateCounterInput: CreateCounterInput;
   Float: ResolverTypeWrapper<Scalars["Float"]["output"]>;
+  GeminiResponse: ResolverTypeWrapper<GeminiResponse>;
   Int: ResolverTypeWrapper<Scalars["Int"]["output"]>;
   LoginResponse: ResolverTypeWrapper<LoginResponse>;
   LoginUserInput: LoginUserInput;
@@ -201,6 +214,7 @@ export type ResolversParentTypes = {
   Counter: Counter;
   CreateCounterInput: CreateCounterInput;
   Float: Scalars["Float"]["output"];
+  GeminiResponse: GeminiResponse;
   Int: Scalars["Int"]["output"];
   LoginResponse: LoginResponse;
   LoginUserInput: LoginUserInput;
@@ -218,6 +232,15 @@ export type CounterResolvers<
 > = {
   count?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
   name?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type GeminiResponseResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes["GeminiResponse"] = ResolversParentTypes["GeminiResponse"],
+> = {
+  response?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  url?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -271,6 +294,12 @@ export type QueryResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes["Query"] = ResolversParentTypes["Query"],
 > = {
+  askGemini?: Resolver<
+    ResolversTypes["GeminiResponse"],
+    ParentType,
+    ContextType,
+    RequireFields<QueryAskGeminiArgs, "url">
+  >;
   counter?: Resolver<
     Maybe<ResolversTypes["Counter"]>,
     ParentType,
@@ -308,6 +337,7 @@ export type UserResolvers<
 
 export type Resolvers<ContextType = any> = {
   Counter?: CounterResolvers<ContextType>;
+  GeminiResponse?: GeminiResponseResolvers<ContextType>;
   LoginResponse?: LoginResponseResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
