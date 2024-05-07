@@ -27,7 +27,7 @@ export class WebKernel implements Kernel {
     this.channel = channel;
 
     window.addEventListener("message", async ({ data }) => {
-      console.log(`[WebKernel/${this.channel}] Received message`, data);
+      // console.log(`[WebKernel/${this.channel}] Received message`, data);
       const message = data as Message;
 
       if (message.type === MessageType.Response) {
@@ -93,13 +93,13 @@ export class ChromeKernel implements Kernel {
     this.channel = channel;
     this.requestPool = new Map();
 
-    console.log(`[ChromeKernel/${this.channel}] initialized`);
+    // console.log(`[ChromeKernel/${this.channel}] initialized`);
 
     chrome.runtime.onConnect.addListener((port) => {
       if (port.name !== this.portName) return;
 
       port.onMessage.addListener(async (message: Message) => {
-        console.log(`[ChromeKernel/${this.channel}] Received message`, message, port.sender);
+        // console.log(`[ChromeKernel/${this.channel}] Received message`, message, port.sender);
 
         if (message.type === MessageType.Request && message.to === this.channel && this.handleRequest) {
           const response: Message = {
