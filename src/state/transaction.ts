@@ -1,4 +1,4 @@
-import { Token } from "@components/types";
+import { Token } from "@engine/types";
 import { proxy } from "valtio";
 
 export enum TransactionStatus {
@@ -58,10 +58,8 @@ export const transactionActions = {
     transactionState.senderPublicKey = "";
     transactionState.receiverPublicKey = "";
     transactionState.amount = "";
-    transactionState.fee = 0;
     transactionState.status = TransactionStatus.PENDING;
     transactionState.date = "";
-    transactionState.item = {} as Token;
     transactionState.signature = "";
   },
 };

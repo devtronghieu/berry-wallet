@@ -1,4 +1,4 @@
-import { Token, TokenMetadata } from "@components/types";
+import { Token, TokenMetadata } from "@engine/types";
 import { Metadata, PROGRAM_ID as METADATA_PROGRAM_ID } from "@metaplex-foundation/mpl-token-metadata";
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { PublicKey } from "@solana/web3.js";

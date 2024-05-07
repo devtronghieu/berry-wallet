@@ -1,4 +1,4 @@
-import { Token } from "@components/types";
+import { Token } from "@engine/types";
 import { getFriendlyAmount } from "@engine/utils";
 import { appState } from "@state/index";
 import { formatCurrency, getLocalLogo } from "@utils/general";

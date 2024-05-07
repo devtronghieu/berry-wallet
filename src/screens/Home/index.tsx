@@ -1,9 +1,9 @@
 import strawberry from "@assets/strawberry.svg";
 import FeatureButton from "@components/FeatureButton";
 import { TabBar, TokenList } from "@components/index";
-import { Token } from "@components/types";
 import { fetchTokens } from "@engine/tokens";
 import { swap } from "@engine/transaction/swap";
+import { Token } from "@engine/types";
 import { getFriendlyAmount } from "@engine/utils";
 import BottomSheet from "@screens/BottomSheet";
 import TransactionResult from "@screens/Result";

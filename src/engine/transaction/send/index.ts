@@ -1,5 +1,12 @@
 import { getConnection } from "@engine/connection";
-import { formatDate } from "@engine/utils";
+import { WRAPPED_SOL_MINT } from "@engine/constants";
+import { Token } from "@engine/types";
+import { convertDateToReadable } from "@engine/utils";
+import {
+  createAssociatedTokenAccountInstruction,
+  createTransferInstruction,
+  getAssociatedTokenAddress,
+} from "@solana/spl-token";
 import {
   Keypair,
   LAMPORTS_PER_SOL,
@@ -7,7 +14,6 @@ import {
   sendAndConfirmTransaction,
   SystemProgram,
   Transaction,
-  TransactionSignature,
 } from "@solana/web3.js";
 import { transactionActions, TransactionStatus } from "@state/transaction";
 
@@ -15,6 +21,14 @@ interface SendTransactionConfig {
   keypair: Keypair;
   receiverPublicKey: PublicKey;
   amount: string;
+  token: Token;
+}
+
+interface Account {
+  mint: PublicKey;
+  owner: PublicKey;
+  associatedToken: PublicKey;
+  payer: PublicKey;
 }
 
 export const constructSolTransaction = async (transactionConfig: SendTransactionConfig): Promise<Transaction> => {
@@ -29,25 +43,50 @@ export const constructSolTransaction = async (transactionConfig: SendTransaction
   );
 };
 
-export const getTransactionBySignature = async (signature: TransactionSignature) => {
-  try {
-    const connection = getConnection();
-    const transaction = await connection.getTransaction(signature);
-    return transaction;
-  } catch (error) {
-    console.error("Error fetching transaction by signature: ", error);
-    return null;
-  }
+const constructCreateATAInstruction = async ({ payer, associatedToken, owner, mint }: Account) => {
+  const connection = getConnection();
+  const associatedInfo = await connection.getAccountInfo(associatedToken);
+  if (associatedInfo) return;
+  return createAssociatedTokenAccountInstruction(payer, associatedToken, owner, mint);
+};
+
+export const constructSplTransaction = async (transactionConfig: SendTransactionConfig): Promise<Transaction> => {
+  const { keypair, receiverPublicKey, amount, token } = transactionConfig;
+  const fromTokenAccount = await getAssociatedTokenAddress(new PublicKey(token.mint), keypair.publicKey);
+  const toTokenAccount = await getAssociatedTokenAddress(new PublicKey(token.mint), receiverPublicKey);
+  const transaction = new Transaction();
+
+  const createATAInstruction = await constructCreateATAInstruction({
+    mint: new PublicKey(token.mint),
+    owner: receiverPublicKey,
+    associatedToken: toTokenAccount,
+    payer: keypair.publicKey,
+  });
+
+  if (createATAInstruction) transaction.add(createATAInstruction);
+  transaction.add(
+    createTransferInstruction(
+      fromTokenAccount,
+      toTokenAccount,
+      keypair.publicKey,
+      Math.pow(10, token.decimals) * parseFloat(amount),
+    ),
+  );
+
+  return transaction;
 };
 
 export const sendTransaction = async (transactionConfig: SendTransactionConfig) => {
   const connection = getConnection();
   try {
-    const transaction = await constructSolTransaction(transactionConfig);
-    transaction.recentBlockhash = (await connection.getRecentBlockhash()).blockhash;
+    let transaction;
+    if (transactionConfig.token.mint === WRAPPED_SOL_MINT)
+      transaction = await constructSolTransaction(transactionConfig);
+    else transaction = await constructSplTransaction(transactionConfig);
+    transaction.feePayer = transactionConfig.keypair.publicKey;
+    transaction.recentBlockhash = (await connection.getLatestBlockhash("finalized")).blockhash;
     const signature = await sendAndConfirmTransaction(connection, transaction, [transactionConfig.keypair]);
-    const transactionInfo = await getTransactionBySignature(signature);
-    transactionActions.setDate(formatDate(new Date((transactionInfo?.blockTime || 0) * 1000)));
+    transactionActions.setDate(convertDateToReadable(new Date()));
     transactionActions.setSignature(signature);
     transactionActions.setStatus(TransactionStatus.SUCCESS);
   } catch (error) {

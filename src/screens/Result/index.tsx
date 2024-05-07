@@ -1,4 +1,4 @@
-import { Token } from "@components/types";
+import { Token } from "@engine/types";
 import { transactionState } from "@state/transaction";
 import { getLocalLogo } from "@utils/general";
 import { FC, useMemo } from "react";

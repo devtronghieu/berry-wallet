@@ -1,6 +1,6 @@
 import TabBar from "@components/TabBar";
-import { Token } from "@components/types";
 import { fetchTransactionFee, sendTransaction } from "@engine/transaction/send";
+import { Token } from "@engine/types";
 import { getFriendlyAmount } from "@engine/utils";
 import { Keypair, PublicKey } from "@solana/web3.js";
 import { appState } from "@state/index";
@@ -12,8 +12,8 @@ import { useSnapshot } from "valtio";
 
 import ArrowRightBoldIcon from "@/icons/ArrowRightBoldIcon";
 
+import Select from "../../components/Select";
 import Input from "./Input";
-import Select from "./Select";
 
 interface Props {
   onSubmit: (type: string) => void;
@@ -24,6 +24,7 @@ const Send: FC<Props> = ({ onSubmit }) => {
   const { keypair, prices, tokens } = useSnapshot(appState);
   const balanceAmount = useRef<number>(0);
   const price = useRef<number>(0);
+  const symbol = useRef<string>("Unknown");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [receiverError, setReceiverError] = useState<string>("");
   const [amountError, setAmountError] = useState<string>("");
@@ -38,6 +39,7 @@ const Send: FC<Props> = ({ onSubmit }) => {
       keypair: keypair as Keypair,
       receiverPublicKey: new PublicKey(receiverPublicKey),
       amount,
+      token: tokens[selectedIndex] as Token,
     });
   };
 
@@ -104,9 +106,12 @@ const Send: FC<Props> = ({ onSubmit }) => {
     return true;
   };
 
+  console.log("Re-render");
+
   useMemo(() => {
     if (!keypair) return;
     fetchTransactionFee(keypair.publicKey);
+    console.log("fetchTransactionFee");
   }, [keypair]);
 
   useMemo(() => {
@@ -115,6 +120,8 @@ const Send: FC<Props> = ({ onSubmit }) => {
       tokens[selectedIndex]?.amount || "0",
       tokens[selectedIndex]?.decimals || 0,
     );
+    symbol.current = tokens[selectedIndex].metadata?.symbol || "Unknown";
+
     TxA.resetTransactionState();
     TxA.setItem(tokens[selectedIndex]);
     setAmountError("");
@@ -137,7 +144,9 @@ const Send: FC<Props> = ({ onSubmit }) => {
       <div className="text-secondary-500 font-semibold text-base py-10 flex flex-col gap-y-2">
         <p className="flex justify-between">
           <span>Balance</span>
-          <span>{balanceAmount.current} SOL</span>
+          <span>
+            {balanceAmount.current} {symbol.current}
+          </span>
         </p>
         <p className="flex justify-between">
           <span>Transaction fee</span>
