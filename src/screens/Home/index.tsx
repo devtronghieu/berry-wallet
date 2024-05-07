@@ -62,8 +62,8 @@ const HomeScreen = () => {
 
   const totalBalance = useMemo(() => {
     return tokens.reduce((acc, token) => {
-      const price = prices[getSafeMintAddressForPriceAPI(token.mint)] || 0;
-      const friendlyAmount = getFriendlyAmount(token.amount, token.decimals);
+      const price = prices[getSafeMintAddressForPriceAPI(token.accountData.mint)] || 0;
+      const friendlyAmount = getFriendlyAmount(token.accountData.amount, token.accountData.decimals);
       const totalPrice = friendlyAmount * price;
       return acc + totalPrice;
     }, 0);

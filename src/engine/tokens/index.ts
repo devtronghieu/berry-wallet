@@ -100,10 +100,12 @@ export const fetchOnchainData = async (pubkey: PublicKey) => {
   const balance = await connection.getBalance(pubkey);
   tokens.push({
     pubkey,
-    mint: WRAPPED_SOL_MINT,
-    owner: pubkey.toBase58(),
-    amount: balance.toString(),
-    decimals: 9,
+    accountData: {
+      mint: WRAPPED_SOL_MINT,
+      owner: pubkey.toBase58(),
+      amount: balance.toString(),
+      decimals: 9,
+    },
   });
 
   // SPL Tokens
@@ -125,15 +127,18 @@ export const fetchOnchainData = async (pubkey: PublicKey) => {
           mint: parsedData.parsed.info.mint,
           owner: parsedData.parsed.info.owner,
           amount: parsedData.parsed.info.tokenAmount.amount,
+          decimals: parsedData.parsed.info.tokenAmount.decimals,
         },
       });
     } else {
       tokens.push({
         pubkey: item.pubkey,
-        mint: parsedData.parsed.info.mint,
-        owner: parsedData.parsed.info.owner,
-        amount: parsedData.parsed.info.tokenAmount.amount,
-        decimals: parsedData.parsed.info.tokenAmount.decimals,
+        accountData: {
+          mint: parsedData.parsed.info.mint,
+          owner: parsedData.parsed.info.owner,
+          amount: parsedData.parsed.info.tokenAmount.amount,
+          decimals: parsedData.parsed.info.tokenAmount.decimals,
+        },
       });
     }
   });
@@ -141,7 +146,7 @@ export const fetchOnchainData = async (pubkey: PublicKey) => {
   // Token Metadata
   const tokenMetadataPromises: Promise<ATAMetadata | undefined>[] = [];
   tokens.forEach((token) => {
-    tokenMetadataPromises.push(fetchTokenMetadata(token.mint));
+    tokenMetadataPromises.push(fetchTokenMetadata(token.accountData.mint));
   });
   const tokenMetadataList = await Promise.all(tokenMetadataPromises);
   tokenMetadataList.forEach((metadata, index) => {
@@ -198,10 +203,12 @@ export const getLocalToken = async (mint: string) => {
 
   const token: Token = {
     pubkey: new PublicKey(localToken.address),
-    mint: localToken.address,
-    owner: "",
-    amount: "0",
-    decimals: localToken.decimals,
+    accountData: {
+      mint: localToken.address,
+      owner: "",
+      amount: "0",
+      decimals: localToken.decimals,
+    },
     metadata: {
       name: localToken.name,
       symbol: localToken.symbol,

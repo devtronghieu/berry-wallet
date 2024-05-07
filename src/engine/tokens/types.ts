@@ -6,6 +6,7 @@ export interface ATA {
     mint: string;
     owner: string;
     amount: string;
+    decimals: number;
   };
 }
 
@@ -15,14 +16,9 @@ export interface ATAMetadata {
   image: string;
 }
 
-export interface Token {
-  pubkey: PublicKey;
-  mint: string;
-  owner: string;
-  amount: string;
-  decimals: number;
+export type Token = ATA & {
   metadata?: ATAMetadata;
-}
+};
 
 export type CollectibleMetadata = ATAMetadata & {
   collectionPubkey?: PublicKey;

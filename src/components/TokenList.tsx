@@ -19,12 +19,12 @@ export const TokenList: FC<Props> = ({ className, tokens }) => {
       {tokens.map((token) => {
         const symbol = token.metadata?.symbol || "Unknown";
         const logo = token.metadata?.image || getLocalLogo(symbol);
-        const friendlyAmount = getFriendlyAmount(token.amount, token.decimals);
-        const price = prices[getSafeMintAddressForPriceAPI(token.mint)] || 0;
+        const friendlyAmount = getFriendlyAmount(token.accountData.amount, token.accountData.decimals);
+        const price = prices[getSafeMintAddressForPriceAPI(token.accountData.mint)] || 0;
         const totalPrice = friendlyAmount * price;
 
         return (
-          <div key={token.mint} className="token-item">
+          <div key={token.pubkey.toBase58()} className="token-item">
             <div className="flex gap-1.5 items-center">
               <img src={logo} alt={token.metadata?.name || "Unknown"} className="w-8 h-8 rounded-full" />
               <div className="flex flex-col">

@@ -67,10 +67,10 @@ const Send: FC<Props> = ({ onSubmit }) => {
   }, [keypair]);
 
   useMemo(() => {
-    price.current = prices[getSafeMintAddressForPriceAPI(tokens[selectedIndex]?.mint)] || 0;
+    price.current = prices[getSafeMintAddressForPriceAPI(tokens[selectedIndex]?.accountData.mint)] || 0;
     balanceAmount.current = getFriendlyAmount(
-      tokens[selectedIndex]?.amount || "0",
-      tokens[selectedIndex]?.decimals || 0,
+      tokens[selectedIndex]?.accountData.amount || "0",
+      tokens[selectedIndex]?.accountData.decimals || 0,
     );
     symbol.current = tokens[selectedIndex].metadata?.symbol || "Unknown";
 

@@ -27,7 +27,7 @@ export const useStartup = () => {
 
   useEffect(() => {
     const fetchPrices = async () => {
-      const mintAddresses = tokens.map((token) => getSafeMintAddressForPriceAPI(token.mint));
+      const mintAddresses = tokens.map((token) => getSafeMintAddressForPriceAPI(token.accountData.mint));
       const prices = (await queryTokenPrice(mintAddresses)) as {
         getTokenPricesByTokenAddresses: GqlToken[];
       };
@@ -48,7 +48,7 @@ export const useStartup = () => {
       const subscriptionId = connection.onAccountChange(token.pubkey, async (info) => {
         const isSOL = info.data.byteLength === 0;
         if (isSOL) {
-          appState.tokens[0].amount = info.lamports.toString();
+          appState.tokens[0].accountData.amount = info.lamports.toString();
         } else {
           const parsedAccountValue = (await connection.getParsedAccountInfo(token.pubkey, "confirmed")).value;
           if (!parsedAccountValue) return;
@@ -60,7 +60,7 @@ export const useStartup = () => {
             console.log("--> NFT Change", parsedData);
           } else {
             const ataIndex = appState.tokens.findIndex((t) => t.pubkey.equals(token.pubkey));
-            appState.tokens[ataIndex].amount = parsedData.parsed.info.tokenAmount.amount;
+            appState.tokens[ataIndex].accountData.amount = parsedData.parsed.info.tokenAmount.amount;
           }
         }
       });

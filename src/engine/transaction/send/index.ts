@@ -52,12 +52,12 @@ const constructCreateATAInstruction = async ({ payer, associatedToken, owner, mi
 
 export const constructSplTransaction = async (transactionConfig: SendTransactionConfig): Promise<Transaction> => {
   const { keypair, receiverPublicKey, amount, token } = transactionConfig;
-  const fromTokenAccount = await getAssociatedTokenAddress(new PublicKey(token.mint), keypair.publicKey);
-  const toTokenAccount = await getAssociatedTokenAddress(new PublicKey(token.mint), receiverPublicKey);
+  const fromTokenAccount = await getAssociatedTokenAddress(new PublicKey(token.accountData.mint), keypair.publicKey);
+  const toTokenAccount = await getAssociatedTokenAddress(new PublicKey(token.accountData.mint), receiverPublicKey);
   const transaction = new Transaction();
 
   const createATAInstruction = await constructCreateATAInstruction({
-    mint: new PublicKey(token.mint),
+    mint: new PublicKey(token.accountData.mint),
     owner: receiverPublicKey,
     associatedToken: toTokenAccount,
     payer: keypair.publicKey,
@@ -69,7 +69,7 @@ export const constructSplTransaction = async (transactionConfig: SendTransaction
       fromTokenAccount,
       toTokenAccount,
       keypair.publicKey,
-      Math.pow(10, token.decimals) * parseFloat(amount),
+      Math.pow(10, token.accountData.decimals) * parseFloat(amount),
     ),
   );
 
@@ -80,7 +80,7 @@ export const sendTransaction = async (transactionConfig: SendTransactionConfig) 
   const connection = getConnection();
   try {
     let transaction;
-    if (transactionConfig.token.mint === WRAPPED_SOL_MINT)
+    if (transactionConfig.token.accountData.mint === WRAPPED_SOL_MINT)
       transaction = await constructSolTransaction(transactionConfig);
     else transaction = await constructSplTransaction(transactionConfig);
     transaction.feePayer = transactionConfig.keypair.publicKey;
