@@ -1,7 +1,7 @@
-import { Token } from "@engine/types";
+import { Token } from "@components/types";
 import { getFriendlyAmount } from "@engine/utils";
 import { appState } from "@state/index";
-import { formatCurrency,getLocalLogo } from "@utils/general";
+import { formatCurrency, getLocalLogo } from "@utils/general";
 import { getSafeMintAddressForPriceAPI } from "@utils/tokens";
 import { FC } from "react";
 import { useSnapshot } from "valtio";
