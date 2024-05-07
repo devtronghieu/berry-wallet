@@ -14,7 +14,7 @@ export interface TransactionState {
   fee: number;
   status: TransactionStatus;
   date: string;
-  item: Token;
+  token: Token;
   signature: string;
 }
 
@@ -25,7 +25,7 @@ export const transactionState = proxy<TransactionState>({
   fee: 0,
   status: TransactionStatus.PENDING,
   date: "",
-  item: {} as Token,
+  token: {} as Token,
   signature: "",
 });
 
@@ -48,8 +48,8 @@ export const transactionActions = {
   setDate: (date: string) => {
     transactionState.date = date;
   },
-  setItem: (item: Token) => {
-    transactionState.item = item;
+  setToken: (token: Token) => {
+    transactionState.token = token;
   },
   setSignature: (signature: string) => {
     transactionState.signature = signature;

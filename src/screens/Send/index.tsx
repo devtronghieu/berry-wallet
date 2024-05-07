@@ -75,7 +75,7 @@ const Send: FC<Props> = ({ onSubmit }) => {
     symbol.current = tokens[selectedIndex].metadata?.symbol || "Unknown";
 
     TxA.resetTransactionState();
-    TxA.setItem(tokens[selectedIndex]);
+    TxA.setToken(tokens[selectedIndex]);
     setAmountError("");
     setReceiverError("");
     setIsValidReceiver(false);

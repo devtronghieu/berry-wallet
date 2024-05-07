@@ -27,7 +27,7 @@ const Select: FC<Props> = ({ items, selectedItemIndex, onSelectedItem }) => {
 
   const handleSelectOption = (index: number) => {
     onSelectedItem(index);
-    TxA.setItem(items[index]);
+    TxA.setToken(items[index]);
     setIsOpen(false);
   };
   return (

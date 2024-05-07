@@ -7,7 +7,7 @@ import { useSnapshot } from "valtio";
 import TransactionDetails from "./TransactionDetails";
 
 const TransactionResult: FC = () => {
-  const { amount, receiverPublicKey, date, status, fee, item, signature } = useSnapshot(transactionState);
+  const { amount, receiverPublicKey, date, status, fee, token, signature } = useSnapshot(transactionState);
   const transactionDetails = useMemo(() => {
     return [
       { name: "To", value: `${receiverPublicKey.slice(0, 4)}...${receiverPublicKey.slice(-4)}` },
@@ -24,7 +24,7 @@ const TransactionResult: FC = () => {
     return { symbol, logo };
   };
 
-  const { symbol, logo } = getSymbolAndLogo(item);
+  const { symbol, logo } = getSymbolAndLogo(token);
 
   return (
     <TransactionDetails transactionDetails={transactionDetails}>
