@@ -74,6 +74,8 @@ export const fetchTokens = async (pubkey: PublicKey) => {
     "confirmed",
   );
   parsedData.value.forEach((item) => {
+    if (!item.account.data.parsed.info.tokenAmount.decimals) return; // skip spl-token with decimals=0 (NFT case)
+
     tokens.push({
       pubkey: item.pubkey,
       mint: item.account.data.parsed.info.mint,
@@ -133,8 +135,8 @@ export const getLocalToken = async (mint: string) => {
   const response = await fetch("/localTokenList.json");
   const tokenList = await response.json();
 
-  const localToken = tokenList.tokens.find((token) => {
-    if (token.address === mint){
+  const localToken = tokenList.tokens.find((token: { address: string }) => {
+    if (token.address === mint) {
       return token;
     }
   });
@@ -152,7 +154,7 @@ export const getLocalToken = async (mint: string) => {
       symbol: localToken.symbol,
       logo: localToken.logoURI,
     },
-  }
-  
+  };
+
   return token;
-}
+};
