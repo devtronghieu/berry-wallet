@@ -40,7 +40,7 @@
   }
 
   .gradient-button {
-    @apply button gradient-background hover:opacity-90 transition-opacity;
+    @apply button gradient-background hover:opacity-90 transition-opacity cursor-pointer;
   }
 
   .disabled-button {
@@ -65,6 +65,14 @@
 
   .option {
     @apply w-full px-4 py-2 rounded-xl outline-none bg-primary-300 text-primary-100 placeholder:text-primary-100 font-semibold  h-10 flex items-center cursor-pointer justify-between;
+  }
+
+  .select-option {
+    @apply flex items-center justify-between gap-2.5 px-5 py-2 rounded-xl cursor-pointer;
+  }
+
+  .select-option:hover {
+    @apply bg-primary-200;
   }
 
   .rounded-button {
@@ -102,11 +110,19 @@
   }
 
   .token-list {
-    @apply w-full flex-grow overflow-y-scroll flex flex-col gap-3;
+    @apply w-full flex-grow overflow-y-auto flex flex-col gap-3;
   }
 
   .token-item {
     @apply w-full rounded-xl flex items-center justify-between px-4 py-3 bg-primary-200;
+  }
+
+  .transaction-result-item {
+    @apply flex justify-between text-sm text-secondary-500 font-semibold p-[14px] border-b-[1px] border-primary-400;
+  }
+
+  .transaction-result-item:last-child {
+    @apply border-b-0;
   }
 
   .no-scrollbar {
@@ -121,4 +137,24 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Bottom sheet  */
+.react-modal-sheet-container {
+  @apply bg-primary-100 !rounded-tr-3xl !rounded-tl-3xl;
+  height: 572px !important;
+}
+
+.react-modal-sheet-content {
+  @apply bg-primary-100 !rounded-tr-3xl !rounded-tl-3xl;
 }

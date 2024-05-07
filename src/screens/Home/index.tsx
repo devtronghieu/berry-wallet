@@ -1,34 +1,60 @@
-import "./index.css";
-
 import strawberry from "@assets/strawberry.svg";
-import { FeatureButton, TabBar, TokenList } from "@components/index";
+import { FeatureButton } from "@components/FeatureButton";
+import { TabBar, TokenList } from "@components/index";
 import { fetchTokens } from "@engine/tokens";
 import { Token } from "@engine/tokens/types";
 import { swap } from "@engine/transaction/swap";
 import { getFriendlyAmount } from "@engine/utils";
+import BottomSheet from "@screens/BottomSheet";
 import History from "@screens/History";
+import TransactionResult from "@screens/Result";
+import Send from "@screens/Send";
 import { Keypair } from "@solana/web3.js";
 import { appActions, appState } from "@state/index";
+import { formatCurrency } from "@utils/general";
 import { Token as GqlToken } from "@utils/gqlTypes";
 import { queryTokenPrice } from "@utils/graphql";
 import { getSafeMintAddressForPriceAPI } from "@utils/tokens";
-import { useEffect, useMemo } from "react";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSnapshot } from "valtio";
 
-import { CopyIcon, EyeCloseIcon, EyeOpenIcon, SendIcon, SettingIcon, SwapIcon, WalletIcon } from "@/icons/index";
+import CopyIcon from "@/icons/Copy";
+import EyeCloseIcon from "@/icons/EyeClose";
+import EyeOpenIcon from "@/icons/EyeOpen";
+import { SendIcon, SettingIcon, SwapIcon, WalletIcon } from "@/icons/index";
 
 import HoveredAddress from "./HoveredAddress";
-
-function formatCurrency(num: number) {
-  return num.toLocaleString("en-US", { style: "currency", currency: "USD" });
-}
 
 const HomeScreen = () => {
   const { keypair, tokens, prices } = useSnapshot(appState);
   const [isWalletHovered, setIsWalletHovered] = useState<boolean>(false);
   const [dataBlurred, setDataBlurred] = useState<boolean>(true);
+  const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("Tokens");
+  const [bottomSheetType, setBottomSheetType] = useState<string>("Send");
+
+  const handleOnClick = (type: string) => {
+    setBottomSheetType(type);
+    setModalIsOpen(true);
+  };
+
+  const CurrentBottomSheetChildren = useMemo(() => {
+    const BottomSheetChidren: Record<string, React.ElementType> = {
+      Send() {
+        return <Send onSubmit={setBottomSheetType} />;
+      },
+      Receive() {
+        return <div>Receive</div>;
+      },
+      Swap() {
+        return <div>Swap</div>;
+      },
+      Transaction() {
+        return <TransactionResult />;
+      },
+    };
+    return BottomSheetChidren[bottomSheetType];
+  }, [bottomSheetType]);
 
   const navOnClickList = useMemo(() => {
     return [() => setActiveTab("Tokens"), () => setActiveTab("Collectibles"), () => setActiveTab("Activities")];
@@ -116,15 +142,19 @@ const HomeScreen = () => {
             {formatCurrency(totalBalance)}
           </h1>
         </div>
-
         <div className="mt-6 flex items-center gap-10">
-          <FeatureButton Icon={SendIcon} title="Send" />
-          <FeatureButton Icon={WalletIcon} title="Receive" />
-          <FeatureButton Icon={SwapIcon} title="Swap" onClick={handleSwap} />
+          <FeatureButton Icon={SendIcon} title="Send" onClick={() => handleOnClick("Send")} />
+          <FeatureButton Icon={WalletIcon} title="Receive" onClick={() => handleOnClick("Receive")} />
+          <FeatureButton
+            Icon={SwapIcon}
+            title="Swap"
+            onClick={() => {
+              handleOnClick("Swap");
+              handleSwap();
+            }}
+          />
         </div>
-
         <TabBar className="mt-4" navTitle={["Tokens", "Collectibles", "Activities"]} navOnClick={navOnClickList} />
-
         {activeTab === "Tokens" ? (
           <TokenList className="mt-4" tokens={tokens as Token[]} />
         ) : activeTab === "Collectibles" ? (
@@ -133,6 +163,10 @@ const HomeScreen = () => {
           <History />
         )}
       </div>
+
+      <BottomSheet title={bottomSheetType} isOpen={modalIsOpen} onClose={() => setModalIsOpen(false)}>
+        <CurrentBottomSheetChildren />
+      </BottomSheet>
     </div>
   );
 };

@@ -1,8 +1,7 @@
-import solLogo from "@assets/tokens/sol.svg";
-import unknownLogo from "@assets/tokens/unknown.svg";
 import { Token } from "@engine/tokens/types";
 import { getFriendlyAmount } from "@engine/utils";
 import { appState } from "@state/index";
+import { formatCurrency, getLocalLogo } from "@utils/general";
 import { getSafeMintAddressForPriceAPI } from "@utils/tokens";
 import { FC } from "react";
 import { useSnapshot } from "valtio";
@@ -11,19 +10,6 @@ interface Props {
   className?: string;
   tokens: Token[];
 }
-
-const formatCurrency = (num: number) => {
-  return num.toLocaleString("en-US", { style: "currency", currency: "USD" });
-};
-
-const getLocalLogo = (symbol: string) => {
-  switch (symbol) {
-    case "SOL":
-      return solLogo;
-    default:
-      return unknownLogo;
-  }
-};
 
 export const TokenList: FC<Props> = ({ className, tokens }) => {
   const { prices } = useSnapshot(appState);

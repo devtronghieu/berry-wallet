@@ -1,10 +1,10 @@
+import { Token, TokenMetadata } from "@engine/tokens/types";
 import { Metadata, PROGRAM_ID as METADATA_PROGRAM_ID } from "@metaplex-foundation/mpl-token-metadata";
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { PublicKey } from "@solana/web3.js";
 
 import { getConnection } from "../connection";
 import { USDC_DEV_MINT, WRAPPED_SOL_MINT } from "../constants";
-import { Token, TokenMetadata } from "./types";
 
 const getBackupMetadata = (mint: string): TokenMetadata | undefined => {
   switch (mint) {

@@ -30,7 +30,7 @@ export default {
         500: "#4A4A4A",
       },
       error: "#EC044E",
-      success: "#30A13F"
+      success: "#30A13F",
     },
     extend: {
       fontFamily: {
