@@ -1,10 +1,13 @@
 import { WebKernel } from "@messaging/core";
-import { Channel, DAppPayload, Event } from "@messaging/types";
+import { Channel, Event } from "@messaging/types";
 import { SolanaSignInInput, SolanaSignInOutput } from "@solana/wallet-standard-features";
 import { PublicKey, SendOptions, Transaction, VersionedTransaction } from "@solana/web3.js";
+import { decode, encode } from "bs58";
 import { EventEmitter } from "eventemitter3";
 
 import { Berry } from "@/wallet-standard/window";
+
+import { ConnectPayload, SignTransactionPayload } from "./types";
 
 export class BerryImpl extends EventEmitter implements Berry {
   publicKey: PublicKey | null;
@@ -17,24 +20,19 @@ export class BerryImpl extends EventEmitter implements Berry {
   }
 
   async connect(options?: { onlyIfTrusted?: boolean | undefined } | undefined): Promise<{ publicKey: PublicKey }> {
-    try {
-      const response = await this.webKernel.sendRequest({
-        destination: Channel.Content,
-        payload: {
-          event: Event.Connect,
-          data: options,
-        } as DAppPayload,
-      });
-      this.publicKey = new PublicKey(response.payload as string);
-      return { publicKey: this.publicKey };
-    } catch (error) {
-      console.error("Error connecting to wallet", error);
-      throw error;
-    }
+    const response = await this.webKernel.sendRequest({
+      destination: Channel.Content,
+      payload: {
+        event: Event.Connect,
+        options,
+      } as ConnectPayload,
+    });
+    this.publicKey = new PublicKey(response.payload as string);
+    return { publicKey: this.publicKey };
   }
 
-  disconnect(): Promise<void> {
-    throw new Error("Method disconnect not implemented.");
+  async disconnect(): Promise<void> {
+    this.publicKey = null;
   }
 
   signAndSendTransaction<T extends VersionedTransaction | Transaction>(
@@ -45,9 +43,21 @@ export class BerryImpl extends EventEmitter implements Berry {
     throw new Error("Method not implemented.");
   }
 
-  signTransaction<T extends VersionedTransaction | Transaction>(transaction: T): Promise<T> {
-    console.log("signTransaction", transaction);
-    throw new Error("Method not implemented.");
+  async signTransaction<T extends VersionedTransaction | Transaction>(transaction: T): Promise<T> {
+    const message = await this.webKernel.sendRequest({
+      destination: Channel.Content,
+      payload: {
+        event: Event.SignTransaction,
+        encodedTransaction: encode(transaction.serialize()),
+      } as SignTransactionPayload,
+    });
+
+    const encodedSignedTransaction = message.payload as string;
+    const signedTransaction = decode(encodedSignedTransaction);
+
+    console.log("signedTransaction", signedTransaction, encodedSignedTransaction);
+
+    return VersionedTransaction.deserialize(signedTransaction) as T;
   }
 
   signAllTransactions<T extends VersionedTransaction | Transaction>(transactions: T[]): Promise<T[]> {
@@ -60,6 +70,7 @@ export class BerryImpl extends EventEmitter implements Berry {
     throw new Error("Method not implemented.");
   }
 
+  // NOTE: I'm not sure if we need to implement this method, so I have removed it from the wallet-standard-features package. We may need to add it back if it is required.
   async signIn(input?: SolanaSignInInput | undefined): Promise<SolanaSignInOutput> {
     console.log("signIn", input);
     throw new Error("Method signIn not implemented.");

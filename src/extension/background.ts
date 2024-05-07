@@ -1,17 +1,54 @@
 import { ChromeKernel } from "@messaging/core";
-import { Channel, DAppPayload, Event } from "@messaging/types";
-import { Keypair } from "@solana/web3.js";
+import { Channel, Event } from "@messaging/types";
 
-console.log("Background script loaded");
+import { ConnectPayload, DAppPayload, SignTransactionPayload } from "./types";
+import { openPopup } from "./utils";
 
 const chromeKernel = new ChromeKernel(Channel.Background);
 
-chromeKernel.handleRequest = async (request) => {
-  const payload = request.payload as DAppPayload;
+let currentPublicKey: string | null = null;
 
-  switch (payload.event) {
+chromeKernel.handleRequest = async (request) => {
+  switch ((request.payload as DAppPayload).event) {
     case Event.Connect: {
-      return Keypair.generate().publicKey.toBase58();
+      const payload = request.payload as ConnectPayload;
+
+      if (payload.options?.onlyIfTrusted && currentPublicKey) {
+        return currentPublicKey;
+      }
+
+      const resolveId = crypto.randomUUID();
+
+      openPopup(payload.event, resolveId);
+
+      const response = await chromeKernel.waitForResolve({
+        id: resolveId,
+        contextData: {
+          sender: chromeKernel.currentSender,
+        },
+      });
+
+      currentPublicKey = response.payload as string;
+
+      return response.payload;
+    }
+
+    case Event.SignTransaction: {
+      const payload = request.payload as SignTransactionPayload;
+
+      const resolveId = crypto.randomUUID();
+
+      openPopup(payload.event, resolveId);
+
+      const response = await chromeKernel.waitForResolve({
+        id: resolveId,
+        contextData: {
+          sender: chromeKernel.currentSender,
+          encodedTransaction: payload.encodedTransaction,
+        },
+      });
+
+      return response.payload;
     }
 
     default:

@@ -4,12 +4,11 @@ import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { PublicKey } from "@solana/web3.js";
 
 import { getConnection } from "./connection";
-import { WRAPPED_SOL_MINT } from "./constants";
+import { USDC_DEV_MINT, WRAPPED_SOL_MINT } from "./constants";
 
 const getBackupMetadata = (mint: string): TokenMetadata | undefined => {
   switch (mint) {
-    // USDC Dev Coin
-    case "Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr":
+    case USDC_DEV_MINT:
       return {
         name: "USD Dev Coin",
         symbol: "USDC",
@@ -95,4 +94,37 @@ export const fetchTokens = async (pubkey: PublicKey) => {
   });
 
   return tokens;
+};
+
+interface ParsedAccountInfoData {
+  parsed: {
+    info: {
+      decimals: number;
+      freezeAuthority: string;
+      isInitialized: boolean;
+      mintAuthority: string;
+      supply: string;
+    };
+    type: string; // e.g. "mint"
+  };
+  program: string; // e.g. "spl-token"
+  space: number;
+}
+
+const getBackupDecimalsByMint = (mint: string) => {
+  switch (mint) {
+    case WRAPPED_SOL_MINT:
+      return 9;
+    case USDC_DEV_MINT:
+      return 6;
+    default:
+      return 0;
+  }
+};
+
+export const getTokenDecimalsByMint = async (mint: string) => {
+  const connection = getConnection();
+  const mintData = await connection.getParsedAccountInfo(new PublicKey(mint));
+  if (!(mintData.value?.data as ParsedAccountInfoData).parsed) return getBackupDecimalsByMint(mint);
+  return (mintData.value!.data as ParsedAccountInfoData).parsed.info.decimals;
 };

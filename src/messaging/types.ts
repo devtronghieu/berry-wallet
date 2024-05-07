@@ -17,14 +17,21 @@ export type MessageId = string;
 
 export type Payload = unknown;
 
-export interface DAppPayload {
-  event: Event;
-  data?: unknown;
+export type ContextData = unknown;
+
+export interface ResolverContext {
+  resolve: (message: Message) => void;
+  reject: (error: Error) => void;
+  data?: ContextData;
 }
 
 export enum MessageType {
   Request = "request",
   Response = "response",
+  Reject = "reject",
+  ContextData = "context-data",
+  CrossResolve = "cross-resolve",
+  CrossReject = "cross-reject",
 }
 
 export interface Message {
@@ -37,9 +44,12 @@ export interface Message {
 
 export type SendRequestSignature = (params: { destination: Channel; payload: Payload }) => Promise<Message>;
 
-export type HandleRequestSignature = (message: Message) => Promise<Payload>;
+export type WaitForResolveSignature = (params: { id: MessageId; contextData?: ContextData }) => Promise<Message>;
 
-export interface ResolverContext {
-  resolve: (message: Message) => void;
-  reject: (error: Error) => void;
-}
+export type RequestContextDataSignature = (params: { from: Channel; id: MessageId }) => ContextData;
+
+export type CrossResolveSignature = (params: { id: MessageId; destination: Channel; payload: Payload }) => void;
+
+export type CrossRejectSignature = (params: { id: MessageId; destination: Channel; errorMessage: string }) => void;
+
+export type HandleRequestSignature = (message: Message) => Promise<Payload>;

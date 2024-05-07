@@ -6,13 +6,16 @@ import HomeScreen from "@screens/Home/index.tsx";
 import ImportPrivateKeyScreen from "@screens/ImportPrivateKey.tsx";
 import ImportSeedPhraseScreen from "@screens/ImportSeedPhrase";
 import NotFoundScreen from "@screens/NotFound.tsx";
-import RequestsScreen from "@screens/Requests.tsx";
+import RequestConnectScreen from "@screens/Request/Connect.tsx";
+import RequestScreen from "@screens/Request/index.tsx";
+import RequestSignMessageScreen from "@screens/Request/SignMessage.tsx";
+import RequestSignTransactionScreen from "@screens/Request/SignTransaction.tsx";
 import SignInScreen from "@screens/SignIn.tsx";
 import UnlockWalletScreen from "@screens/UnlockWallet.tsx";
 import { Route } from "@utils/routes.ts";
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { createHashRouter,RouterProvider } from "react-router-dom";
+import { createHashRouter, RouterProvider } from "react-router-dom";
 
 import App from "./App.tsx";
 
@@ -31,8 +34,22 @@ const router = createHashRouter([
         index: true,
       },
       {
-        path: `${Route.Requests}/:event`,
-        element: <RequestsScreen />,
+        path: Route.Request,
+        element: <RequestScreen />,
+        children: [
+          {
+            path: `${Route.RequestConnect}/:messageId`,
+            element: <RequestConnectScreen />,
+          },
+          {
+            path: `${Route.RequestSignMessage}/:messageId`,
+            element: <RequestSignMessageScreen />,
+          },
+          {
+            path: `${Route.RequestSignTransaction}/:messageId`,
+            element: <RequestSignTransactionScreen />,
+          },
+        ],
       },
     ],
   },
