@@ -3,9 +3,10 @@ import "./index.css";
 import strawberry from "@assets/strawberry.svg";
 import { FeatureButton, TabBar, TokenList } from "@components/index";
 import { fetchTokens } from "@engine/tokens";
+import { Token } from "@engine/tokens/types";
 import { swap } from "@engine/transaction/swap";
-import { Token } from "@engine/types";
 import { getFriendlyAmount } from "@engine/utils";
+import History from "@screens/History";
 import { Keypair } from "@solana/web3.js";
 import { appActions, appState } from "@state/index";
 import { Token as GqlToken } from "@utils/gqlTypes";
@@ -129,7 +130,7 @@ const HomeScreen = () => {
         ) : activeTab === "Collectibles" ? (
           <div>Collectibles</div>
         ) : (
-          <div>Activities</div>
+          <History />
         )}
       </div>
     </div>

@@ -1,5 +1,5 @@
 import { deriveKeypair } from "@engine/keypair";
-import { getActiveKeypairIndex, getPassword, getPasswordExpiredAt, upsertPasswordExpiredAt } from "@engine/store";
+import { getActiveKeypairIndex, getPassword, getPasswordExpiredAt, upsertPasswordExpiredAt } from "@engine/storage";
 import { appActions } from "@state/index";
 import { hash } from "@utils/crypto";
 import { Route } from "@utils/routes";
