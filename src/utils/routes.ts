@@ -10,4 +10,5 @@ export enum Route {
   RequestConnect = "/request/connect",
   RequestSignMessage = "/request/sign-message",
   RequestSignTransaction = "/request/sign-transaction",
+  RequestSignAndSendTransaction = "/request/sign-and-send-transaction",
 }

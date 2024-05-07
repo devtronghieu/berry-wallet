@@ -1,23 +1,24 @@
 import unknownLogo from "@assets/tokens/unknown.svg";
-import { signMessage } from "@engine/transaction/sign";
+import { signAndSendTransaction } from "@engine/transaction/sign";
 import { ChromeKernel } from "@messaging/core";
 import { Channel, Message } from "@messaging/types";
-import { Keypair } from "@solana/web3.js";
+import { Keypair, SendOptions } from "@solana/web3.js";
 import { appState } from "@state/index";
-import { decode, encode } from "bs58";
+import { decode } from "bs58";
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useSnapshot } from "valtio";
 
-interface SignMessageContextData {
+interface SignAndSendTransactionContextData {
   sender: chrome.runtime.MessageSender;
-  encodedMessage: string;
+  encodedTransaction: string;
+  options: SendOptions | undefined;
 }
 
-const RequestSignMessageScreen = () => {
+const RequestSignAndSendTransactionScreen = () => {
   const { messageId } = useParams<{ messageId: string }>();
   const { keypair } = useSnapshot(appState);
-  const [payload, setPayload] = useState<SignMessageContextData>();
+  const [payload, setPayload] = useState<SignAndSendTransactionContextData>();
   const chromeKernel = useMemo(() => new ChromeKernel(Channel.Popup), []);
 
   useEffect(() => {
@@ -29,22 +30,24 @@ const RequestSignMessageScreen = () => {
         id: messageId,
       })) as Message;
 
-      setPayload(message.payload as SignMessageContextData);
+      setPayload(message.payload as SignAndSendTransactionContextData);
     };
 
     requestContextData().catch(console.error);
   }, [chromeKernel, messageId]);
 
-  const handleSignMessage = () => {
+  const handleSignAndSendTransaction = async () => {
     if (!keypair || !messageId || !payload) return;
 
     try {
-      const signatureBytes = signMessage(keypair as Keypair, decode(payload.encodedMessage));
+      const serializedTransaction = decode(payload.encodedTransaction);
+
+      const signature = await signAndSendTransaction(keypair as Keypair, serializedTransaction);
 
       chromeKernel.crossResolve({
         id: messageId,
         destination: Channel.Background,
-        payload: encode(signatureBytes),
+        payload: signature,
       });
     } catch (error) {
       console.log("Error signing transaction", error);
@@ -72,7 +75,7 @@ const RequestSignMessageScreen = () => {
 
   return (
     <div>
-      <h1>Request Sign Message Screen</h1>
+      <h1>Request Sign and Send Transaction Screen</h1>
 
       <div className="flex items-center gap-2">
         <img src={payload.sender?.tab?.favIconUrl || unknownLogo} alt="Sender" className="w-8 h-8 rounded-full" />
@@ -83,7 +86,7 @@ const RequestSignMessageScreen = () => {
         <button className="gradient-button" onClick={handleReject}>
           Cancel
         </button>
-        <button className="gradient-button" onClick={handleSignMessage}>
+        <button className="gradient-button" onClick={handleSignAndSendTransaction}>
           Sign
         </button>
       </div>
@@ -91,4 +94,4 @@ const RequestSignMessageScreen = () => {
   );
 };
 
-export default RequestSignMessageScreen;
+export default RequestSignAndSendTransactionScreen;
