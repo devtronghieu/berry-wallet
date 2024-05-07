@@ -1,29 +1,26 @@
-import { Token } from "@engine/tokens/types";
+import { CollectionMap, Token } from "@engine/tokens/types";
 import { Keypair } from "@solana/web3.js";
 import { EncryptedData } from "@utils/crypto";
 import { proxy } from "valtio";
 
 export interface AppState {
-  startingUp: boolean;
   network: "mainnet" | "devnet";
   encryptedSeedPhrase?: EncryptedData;
   keypair?: Keypair;
   hashedPassword?: string;
   tokens: Token[];
+  collectionMap: CollectionMap;
   prices: Record<string, number>;
 }
 
 export const appState = proxy<AppState>({
-  startingUp: true,
   network: import.meta.env.VITE_ENV === "mainnet" ? "mainnet" : "devnet",
   tokens: [],
+  collectionMap: new Map(),
   prices: {},
 });
 
 export const appActions = {
-  setStartingUp: (startingUp: boolean) => {
-    appState.startingUp = startingUp;
-  },
   setEncryptedSeedPhrase: (encryptedSeedPhrase: EncryptedData) => {
     appState.encryptedSeedPhrase = encryptedSeedPhrase;
   },
@@ -35,6 +32,9 @@ export const appActions = {
   },
   setTokens: (tokens: Token[]) => {
     appState.tokens = tokens;
+  },
+  setCollectionMap: (collectionMap: CollectionMap) => {
+    appState.collectionMap = collectionMap;
   },
   setPrices: (prices: Record<string, number>) => {
     appState.prices = prices;

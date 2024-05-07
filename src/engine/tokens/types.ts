@@ -30,6 +30,8 @@ export type Collectible = ATA & {
   metadata?: CollectibleMetadata;
 };
 
+export type CollectionMap = Map<string, { collectibles: Collectible[]; metadata: ATAMetadata }>;
+
 export interface ParsedDataOfMint {
   parsed: {
     info: {

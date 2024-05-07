@@ -16,6 +16,8 @@ export const TokenList: FC<Props> = ({ className, tokens }) => {
 
   return (
     <div className={`token-list ${className}`}>
+      {tokens.length === 0 && <p className="text-center text-secondary-500">No tokens found</p>}
+
       {tokens.map((token) => {
         const symbol = token.metadata?.symbol || "Unknown";
         const logo = token.metadata?.image || getLocalLogo(symbol);
