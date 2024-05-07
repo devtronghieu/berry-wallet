@@ -11,3 +11,7 @@ export type ConnectPayload = DAppPayload & {
 export type SignTransactionPayload = DAppPayload & {
   encodedTransaction: string;
 };
+
+export type SignMessagePayload = DAppPayload & {
+  encodedMessage: string;
+};
