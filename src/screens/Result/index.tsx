@@ -21,7 +21,7 @@ const TransactionResult: FC = () => {
 
   const getSymbolAndLogo = (item: Token) => {
     const symbol = item?.metadata?.symbol || "Unknown";
-    const logo = item?.metadata?.logo || getLocalLogo(symbol);
+    const logo = item?.metadata?.image || getLocalLogo(symbol);
 
     return { symbol, logo };
   };

@@ -24,7 +24,7 @@ import { SendIcon, SettingIcon, SwapIcon, WalletIcon } from "@/icons/index";
 import HoveredAddress from "./HoveredAddress";
 
 const HomeScreen = () => {
-  const { keypair, tokens, prices } = useSnapshot(appState);
+  const { keypair, startingUp, tokens, prices } = useSnapshot(appState);
   const [isWalletHovered, setIsWalletHovered] = useState<boolean>(false);
   const [dataBlurred, setDataBlurred] = useState<boolean>(true);
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
@@ -130,14 +130,20 @@ const HomeScreen = () => {
             }}
           />
         </div>
+
         <TabBar className="mt-4" navTitle={["Tokens", "Collectibles", "Activities"]} navOnClick={navOnClickList} />
-        {activeTab === "Tokens" ? (
-          <TokenList className="mt-4" tokens={tokens as Token[]} />
-        ) : activeTab === "Collectibles" ? (
-          <div>Collectibles</div>
-        ) : (
-          <History />
-        )}
+
+        <div className="mt-4 w-full overflow-y-scroll no-scrollbar">
+          {startingUp ? (
+            <div className="text-center text-sm text-secondary-500">Loading...</div>
+          ) : activeTab === "Tokens" ? (
+            <TokenList tokens={tokens as Token[]} />
+          ) : activeTab === "Collectibles" ? (
+            <div>Collectibles</div>
+          ) : (
+            <History />
+          )}
+        </div>
       </div>
 
       <BottomSheet title={bottomSheetType} isOpen={modalIsOpen} onClose={() => setModalIsOpen(false)}>

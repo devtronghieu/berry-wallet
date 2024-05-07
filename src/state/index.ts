@@ -4,6 +4,7 @@ import { EncryptedData } from "@utils/crypto";
 import { proxy } from "valtio";
 
 export interface AppState {
+  startingUp: boolean;
   network: "mainnet" | "devnet";
   encryptedSeedPhrase?: EncryptedData;
   keypair?: Keypair;
@@ -13,12 +14,16 @@ export interface AppState {
 }
 
 export const appState = proxy<AppState>({
+  startingUp: true,
   network: import.meta.env.VITE_ENV === "mainnet" ? "mainnet" : "devnet",
   tokens: [],
   prices: {},
 });
 
 export const appActions = {
+  setStartingUp: (startingUp: boolean) => {
+    appState.startingUp = startingUp;
+  },
   setEncryptedSeedPhrase: (encryptedSeedPhrase: EncryptedData) => {
     appState.encryptedSeedPhrase = encryptedSeedPhrase;
   },

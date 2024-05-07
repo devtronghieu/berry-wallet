@@ -1,9 +1,18 @@
 import { PublicKey } from "@solana/web3.js";
 
-export interface TokenMetadata {
+export interface ATA {
+  pubkey: PublicKey;
+  accountData: {
+    mint: string;
+    owner: string;
+    amount: string;
+  };
+}
+
+export interface ATAMetadata {
   name: string;
   symbol: string;
-  logo: string;
+  image: string;
 }
 
 export interface Token {
@@ -12,8 +21,18 @@ export interface Token {
   owner: string;
   amount: string;
   decimals: number;
-  metadata?: TokenMetadata;
+  metadata?: ATAMetadata;
 }
+
+export type CollectibleMetadata = ATAMetadata & {
+  collectionPubkey?: PublicKey;
+  description: string;
+  attributes: { trait_type: string; value: string }[];
+};
+
+export type Collectible = ATA & {
+  metadata?: CollectibleMetadata;
+};
 
 export interface ParsedDataOfMint {
   parsed: {

@@ -1,5 +1,5 @@
 import { getConnection } from "@engine/connection";
-import { fetchTokens } from "@engine/tokens";
+import { fetchOnchainData } from "@engine/tokens";
 import { ParsedDataOfATA } from "@engine/tokens/types";
 import { appActions, appState } from "@state/index";
 import { Token as GqlToken } from "@utils/gqlTypes";
@@ -14,9 +14,15 @@ export const useStartup = () => {
   useEffect(() => {
     if (!keypair) return;
 
-    fetchTokens(keypair.publicKey)
-      .then((tokens) => appActions.setTokens(tokens))
-      .catch(console.error);
+    appActions.setStartingUp(true);
+
+    fetchOnchainData(keypair.publicKey)
+      .then((data) => {
+        appActions.setTokens(data.tokens);
+        console.log("NFTs", data.collectibles);
+      })
+      .catch(console.error)
+      .finally(() => appActions.setStartingUp(false));
   }, [keypair]);
 
   useEffect(() => {

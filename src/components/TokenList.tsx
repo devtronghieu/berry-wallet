@@ -15,10 +15,10 @@ export const TokenList: FC<Props> = ({ className, tokens }) => {
   const { prices } = useSnapshot(appState);
 
   return (
-    <div className={`token-list no-scrollbar ${className}`}>
+    <div className={`token-list ${className}`}>
       {tokens.map((token) => {
         const symbol = token.metadata?.symbol || "Unknown";
-        const logo = token.metadata?.logo || getLocalLogo(symbol);
+        const logo = token.metadata?.image || getLocalLogo(symbol);
         const friendlyAmount = getFriendlyAmount(token.amount, token.decimals);
         const price = prices[getSafeMintAddressForPriceAPI(token.mint)] || 0;
         const totalPrice = friendlyAmount * price;

@@ -41,7 +41,7 @@ const History = () => {
           <TokenHistoryItem
             key={index}
             amount={transaction.amount}
-            tokenImage={transaction.token.metadata?.logo || ""}
+            tokenImage={transaction.token.metadata?.image || ""}
             tokenName={transaction.token.metadata?.name || "Unknown"}
             transactionType={transaction.transactionType}
           />
