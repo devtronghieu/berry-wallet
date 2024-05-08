@@ -17,17 +17,14 @@ import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSnapshot } from "valtio";
 
-import CopyIcon from "@/icons/Copy";
 import EyeCloseIcon from "@/icons/EyeClose";
 import EyeOpenIcon from "@/icons/EyeOpen";
-import { ArrowDownIcon, ArrowUpIcon, SettingIcon, SwapIcon } from "@/icons/index";
+import { ArrowDownIcon, ArrowUpIcon, ChevronDownIcon, SettingIcon, SwapIcon } from "@/icons/index";
 
 import Collections from "./Collections";
-import HoveredAddress from "./HoveredAddress";
 
 const HomeScreen = () => {
   const { keypair, tokens, prices, collectionMap } = useSnapshot(appState);
-  const [isWalletHovered, setIsWalletHovered] = useState<boolean>(false);
   const [dataBlurred, setDataBlurred] = useState<boolean>(true);
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("Tokens");
@@ -88,17 +85,13 @@ const HomeScreen = () => {
   return (
     <div className="extension-container flex flex-col">
       <div className="h-[60px] px-4 py-2 gap-1.5 flex justify-between bg-primary-300">
-        {isWalletHovered ? (
-          <HoveredAddress setIsWalletHovered={setIsWalletHovered} />
-        ) : (
-          <div className="flex items-center gap-2" onMouseEnter={() => setIsWalletHovered(true)}>
-            <img className="w-10 h-10" src={strawberry} alt="strawberry logo" />
-            <p className="font-bold text-lg text-primary-500">Account 1</p>
-            <button className="w-6 h-6 flex items-center justify-center bg-primary-200 rounded-full">
-              <CopyIcon size={20} />
-            </button>
-          </div>
-        )}
+        <div className="flex items-center gap-2">
+          <img className="w-10 h-10" src={strawberry} alt="strawberry logo" />
+          <p className="font-bold text-lg text-primary-500">Account 1</p>
+          <button>
+            <ChevronDownIcon size={24} />
+          </button>
+        </div>
 
         <button onClick={() => navigate(Route.Settings)}>
           <SettingIcon size={20} />
