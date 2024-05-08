@@ -4,6 +4,8 @@ import { Route } from "@utils/routes";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useSnapshot } from "valtio";
 
+import { ArrowUpIcon } from "@/icons";
+
 const NftScreen = () => {
   const navigate = useNavigate();
   const { nftId } = useParams<{ nftId: string }>();
@@ -42,7 +44,7 @@ const NftScreen = () => {
           {collectionMap.get(collectionId)?.collectibles.map((collectible) => (
             <div
               key={collectible.accountData.mint}
-              className="flex flex-col items-center gap-2"
+              className="flex flex-col items-center gap-2 cursor-pointer"
               onClick={() => handleNavigateToCollectible(collectible.accountData.mint)}
             >
               <img
@@ -65,7 +67,7 @@ const NftScreen = () => {
           }
 
           return (
-            <div className="flex flex-col items-center gap-4 mx-5">
+            <div className="flex flex-col items-center gap-4 mx-5 my-4">
               <img
                 src={collectible.metadata.image}
                 alt={collectible.metadata.name}
@@ -73,21 +75,33 @@ const NftScreen = () => {
               />
 
               <div className="px-5 w-full">
-                <button className="gradient-button w-full">Send</button>
+                <button className="gradient-button w-full !gap-1">
+                  <ArrowUpIcon size={24} />
+                  <p>Send</p>
+                </button>
+              </div>
+
+              <div className="w-full flex flex-col gap-0.5">
+                <div className="bg-primary-200 px-3 py-2 rounded-t-xl">
+                  <p className="text-sm font-semibold text-primary-500">Description</p>
+                  <p className="text-sm text-secondary-500">{collectible.metadata.description}</p>
+                </div>
+                <div className="bg-primary-200 px-3 py-2 rounded-b-xl flex items-center justify-between">
+                  <p className="text-sm font-semibold text-primary-500">Network</p>
+                  <p className="text-sm text-secondary-500">Solana</p>
+                </div>
               </div>
 
               <div className="w-full">
-                <p>Description</p>
-                <p>{collectible.metadata.description}</p>
-              </div>
-
-              <div className="w-full">
-                {collectible.metadata.attributes.map((attribute, index) => (
-                  <div key={index} className="flex justify-between items-center gap-2">
-                    <p>{attribute.trait_type}</p>
-                    <p>{attribute.value}</p>
-                  </div>
-                ))}
+                <p className="text-lg font-semibold text-secondary-500 mb-3">Properties</p>
+                <div className="flex flex-wrap gap-2">
+                  {collectible.metadata.attributes.map((attribute, index) => (
+                    <div key={index} className="bg-primary-200 rounded-lg p-2">
+                      <p className="text-xs uppercase text-secondary-500">{attribute.trait_type}</p>
+                      <p className="text-base font-semibold text-primary-500">{attribute.value}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           );

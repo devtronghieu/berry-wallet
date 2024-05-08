@@ -20,7 +20,7 @@ import { useSnapshot } from "valtio";
 import CopyIcon from "@/icons/Copy";
 import EyeCloseIcon from "@/icons/EyeClose";
 import EyeOpenIcon from "@/icons/EyeOpen";
-import { SendIcon, SettingIcon, SwapIcon, WalletIcon } from "@/icons/index";
+import { ArrowDownIcon, ArrowUpIcon, SettingIcon, SwapIcon } from "@/icons/index";
 
 import Collections from "./Collections";
 import HoveredAddress from "./HoveredAddress";
@@ -120,8 +120,8 @@ const HomeScreen = () => {
           </h1>
         </div>
         <div className="mt-6 flex items-center gap-10">
-          <FeatureButton Icon={SendIcon} title="Send" onClick={() => handleOnClick("Send")} />
-          <FeatureButton Icon={WalletIcon} title="Receive" onClick={() => handleOnClick("Receive")} />
+          <FeatureButton Icon={ArrowUpIcon} title="Send" onClick={() => handleOnClick("Send")} />
+          <FeatureButton Icon={ArrowDownIcon} title="Receive" onClick={() => handleOnClick("Receive")} />
           <FeatureButton
             Icon={SwapIcon}
             title="Swap"
