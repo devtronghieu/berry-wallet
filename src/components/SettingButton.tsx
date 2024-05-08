@@ -12,7 +12,7 @@ interface Props {
 const SettingButton: FC<Props> = ({ Icon, title, onClick }) => {
   return (
     <div
-      className="bg-primary-300 pl-5 pr-2 py-4 rounded-xl flex items-center justify-between cursor-pointer"
+      className="bg-primary-300 pl-5 pr-2 py-4 rounded-xl flex items-center justify-between cursor-pointer hover:bg-primary-200"
       onClick={onClick}
     >
       <div className="flex items-center gap-2">

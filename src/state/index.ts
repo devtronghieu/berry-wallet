@@ -47,4 +47,7 @@ export const appActions = {
   setPrices: (prices: Record<string, number>) => {
     appState.prices = prices;
   },
+  setLockTimer: (timer: number) => {
+    appState.localConfig.lockTimer = timer;
+  },
 };

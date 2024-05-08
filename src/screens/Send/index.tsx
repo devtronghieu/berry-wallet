@@ -84,7 +84,7 @@ const Send: FC<Props> = ({ onSubmit }) => {
 
   return (
     <>
-      <TabBar className="mt-4" navTitle={["Tokens", "Collectible"]} />
+      <TabBar navTitle={["Tokens", "Collectible"]} />
       <Select items={tokens as Token[]} selectedItemIndex={selectedIndex} onSelectedItem={setSelectedIndex} />
       <Input
         placeholder="Receiver"
