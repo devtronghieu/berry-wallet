@@ -21,6 +21,8 @@ export const useStartup = () => {
     fetchNFTs(keypair.publicKey)
       .then((collectionMap) => appActions.setCollectionMap(collectionMap))
       .catch(console.error);
+
+    // fetch local config
   }, [keypair]);
 
   useEffect(() => {

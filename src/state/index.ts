@@ -5,6 +5,10 @@ import { proxy } from "valtio";
 
 export interface AppState {
   network: "mainnet" | "devnet";
+  localConfig: {
+    showBalance: boolean;
+    lockTimer: number;
+  };
   encryptedSeedPhrase?: EncryptedData;
   keypair?: Keypair;
   hashedPassword?: string;
@@ -15,6 +19,10 @@ export interface AppState {
 
 export const appState = proxy<AppState>({
   network: import.meta.env.VITE_ENV === "mainnet" ? "mainnet" : "devnet",
+  localConfig: {
+    showBalance: true,
+    lockTimer: 30 * 60 * 1000, // 30 minutes
+  },
   tokens: [],
   collectionMap: new Map(),
   prices: {},
