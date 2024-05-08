@@ -25,7 +25,6 @@ import Collections from "./Collections";
 
 const HomeScreen = () => {
   const { keypair, tokens, prices, collectionMap, localConfig } = useSnapshot(appState);
-  const [isWalletHovered, setIsWalletHovered] = useState<boolean>(false);
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("Tokens");
   const [bottomSheetType, setBottomSheetType] = useState<string>("Send");
