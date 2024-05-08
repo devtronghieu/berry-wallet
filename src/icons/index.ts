@@ -4,6 +4,7 @@ export * from "./ArrowLeft";
 export * from "./ArrowRight";
 export * from "./ArrowUp";
 export * from "./ArrowUpCircle.tsx";
+export { ChevronDownIcon } from "./ChevronDown";
 export { ChevronRightIcon } from "./ChevronRight";
 export { ClockIcon } from "./Clock";
 export * from "./Copy";
