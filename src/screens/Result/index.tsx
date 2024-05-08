@@ -31,7 +31,7 @@ const TransactionResult: FC = () => {
   return (
     <TransactionDetails transactionDetails={transactionDetails}>
       <div className="flex flex-col items-center">
-        <img src={logo} alt={symbol} className="w-[100px] h-[100px] rounded-full mt-4" />
+        <img src={logo} alt={symbol} className="w-[100px] h-[100px] rounded-full" />
         <p className="font-semibold text-base mt-2 text-secondary-500">{`${amount} ${symbol}`}</p>
         <a
           href={`https://explorer.solana.com/tx/${signature}${env === "mainnet" ? "" : "?cluster=devnet"}`}
