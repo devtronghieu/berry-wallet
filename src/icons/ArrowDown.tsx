@@ -9,9 +9,9 @@ export const ArrowDownIcon: FC<IconProps> = ({ size = 20, color = "#267578" }) =
       <path
         d="M18.2988 13.7002L12.2748 19.7502L6.24976 13.7002"
         stroke={color}
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
