@@ -1,9 +1,8 @@
+import BackHeader from "@components/BackHeader";
 import { appState } from "@state/index";
 import { Route } from "@utils/routes";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useSnapshot } from "valtio";
-
-import { ArrowLeftIcon } from "@/icons";
 
 const NftScreen = () => {
   const navigate = useNavigate();
@@ -33,14 +32,10 @@ const NftScreen = () => {
 
   return (
     <div className="extension-container overflow-y-scroll no-scrollbar">
-      <div className="h-[60px] px-4 py-2 gap-1.5 flex items-center bg-primary-300 mb-3">
-        <button onClick={handleBack}>
-          <ArrowLeftIcon size={24} color="#267578" />
-        </button>
-        <h2 className="text-lg semibold text-primary-500 line-clamp-1">
-          {collectible ? collectible.metadata?.name || "Collectible" : collection?.metadata.name || "Collection"}
-        </h2>
-      </div>
+      <BackHeader
+        title={collectible ? collectible.metadata?.name || "Collectible" : collection?.metadata.name || "Collection"}
+        onBack={handleBack}
+      />
 
       {!collectibleId && (
         <div className="grid grid-cols-3 gap-4 px-5">

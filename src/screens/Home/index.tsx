@@ -11,8 +11,10 @@ import Send from "@screens/Send";
 import { Keypair } from "@solana/web3.js";
 import { appState } from "@state/index";
 import { formatCurrency } from "@utils/general";
+import { Route } from "@utils/routes";
 import { getSafeMintAddressForPriceAPI } from "@utils/tokens";
 import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useSnapshot } from "valtio";
 
 import CopyIcon from "@/icons/Copy";
@@ -30,6 +32,7 @@ const HomeScreen = () => {
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("Tokens");
   const [bottomSheetType, setBottomSheetType] = useState<string>("Send");
+  const navigate = useNavigate();
 
   const handleOnClick = (type: string) => {
     setBottomSheetType(type);
@@ -97,7 +100,7 @@ const HomeScreen = () => {
           </div>
         )}
 
-        <button>
+        <button onClick={() => navigate(Route.Settings)}>
           <SettingIcon size={20} />
         </button>
       </div>

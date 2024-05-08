@@ -6,6 +6,7 @@ export enum Route {
   ImportPrivateKey = "/import-private-key",
   Home = "/",
   Nft = "/nft",
+  Settings = "/settings",
 
   Request = "/request",
   RequestConnect = "/request/connect",
