@@ -4,7 +4,6 @@ import { TabBar, TokenList } from "@components/index";
 import { Token } from "@engine/tokens/types";
 import { swap } from "@engine/transaction/swap";
 import { getFriendlyAmount } from "@engine/utils";
-import { useStartup } from "@hooks/startup";
 import BottomSheet from "@screens/BottomSheet";
 import History from "@screens/History";
 import TransactionResult from "@screens/Result";
@@ -31,8 +30,6 @@ const HomeScreen = () => {
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("Tokens");
   const [bottomSheetType, setBottomSheetType] = useState<string>("Send");
-
-  useStartup();
 
   const handleOnClick = (type: string) => {
     setBottomSheetType(type);

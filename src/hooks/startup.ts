@@ -36,7 +36,9 @@ export const useStartup = () => {
       appActions.setPrices(priceMap);
     };
     fetchPrices().catch(console.error);
+  }, [tokens]);
 
+  useEffect(() => {
     // Watch on-chain data
     const connection = getConnection();
 
@@ -51,15 +53,8 @@ export const useStartup = () => {
           const parsedAccountValue = (await connection.getParsedAccountInfo(token.pubkey, "confirmed")).value;
           if (!parsedAccountValue) return;
           const parsedData = parsedAccountValue.data as ParsedDataOfATA;
-          const isNft = parsedData.parsed.info.tokenAmount.decimals === 0;
-
-          if (isNft) {
-            // Handle NFT
-            console.log("--> NFT Change", parsedData);
-          } else {
-            const ataIndex = appState.tokens.findIndex((t) => t.pubkey.equals(token.pubkey));
-            appState.tokens[ataIndex].accountData.amount = parsedData.parsed.info.tokenAmount.amount;
-          }
+          const ataIndex = appState.tokens.findIndex((t) => t.pubkey.equals(token.pubkey));
+          appState.tokens[ataIndex].accountData.amount = parsedData.parsed.info.tokenAmount.amount;
         }
       });
       subscriptionList.push(subscriptionId);
