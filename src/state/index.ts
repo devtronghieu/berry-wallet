@@ -1,3 +1,5 @@
+import { BERRY_LOCAL_CONFIG_KEY } from "@engine/constants";
+import { upsertPasswordExpiredAt } from "@engine/storage";
 import { CollectionMap, Token } from "@engine/tokens/types";
 import { Keypair } from "@solana/web3.js";
 import { EncryptedData } from "@utils/crypto";
@@ -48,6 +50,14 @@ export const appActions = {
     appState.prices = prices;
   },
   setLockTimer: (timer: number) => {
+    if (timer === appState.localConfig.lockTimer) return;
     appState.localConfig.lockTimer = timer;
+    localStorage.setItem(BERRY_LOCAL_CONFIG_KEY, JSON.stringify(appState.localConfig));
+    upsertPasswordExpiredAt(Date.now() + appState.localConfig.lockTimer);
+  },
+  setShowBalance: (showBalance: boolean) => {
+    if (showBalance === appState.localConfig.showBalance) return;
+    appState.localConfig.showBalance = showBalance;
+    localStorage.setItem(BERRY_LOCAL_CONFIG_KEY, JSON.stringify(appState.localConfig));
   },
 };

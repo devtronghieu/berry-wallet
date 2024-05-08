@@ -42,8 +42,8 @@ const UnlockWalletScreen = () => {
         return;
       }
 
-      // Set password expired after 30 minutes
-      await upsertPasswordExpiredAt(Date.now() + 30 * 60 * 1000);
+      const { lockTimer } = JSON.parse(localStorage.getItem("berry-local-config") ?? "{}");
+      await upsertPasswordExpiredAt(Date.now() + (lockTimer || 0) * 60 * 1000);
 
       const activeKeypairIndex = await getActiveKeypairIndex();
       const keypair = await deriveKeypair(hashedPassword, activeKeypairIndex ?? 0);

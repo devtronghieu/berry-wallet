@@ -1,4 +1,5 @@
 import { getConnection } from "@engine/connection";
+import { BERRY_LOCAL_CONFIG_KEY } from "@engine/constants";
 import { fetchNFTs, fetchTokens } from "@engine/tokens";
 import { ParsedDataOfATA } from "@engine/tokens/types";
 import { appActions, appState } from "@state/index";
@@ -23,6 +24,11 @@ export const useStartup = () => {
       .catch(console.error);
 
     // fetch local config
+    const localConfig = localStorage.getItem(BERRY_LOCAL_CONFIG_KEY);
+    if (!localConfig) return;
+    const { showBalance, lockTimer } = JSON.parse(localConfig);
+    appActions.setLockTimer(lockTimer);
+    appActions.setShowBalance(showBalance);
   }, [keypair]);
 
   useEffect(() => {
