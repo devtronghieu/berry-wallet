@@ -9,7 +9,7 @@ import History from "@screens/History";
 import TransactionResult from "@screens/Result";
 import Send from "@screens/Send";
 import { Keypair } from "@solana/web3.js";
-import { appState } from "@state/index";
+import { appActions, appState } from "@state/index";
 import { formatCurrency } from "@utils/general";
 import { Route } from "@utils/routes";
 import { getSafeMintAddressForPriceAPI } from "@utils/tokens";
@@ -24,8 +24,7 @@ import { ArrowDownIcon, ArrowUpIcon, ChevronDownIcon, SettingIcon, SwapIcon } fr
 import Collections from "./Collections";
 
 const HomeScreen = () => {
-  const { keypair, tokens, prices, collectionMap } = useSnapshot(appState);
-  const [dataBlurred, setDataBlurred] = useState<boolean>(true);
+  const { keypair, tokens, prices, collectionMap, localConfig } = useSnapshot(appState);
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("Tokens");
   const [bottomSheetType, setBottomSheetType] = useState<string>("Send");
@@ -102,12 +101,17 @@ const HomeScreen = () => {
         <div>
           <div className="flex items-center">
             <h2 className="text-lg text-secondary-500 font-bold me-2">TOTAL BALANCE</h2>
-            <button className="trans-mini-icon-button" onClick={() => setDataBlurred(!dataBlurred)}>
-              {dataBlurred ? <EyeCloseIcon size={20} /> : <EyeOpenIcon size={20} />}
+            <button
+              className="trans-mini-icon-button"
+              onClick={() => appActions.setShowBalance(!localConfig.showBalance)}
+            >
+              {!localConfig.showBalance ? <EyeCloseIcon size={20} /> : <EyeOpenIcon size={20} />}
             </button>
           </div>
           <h1
-            className={`text-2xl font-semibold text-center text-primary-400 mt-2 ${dataBlurred ? "blur-effect" : ""}`}
+            className={`text-2xl font-semibold text-center text-primary-400 mt-2 ${
+              !localConfig.showBalance ? "blur-effect" : ""
+            }`}
           >
             {formatCurrency(totalBalance)}
           </h1>
