@@ -1,13 +1,13 @@
-import CloseHeader from "@components/CloseHeader";
 import { appActions, appState } from "@state/index";
-import { Route } from "@utils/routes";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { FC, useState } from "react";
 
 import { CorrectIcon } from "@/icons";
 
-const ChangeAutoLockTimerScreen = () => {
-  const navigate = useNavigate();
+interface Props {
+  onSave: () => void;
+}
+
+const ChangeAutoLockTimerScreen: FC<Props> = ({ onSave }) => {
   const { lockTimer } = appState.localConfig;
   const timerOptions = new Map<string, number>([
     ["Immediately", 0],
@@ -28,15 +28,15 @@ const ChangeAutoLockTimerScreen = () => {
 
   const handleClickSave = () => {
     appActions.setLockTimer((timerOptions.get(selectedOption) || 0) * 60 * 1000);
+    onSave();
   };
 
   return (
     <div className="flex h-full flex-col">
-      <CloseHeader title="Change auto-lock timer" onClose={() => navigate(Route.SecurityAndPrivacy)} />
-      <div className="flex flex-col gap-3 px-5">
+      <div className="flex flex-col gap-3">
         {Array.from(timerOptions.keys()).map((option, index) => (
           <div
-            className="bg-primary-200 text-secondary-500 text-base font-medium w-[360px] h-[40px] rounded-xl flex justify-between items-center p-3 cursor-pointer"
+            className="bg-primary-200 text-secondary-500 text-base font-medium h-[40px] rounded-xl flex justify-between items-center p-3 cursor-pointer"
             key={index}
             onClick={() => setSelectedOption(option)}
           >
@@ -49,7 +49,7 @@ const ChangeAutoLockTimerScreen = () => {
           </div>
         ))}
       </div>
-      <button className="rounded-xl gradient-button w-[320px] h-[40px] m-auto mb-4" onClick={handleClickSave}>
+      <button className="rounded-xl gradient-button h-[40px] mt-auto mx-5" onClick={handleClickSave}>
         Save
       </button>
     </div>

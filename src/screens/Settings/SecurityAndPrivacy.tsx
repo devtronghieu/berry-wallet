@@ -1,21 +1,26 @@
-import CloseHeader from "@components/CloseHeader";
 import SettingButton from "@components/SettingButton";
-import { Route } from "@utils/routes";
-import { useNavigate } from "react-router-dom";
+import { BottomSheetType } from "@utils/bottomSheetTypes";
+import { FC } from "react";
 
 import { ClockIcon, KeyIcon } from "@/icons";
 
-const SecurityAndPrivacyScreen = () => {
-  const navigate = useNavigate();
+interface Props {
+  onSettingButtonClick: (bottomSheetType: string) => void;
+}
+
+const SecurityAndPrivacyScreen: FC<Props> = ({ onSettingButtonClick }) => {
   return (
     <div>
-      <CloseHeader title="Security and Privacy" onClose={() => navigate(Route.Settings)} />
-      <div className="flex flex-col gap-3 px-5">
-        <SettingButton Icon={KeyIcon} title="Change password" onClick={() => {}} />
+      <div className="flex flex-col gap-3">
+        <SettingButton
+          Icon={KeyIcon}
+          title="Change password"
+          onClick={() => onSettingButtonClick(BottomSheetType.ChangePassword)}
+        />
         <SettingButton
           Icon={ClockIcon}
           title="Change auto-clock timer"
-          onClick={() => navigate(Route.ChangeAutoLockTimer)}
+          onClick={() => onSettingButtonClick(BottomSheetType.ChangeAutoLockTimer)}
         />
       </div>
     </div>

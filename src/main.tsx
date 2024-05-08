@@ -12,10 +12,8 @@ import RequestScreen from "@screens/Request/index.tsx";
 import RequestSignAndSendTransactionScreen from "@screens/Request/SignAndSendTransaction.tsx";
 import RequestSignMessageScreen from "@screens/Request/SignMessage.tsx";
 import RequestSignTransactionScreen from "@screens/Request/SignTransaction.tsx";
-import ChangeAutoLockTimerScreen from "@screens/Settings/ChangeAutoLockTimer.tsx";
 import DefaultSettingsScreen from "@screens/Settings/Default.tsx";
 import SettingsScreen from "@screens/Settings/index.tsx";
-import SecurityAndPrivacyScreen from "@screens/Settings/SecurityAndPrivacy.tsx";
 import SignInScreen from "@screens/SignIn.tsx";
 import UnlockWalletScreen from "@screens/UnlockWallet.tsx";
 import { Route } from "@utils/routes.ts";
@@ -50,14 +48,6 @@ const router = createHashRouter([
           {
             index: true,
             element: <DefaultSettingsScreen />,
-          },
-          {
-            path: Route.SecurityAndPrivacy,
-            element: <SecurityAndPrivacyScreen />,
-          },
-          {
-            path: Route.ChangeAutoLockTimer,
-            element: <ChangeAutoLockTimerScreen />,
           },
         ],
       },
