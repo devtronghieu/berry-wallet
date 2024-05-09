@@ -38,6 +38,19 @@ export const setPassword = async (password: string) => {
   await getDB().put(doc);
 };
 
+export const upsertPassword = async (password: string) => {
+  try {
+    const doc = await getDB().get(passwordId);
+    await getDB().put({ ...doc, password });
+  } catch (error) {
+    if ((error as PouchDB.Core.Error).status === 404) {
+      await getDB().put({ _id: passwordId, password });
+    } else {
+      throw error;
+    }
+  }
+};
+
 export const getPassword = async () => {
   try {
     const doc = await getDB().get<{ password: string }>(passwordId);
@@ -56,6 +69,7 @@ const passwordExpiredAtId = "passwordExpiredAt";
 export const upsertPasswordExpiredAt = async (expiredAt: number) => {
   try {
     const doc = await getDB().get<{ expiredAt: number }>(passwordExpiredAtId);
+    console.log(doc);
     await getDB().put({ ...doc, expiredAt });
   } catch (error) {
     if ((error as PouchDB.Core.Error).status === 404) {
@@ -103,7 +117,7 @@ export const getActiveKeypairIndex = async () => {
   }
 };
 
-const historyId = "transactionHistory";  
+const historyId = "transactionHistory";
 
 export const setHistory = async (history: Transaction[]) => {
   try {

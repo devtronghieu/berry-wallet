@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { PlusIcon, ShieldDoneIcon, TrashIcon, WalletIcon } from "@/icons";
 
 import ChangeAutoLockTimerScreen from "./ChangeAutoLockTimer";
+import ChangePassword from "./ChangePassword";
 import SecurityAndPrivacyScreen from "./SecurityAndPrivacy";
 
 const DefaultSettingsScreen = () => {
@@ -37,7 +38,7 @@ const DefaultSettingsScreen = () => {
         return <ChangeAutoLockTimerScreen onSave={() => setBottomSheetType(BottomSheetType.SecurityAndPrivacy)} />;
       },
       [BottomSheetType.ChangePassword]: () => {
-        return <div>ChangePassword</div>;
+        return <ChangePassword onSave={() => setBottomSheetType(BottomSheetType.SecurityAndPrivacy)} />;
       },
     };
     return BottomSheetChildren[bottomSheetType];
