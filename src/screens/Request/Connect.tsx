@@ -9,14 +9,18 @@ import { ShieldDoneIcon } from "@/icons";
 import ActionButtons from "./ActionButtons";
 import { useRequestContext } from "./shared";
 
+interface ConnectContextData {
+  sender: chrome.runtime.MessageSender;
+}
+
 const RequestConnectScreen = () => {
-  const { chromeKernel, messageId, payload } = useRequestContext();
+  const { chromeKernel, messageId, payload } = useRequestContext<ConnectContextData>();
   const [webSummary, setWebSummary] = useState<string>("No data");
   const { keypair } = useSnapshot(appState);
 
   useEffect(() => {
     const fetchWebSummary = async () => {
-      const data = (await queryWebSummary("https://anza-xyz.github.io/wallet-adapter/example/")) as {
+      const data = (await queryWebSummary(payload?.sender.tab?.url || "")) as {
         askGemini: { response: string };
       };
       setWebSummary(data.askGemini.response);
