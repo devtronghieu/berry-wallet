@@ -42,3 +42,22 @@ export const validateAmount = (value: string, balanceAmount: number) => {
 
   return { isValid: true, errorMessage: "" };
 };
+
+export const validateTotalAmount = (value: string, balanceAmount: number) => {
+  if (value.length === 0) {
+    return { isValid: false, errorMessage: "" };
+  }
+
+  if (isNaN(parseFloat(value))) {
+    return { isValid: false, errorMessage: "Total amount must be a number." };
+  }
+  if (parseFloat(value) <= 0) {
+    return { isValid: false, errorMessage: "No collectibles available." };
+  }
+
+  if (parseFloat(value) > balanceAmount) {
+    return { isValid: false, errorMessage: "Your balance is not enough." };
+  }
+
+  return { isValid: true, errorMessage: "" };
+};

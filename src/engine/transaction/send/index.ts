@@ -1,6 +1,6 @@
 import { getConnection } from "@engine/connection";
 import { WRAPPED_SOL_MINT } from "@engine/constants";
-import { Token } from "@engine/tokens/types";
+import { Token, Collectible } from "@engine/tokens/types";
 import { convertDateToReadable } from "@engine/utils";
 import {
   createAssociatedTokenAccountInstruction,
@@ -115,5 +115,59 @@ export const fetchTransactionFee = async (feePayerPubKey: PublicKey) => {
     transactionActions.setFee(fee / LAMPORTS_PER_SOL);
   } catch (error) {
     console.error("Error fetching transaction fees: ", error);
+  }
+};
+
+// Send NFT
+export interface SendNFTConfig {
+  keypair: Keypair;
+  receiverPublicKey?: PublicKey;
+  NFT?: Collectible;
+}
+export const constructNftTransaction = async (
+  tranferNFTConfig: SendNFTConfig,
+  transactionWithBlockhash?: Transaction,
+): Promise<Transaction> => {
+  const { keypair, receiverPublicKey, NFT } = tranferNFTConfig;
+  if (!receiverPublicKey || !NFT) throw new Error("Invalid NFT or receiver public key.");
+  const fromTokenAccount = await getAssociatedTokenAddress(new PublicKey(NFT.accountData.mint), keypair.publicKey);
+  const toTokenAccount = await getAssociatedTokenAddress(new PublicKey(NFT.accountData.mint), receiverPublicKey);
+  const transaction = transactionWithBlockhash
+    ? transactionWithBlockhash
+    : new Transaction().add(
+        SystemProgram.transfer({
+          fromPubkey: keypair.publicKey,
+          toPubkey: receiverPublicKey,
+          lamports: 0,
+        }),
+      );
+
+  const createATAInstruction = await constructCreateATAInstruction({
+    mint: new PublicKey(NFT.accountData.mint),
+    owner: receiverPublicKey,
+    associatedToken: toTokenAccount,
+    payer: keypair.publicKey,
+  });
+
+  if (createATAInstruction) transaction.add(createATAInstruction);
+  transaction.add(createTransferInstruction(fromTokenAccount, toTokenAccount, keypair.publicKey, 1));
+
+  return transaction;
+};
+
+export const sendCollectible = async (tranferNFTConfig: SendNFTConfig) => {
+  const connection = getConnection();
+  try {
+    let transaction = await constructNftTransaction(tranferNFTConfig);
+    transaction.feePayer = tranferNFTConfig.keypair.publicKey;
+    transaction.recentBlockhash = (await connection.getLatestBlockhash("finalized")).blockhash;
+    const signature = await sendAndConfirmTransaction(connection, transaction, [tranferNFTConfig.keypair]);
+    console.log(`txhash: ${signature}`);
+    transactionActions.setDate(convertDateToReadable(new Date()));
+    transactionActions.setSignature(signature);
+    transactionActions.setStatus(TransactionStatus.SUCCESS);
+  } catch (error) {
+    console.error("Error sending collectible: ", error);
+    transactionActions.setStatus(TransactionStatus.FAILED);
   }
 };

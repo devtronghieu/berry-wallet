@@ -6,9 +6,12 @@ interface Props {
   value: string;
   onChange: (value: string) => void;
   error: string;
+  disabled?: boolean;
+  disabledMessage?: string;
 }
 
-const Input: FC<Props> = ({ placeholder, type, value, onChange, error }) => {
+const Input: FC<Props> = ({ placeholder, type, value, onChange, error, disabled = false, disabledMessage = "" }) => {
+  if (disabled) placeholder = disabledMessage;
   return (
     <>
       <input
@@ -17,8 +20,9 @@ const Input: FC<Props> = ({ placeholder, type, value, onChange, error }) => {
         value={value}
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
+        disabled={disabled}
       />
-      {error && <p className="text-xs text-error">{error}</p>}
+      {error && <p className="font-semibold text-s text-error">{error}</p>}
     </>
   );
 };
