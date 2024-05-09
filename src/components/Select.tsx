@@ -46,13 +46,13 @@ const Select: FC<Props> = ({ items, selectedItemIndex, onSelectedItem, disabled 
   };
 
   // Get symbol/name and logo of the item
-  const getSymbolorNameAndLogo = (item: Token | Collectible | Collection) => {
+  const getSymbolOrNameAndLogo = (item: Token | Collectible | Collection) => {
     const symbol = (isToken(item) ? item?.metadata?.symbol : item?.metadata?.name) || "Unknown";
     const logo = item?.metadata?.image || getLocalLogo(symbol);
     return { symbol, logo };
   };
 
-  const { symbol, logo } = getSymbolorNameAndLogo(items[selectedItemIndex]);
+  const { symbol, logo } = getSymbolOrNameAndLogo(items[selectedItemIndex]);
 
   const handleSelectOption = (index: number) => {
     onSelectedItem(index);
@@ -79,7 +79,7 @@ const Select: FC<Props> = ({ items, selectedItemIndex, onSelectedItem, disabled 
         } z-10`}
       >
         {items.map((item, index) => {
-          const { symbol, logo } = getSymbolorNameAndLogo(item);
+          const { symbol, logo } = getSymbolOrNameAndLogo(item);
           return (
             <div className="select-option" onClick={() => handleSelectOption(index)}>
               <div className="flex items-center gap-1.5">
