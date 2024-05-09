@@ -39,7 +39,7 @@ const RequestScreen = () => {
   if (!payload) return <div>Loading...</div>;
 
   return (
-    <div className="popup-container">
+    <div className="popup-container overflow-y-hidden flex flex-col">
       <div className="h-[60px] px-4 py-2 gap-1.5 flex justify-between bg-primary-300">
         <div className="flex items-center gap-2">
           <img className="w-10 h-10" src={strawberry} alt="strawberry logo" />
@@ -50,20 +50,24 @@ const RequestScreen = () => {
         </div>
       </div>
 
-      <div className="flex flex-col items-center">
-        <img src={payload.sender.tab?.favIconUrl || unknownLogo} alt="Sender" className="w-20 h-20 rounded-full" />
-        <p className="text-2xl text-secondary-500 line-clamp-1 text-center">{payload.sender.tab?.title || "Unknown"}</p>
-      </div>
+      <div className="px-5 py-6 flex flex-col gap-4 flex-1">
+        <div className="flex flex-col items-center">
+          <img src={payload.sender.tab?.favIconUrl || unknownLogo} alt="Sender" className="w-20 h-20 rounded-full" />
+          <p className="text-2xl text-secondary-500 line-clamp-1 text-center">
+            {payload.sender.tab?.title || "Unknown"}
+          </p>
+        </div>
 
-      <Outlet
-        context={
-          {
-            chromeKernel,
-            messageId,
-            payload,
-          } satisfies RequestOutletContext<unknown>
-        }
-      />
+        <Outlet
+          context={
+            {
+              chromeKernel,
+              messageId,
+              payload,
+            } satisfies RequestOutletContext<unknown>
+          }
+        />
+      </div>
     </div>
   );
 };

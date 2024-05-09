@@ -1,13 +1,29 @@
 import { Channel } from "@messaging/types";
 import { appState } from "@state/index";
+import { queryWebSummary } from "@utils/graphql";
+import { useEffect, useState } from "react";
 import { useSnapshot } from "valtio";
+
+import { ShieldDoneIcon } from "@/icons";
 
 import ActionButtons from "./ActionButtons";
 import { useRequestContext } from "./shared";
 
 const RequestConnectScreen = () => {
-  const { chromeKernel, messageId } = useRequestContext();
+  const { chromeKernel, messageId, payload } = useRequestContext();
+  const [webSummary, setWebSummary] = useState<string>("No data");
   const { keypair } = useSnapshot(appState);
+
+  useEffect(() => {
+    const fetchWebSummary = async () => {
+      const data = (await queryWebSummary("https://anza-xyz.github.io/wallet-adapter/example/")) as {
+        askGemini: { response: string };
+      };
+      setWebSummary(data.askGemini.response);
+    };
+
+    fetchWebSummary().catch(console.error);
+  }, [payload]);
 
   const handleConnect = () => {
     if (!keypair || !messageId) return;
@@ -30,10 +46,28 @@ const RequestConnectScreen = () => {
   };
 
   return (
-    <div>
-      <h1>Request Connect Screen</h1>
+    <div className="flex flex-col flex-1 gap-4">
+      <div className="flex flex-col gap-1 max-h-40 px-3 py-2 bg-primary-200 rounded-xl overflow-y-auto">
+        <p className="text-small font-semibold text-primary-500">Description</p>
+        <p className="text-small font-semibold text-secondary-500 text-pretty">{webSummary}</p>
+      </div>
+
+      <div className="flex flex-col gap-2 px-3 py-2 bg-primary-200 rounded-xl">
+        <div className="flex">
+          <ShieldDoneIcon size={24} />
+          <p className="text-small font-semibold text-primary-500">View assets, transaction logs</p>
+        </div>
+
+        <div className="flex">
+          <ShieldDoneIcon size={24} />
+          <p className="text-small font-semibold text-primary-500">
+            Send or make other transactions request your signature
+          </p>
+        </div>
+      </div>
 
       <ActionButtons
+        className="mt-auto"
         reminderText="Only connect if you trust this website."
         approveText="Connect"
         onApprove={handleConnect}

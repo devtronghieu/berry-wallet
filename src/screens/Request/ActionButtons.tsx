@@ -1,6 +1,7 @@
 import { FC } from "react";
 
 interface Props {
+  className?: string;
   reminderText: string;
   approveText?: string;
   rejectText?: string;
@@ -9,6 +10,7 @@ interface Props {
 }
 
 const ActionButtons: FC<Props> = ({
+  className,
   reminderText,
   approveText = "Confirm",
   rejectText = "Deny",
@@ -16,18 +18,18 @@ const ActionButtons: FC<Props> = ({
   onReject,
 }) => {
   return (
-    <div className="flex flex-col items-center gap-4 px-5 py-6">
+    <div className={`flex flex-col items-center gap-3 ${className}`}>
       <p className="text-sm text-primary-500">{reminderText}</p>
       <div className="flex items-center gap-4 w-full">
         <button
           onClick={onApprove}
-          className="bg-primary-200 text-primary-400 text-base font-semibold rounded-xl flex-1 py-2"
+          className="bg-primary-200 text-primary-400 text-base font-semibold rounded-xl flex-1 py-2 hover:bg-primary-300 transition-colors"
         >
           {approveText}
         </button>
         <button
           onClick={onReject}
-          className="bg-secondary-100 text-secondary-500 text-base font-semibold rounded-xl flex-1 py-2"
+          className="bg-secondary-100 text-secondary-500 text-base font-semibold rounded-xl flex-1 py-2 hover:bg-secondary-300 transition-colors"
         >
           {rejectText}
         </button>
