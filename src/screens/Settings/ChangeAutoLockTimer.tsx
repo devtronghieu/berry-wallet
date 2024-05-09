@@ -49,7 +49,11 @@ const ChangeAutoLockTimer: FC<Props> = ({ onSave }) => {
           </div>
         ))}
       </div>
-      <button className="rounded-xl gradient-button h-[40px] mt-auto mx-5" onClick={handleClickSave}>
+      <button
+        className="rounded-xl gradient-button h-[40px] mt-auto mx-5"
+        onClick={handleClickSave}
+        onKeyDown={(e) => e.key === "Enter" && handleClickSave()}
+      >
         Save
       </button>
     </div>
