@@ -43,7 +43,7 @@ const UnlockWalletScreen = () => {
       }
 
       const { lockTimer } = JSON.parse(localStorage.getItem("berry-local-config") ?? "{}");
-      await upsertPasswordExpiredAt(Date.now() + (lockTimer || 0) * 60 * 1000);
+      await upsertPasswordExpiredAt(Date.now() + (lockTimer || 30) * 60 * 1000);
 
       const activeKeypairIndex = await getActiveKeypairIndex();
       const keypair = await deriveKeypair(hashedPassword, activeKeypairIndex ?? 0);

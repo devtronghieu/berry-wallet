@@ -1,10 +1,10 @@
 import strawberry from "@assets/strawberry.svg";
+import BottomSheet from "@components/BottomSheet";
 import { FeatureButton } from "@components/FeatureButton";
 import { TabBar, TokenList } from "@components/index";
 import { Token } from "@engine/tokens/types";
 import { swap } from "@engine/transaction/swap";
 import { getFriendlyAmount } from "@engine/utils";
-import BottomSheet from "@components/BottomSheet";
 import History from "@screens/History";
 import TransactionResult from "@screens/Result";
 import Send from "@screens/Send";
