@@ -7,7 +7,6 @@ export enum Route {
   Home = "/",
   Nft = "/nft",
   Settings = "/settings",
-  SecurityAndPrivacy = "/settings/security-and-privacy",
 
   Request = "/request",
   RequestConnect = "/request/connect",

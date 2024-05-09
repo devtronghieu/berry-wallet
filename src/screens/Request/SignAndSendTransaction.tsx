@@ -1,13 +1,12 @@
-import unknownLogo from "@assets/tokens/unknown.svg";
 import { signAndSendTransaction } from "@engine/transaction/sign";
-import { ChromeKernel } from "@messaging/core";
-import { Channel, Message } from "@messaging/types";
+import { Channel } from "@messaging/types";
 import { Keypair, SendOptions } from "@solana/web3.js";
 import { appState } from "@state/index";
 import { decode } from "bs58";
-import { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
 import { useSnapshot } from "valtio";
+
+import ActionButtons from "./ActionButtons";
+import { useRequestContext } from "./shared";
 
 interface SignAndSendTransactionContextData {
   sender: chrome.runtime.MessageSender;
@@ -16,25 +15,8 @@ interface SignAndSendTransactionContextData {
 }
 
 const RequestSignAndSendTransactionScreen = () => {
-  const { messageId } = useParams<{ messageId: string }>();
+  const { chromeKernel, messageId, payload } = useRequestContext<SignAndSendTransactionContextData>();
   const { keypair } = useSnapshot(appState);
-  const [payload, setPayload] = useState<SignAndSendTransactionContextData>();
-  const chromeKernel = useMemo(() => new ChromeKernel(Channel.Popup), []);
-
-  useEffect(() => {
-    const requestContextData = async () => {
-      if (!messageId) return;
-
-      const message = (await chromeKernel.requestContextData({
-        from: Channel.Background,
-        id: messageId,
-      })) as Message;
-
-      setPayload(message.payload as SignAndSendTransactionContextData);
-    };
-
-    requestContextData().catch(console.error);
-  }, [chromeKernel, messageId]);
 
   const handleSignAndSendTransaction = async () => {
     if (!keypair || !messageId || !payload) return;
@@ -77,19 +59,12 @@ const RequestSignAndSendTransactionScreen = () => {
     <div>
       <h1>Request Sign and Send Transaction Screen</h1>
 
-      <div className="flex items-center gap-2">
-        <img src={payload.sender?.tab?.favIconUrl || unknownLogo} alt="Sender" className="w-8 h-8 rounded-full" />
-        <p>{payload.sender?.origin}</p>
-      </div>
-
-      <div className="flex items-center gap-4">
-        <button className="gradient-button" onClick={handleReject}>
-          Cancel
-        </button>
-        <button className="gradient-button" onClick={handleSignAndSendTransaction}>
-          Sign
-        </button>
-      </div>
+      <ActionButtons
+        reminderText="Only sign if you trust this website."
+        approveText="Sign"
+        onApprove={handleSignAndSendTransaction}
+        onReject={handleReject}
+      />
     </div>
   );
 };

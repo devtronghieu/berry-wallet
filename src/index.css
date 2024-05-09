@@ -22,6 +22,10 @@
     @apply font-poppins w-[400px] h-[600px] bg-primary-100;
   }
 
+  .popup-container {
+    @apply font-poppins w-screen h-screen bg-primary-100;
+  }
+
   .gradient-background {
     @apply bg-gradient-to-r from-primary-300 to-primary-400;
   }

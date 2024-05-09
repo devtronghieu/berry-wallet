@@ -1,15 +1,15 @@
 import strawberry from "@assets/strawberry.svg";
+import BottomSheet from "@components/BottomSheet";
 import { FeatureButton } from "@components/FeatureButton";
 import { TabBar, TokenList } from "@components/index";
 import { Token } from "@engine/tokens/types";
 import { swap } from "@engine/transaction/swap";
 import { getFriendlyAmount } from "@engine/utils";
-import BottomSheet from "@screens/BottomSheet";
 import History from "@screens/History";
 import TransactionResult from "@screens/Result";
 import Send from "@screens/Send";
 import { Keypair } from "@solana/web3.js";
-import { appState } from "@state/index";
+import { appActions, appState } from "@state/index";
 import { formatCurrency } from "@utils/general";
 import { Route } from "@utils/routes";
 import { getSafeMintAddressForPriceAPI } from "@utils/tokens";
@@ -17,18 +17,14 @@ import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSnapshot } from "valtio";
 
-import CopyIcon from "@/icons/Copy";
 import EyeCloseIcon from "@/icons/EyeClose";
 import EyeOpenIcon from "@/icons/EyeOpen";
-import { ArrowDownIcon, ArrowUpIcon, SettingIcon, SwapIcon } from "@/icons/index";
+import { ArrowDownIcon, ArrowUpIcon, ChevronDownIcon, SettingIcon, SwapIcon } from "@/icons/index";
 
 import Collections from "./Collections";
-import HoveredAddress from "./HoveredAddress";
 
 const HomeScreen = () => {
-  const { keypair, tokens, prices, collectionMap } = useSnapshot(appState);
-  const [isWalletHovered, setIsWalletHovered] = useState<boolean>(false);
-  const [dataBlurred, setDataBlurred] = useState<boolean>(true);
+  const { keypair, tokens, prices, collectionMap, localConfig } = useSnapshot(appState);
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("Tokens");
   const [bottomSheetType, setBottomSheetType] = useState<string>("Send");
@@ -88,17 +84,13 @@ const HomeScreen = () => {
   return (
     <div className="extension-container flex flex-col">
       <div className="h-[60px] px-4 py-2 gap-1.5 flex justify-between bg-primary-300">
-        {isWalletHovered ? (
-          <HoveredAddress setIsWalletHovered={setIsWalletHovered} />
-        ) : (
-          <div className="flex items-center gap-2" onMouseEnter={() => setIsWalletHovered(true)}>
-            <img className="w-10 h-10" src={strawberry} alt="strawberry logo" />
-            <p className="font-bold text-lg text-primary-500">Account 1</p>
-            <button className="w-6 h-6 flex items-center justify-center bg-primary-200 rounded-full">
-              <CopyIcon size={20} />
-            </button>
-          </div>
-        )}
+        <div className="flex items-center gap-2">
+          <img className="w-10 h-10" src={strawberry} alt="strawberry logo" />
+          <p className="font-bold text-lg text-primary-500">Account 1</p>
+          <button>
+            <ChevronDownIcon size={24} />
+          </button>
+        </div>
 
         <button onClick={() => navigate(Route.Settings)}>
           <SettingIcon size={20} />
@@ -109,12 +101,17 @@ const HomeScreen = () => {
         <div>
           <div className="flex items-center">
             <h2 className="text-lg text-secondary-500 font-bold me-2">TOTAL BALANCE</h2>
-            <button className="trans-mini-icon-button" onClick={() => setDataBlurred(!dataBlurred)}>
-              {dataBlurred ? <EyeCloseIcon size={20} /> : <EyeOpenIcon size={20} />}
+            <button
+              className="trans-mini-icon-button"
+              onClick={() => appActions.setShowBalance(!localConfig.showBalance)}
+            >
+              {!localConfig.showBalance ? <EyeCloseIcon size={20} /> : <EyeOpenIcon size={20} />}
             </button>
           </div>
           <h1
-            className={`text-2xl font-semibold text-center text-primary-400 mt-2 ${dataBlurred ? "blur-effect" : ""}`}
+            className={`text-2xl font-semibold text-center text-primary-400 mt-2 ${
+              !localConfig.showBalance ? "blur-effect" : ""
+            }`}
           >
             {formatCurrency(totalBalance)}
           </h1>
