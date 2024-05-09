@@ -53,13 +53,17 @@ const RequestConnectScreen = () => {
       </div>
 
       <div className="flex flex-col gap-2 px-3 py-2 bg-primary-200 rounded-xl">
-        <div className="flex">
-          <ShieldDoneIcon size={24} />
+        <div className="flex gap-1.5">
+          <div>
+            <ShieldDoneIcon size={24} />
+          </div>
           <p className="text-small font-semibold text-primary-500">View assets, transaction logs</p>
         </div>
 
-        <div className="flex">
-          <ShieldDoneIcon size={24} />
+        <div className="flex gap-1.5">
+          <div>
+            <ShieldDoneIcon size={24} />
+          </div>
           <p className="text-small font-semibold text-primary-500">
             Send or make other transactions request your signature
           </p>

@@ -51,7 +51,7 @@ const RequestScreen = () => {
       </div>
 
       <div className="px-5 py-6 flex flex-col gap-4 flex-1">
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col gap-4 items-center">
           <img src={payload.sender.tab?.favIconUrl || unknownLogo} alt="Sender" className="w-20 h-20 rounded-full" />
           <p className="text-2xl text-secondary-500 line-clamp-1 text-center">
             {payload.sender.tab?.title || "Unknown"}
