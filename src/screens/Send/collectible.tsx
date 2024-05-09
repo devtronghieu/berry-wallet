@@ -1,7 +1,8 @@
 import { formatCurrency } from "@utils/general";
 import { Collectible, ATAMetadata } from "@engine/tokens/types";
 import { Keypair, PublicKey } from "@solana/web3.js";
-import { fetchNftTransactionFee, sendCollectible } from "@engine/transaction/send";
+import { fetchNftTransactionFee } from "@engine/fee";
+import { sendCollectible } from "@engine/transaction/send";
 import { getSafeMintAddressForPriceAPI } from "@utils/tokens";
 import { getFriendlyAmount } from "@engine/utils";
 import Select from "../../components/Select";

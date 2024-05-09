@@ -119,7 +119,7 @@ export const fetchTransactionFee = async (feePayerPubKey: PublicKey) => {
 };
 
 // Send NFT
-interface SendNFTConfig {
+export interface SendNFTConfig {
   keypair: Keypair;
   receiverPublicKey?: PublicKey;
   NFT?: Collectible;
@@ -169,26 +169,5 @@ export const sendCollectible = async (tranferNFTConfig: SendNFTConfig) => {
   } catch (error) {
     console.error("Error sending collectible: ", error);
     transactionActions.setStatus(TransactionStatus.FAILED);
-  }
-};
-
-export const fetchNftTransactionFee = async (tranferNFTConfig: SendNFTConfig) => {
-  try {
-    const connection = getConnection();
-    const { NFT } = tranferNFTConfig;
-    if (!NFT) transactionActions.setFee(0);
-    else {
-      tranferNFTConfig.receiverPublicKey = tranferNFTConfig.keypair.publicKey;
-      let transaction = new Transaction({
-        recentBlockhash: (await connection.getRecentBlockhash()).blockhash,
-        feePayer: tranferNFTConfig.keypair.publicKey,
-      });
-      transaction = await constructNftTransaction(tranferNFTConfig, transaction);
-      const fee = await transaction.getEstimatedFee(connection);
-      if (!fee) throw new Error("No fee found.");
-      transactionActions.setFee(fee / LAMPORTS_PER_SOL);
-    }
-  } catch (error) {
-    console.error("Error fetching NFT transaction fees: ", error);
   }
 };

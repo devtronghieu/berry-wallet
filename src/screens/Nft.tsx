@@ -5,7 +5,7 @@ import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useSnapshot } from "valtio";
 import { useMemo, useState } from "react";
 import Send from "@screens/Send";
-import BottomSheet from "@screens/BottomSheet";
+import BottomSheet from "@components/BottomSheet";
 
 import { ArrowUpIcon } from "@/icons";
 import { Collectible } from "@engine/tokens/types";
