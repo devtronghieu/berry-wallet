@@ -7,7 +7,7 @@ interface Props {
   onSave: () => void;
 }
 
-const ChangeAutoLockTimerScreen: FC<Props> = ({ onSave }) => {
+const ChangeAutoLockTimer: FC<Props> = ({ onSave }) => {
   const { lockTimer } = appState.localConfig;
   const timerOptions = new Map<string, number>([
     ["Immediately", 0],
@@ -56,4 +56,4 @@ const ChangeAutoLockTimerScreen: FC<Props> = ({ onSave }) => {
   );
 };
 
-export default ChangeAutoLockTimerScreen;
+export default ChangeAutoLockTimer;

@@ -1,5 +1,5 @@
 import SettingButton from "@components/SettingButton";
-import { BottomSheetType } from "@utils/bottomSheetTypes";
+import { BottomSheetType } from "@screens/Settings/types";
 import { FC } from "react";
 
 import { ClockIcon, KeyIcon } from "@/icons";
@@ -8,7 +8,7 @@ interface Props {
   onSettingButtonClick: (bottomSheetType: string) => void;
 }
 
-const SecurityAndPrivacyScreen: FC<Props> = ({ onSettingButtonClick }) => {
+const SecurityAndPrivacy: FC<Props> = ({ onSettingButtonClick }) => {
   return (
     <div>
       <div className="flex flex-col gap-3">
@@ -27,4 +27,4 @@ const SecurityAndPrivacyScreen: FC<Props> = ({ onSettingButtonClick }) => {
   );
 };
 
-export default SecurityAndPrivacyScreen;
+export default SecurityAndPrivacy;

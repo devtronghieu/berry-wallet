@@ -1,15 +1,16 @@
 import BackHeader from "@components/BackHeader";
+import BottomSheet from "@components/BottomSheet";
 import SettingButton from "@components/SettingButton";
-import BottomSheet from "@screens/BottomSheet";
-import { BottomSheetType } from "@utils/bottomSheetTypes";
+import { BottomSheetType } from "@screens/Settings/types";
 import { Route } from "@utils/routes";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { PlusIcon, ShieldDoneIcon, TrashIcon, WalletIcon } from "@/icons";
 
-import ChangeAutoLockTimerScreen from "./ChangeAutoLockTimer";
-import SecurityAndPrivacyScreen from "./SecurityAndPrivacy";
+import ChangeAutoLockTimer from "./ChangeAutoLockTimer";
+import ManageAccounts from "./ManageAccountsBottomSheet";
+import SecurityAndPrivacy from "./SecurityAndPrivacy";
 
 const DefaultSettingsScreen = () => {
   const navigate = useNavigate();
@@ -22,10 +23,10 @@ const DefaultSettingsScreen = () => {
   const CurrentBottomSheetChildren = useMemo(() => {
     const BottomSheetChildren: Record<string, React.ElementType> = {
       [BottomSheetType.ManageAccounts]: () => {
-        return <div>ManageAccounts</div>;
+        return <ManageAccounts />;
       },
       [BottomSheetType.SecurityAndPrivacy]: () => {
-        return <SecurityAndPrivacyScreen onSettingButtonClick={setBottomSheetType} />;
+        return <SecurityAndPrivacy onSettingButtonClick={setBottomSheetType} />;
       },
       [BottomSheetType.AddOrConnectWallet]: () => {
         return <div>AddOrConnectWallet</div>;
@@ -34,7 +35,7 @@ const DefaultSettingsScreen = () => {
         return <div>ResetApp</div>;
       },
       [BottomSheetType.ChangeAutoLockTimer]: () => {
-        return <ChangeAutoLockTimerScreen onSave={() => setBottomSheetType(BottomSheetType.SecurityAndPrivacy)} />;
+        return <ChangeAutoLockTimer onSave={() => setBottomSheetType(BottomSheetType.SecurityAndPrivacy)} />;
       },
       [BottomSheetType.ChangePassword]: () => {
         return <div>ChangePassword</div>;

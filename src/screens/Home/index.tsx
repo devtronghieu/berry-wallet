@@ -4,7 +4,7 @@ import { TabBar, TokenList } from "@components/index";
 import { Token } from "@engine/tokens/types";
 import { swap } from "@engine/transaction/swap";
 import { getFriendlyAmount } from "@engine/utils";
-import BottomSheet from "@screens/BottomSheet";
+import BottomSheet from "@components/BottomSheet";
 import History from "@screens/History";
 import TransactionResult from "@screens/Result";
 import Send from "@screens/Send";
