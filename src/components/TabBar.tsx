@@ -5,10 +5,11 @@ interface Props {
   className?: string;
   navTitle?: string[];
   navOnClick?: onClick[];
+  activeTab?: string;
 }
 
-export const TabBar: FC<Props> = ({ navTitle = [], className, navOnClick }) => {
-  const [activeIndex, setActiveIndex] = useState(0);
+export const TabBar: FC<Props> = ({ navTitle = [], className, navOnClick, activeTab = "" }) => {
+  const [activeIndex, setActiveIndex] = useState(!activeTab ? 0 : navTitle.indexOf(activeTab));
   return (
     <nav className={`nav-background ${className} ${"active-" + activeIndex}`}>
       <ul className="flex gap-1">

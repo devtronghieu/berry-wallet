@@ -3,17 +3,41 @@ import { appState } from "@state/index";
 import { Route } from "@utils/routes";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useSnapshot } from "valtio";
+import { useMemo, useState } from "react";
+import Send from "@screens/Send";
+import BottomSheet from "@screens/BottomSheet";
 
 import { ArrowUpIcon } from "@/icons";
+import { Collectible } from "@engine/tokens/types";
 
 const NftScreen = () => {
   const navigate = useNavigate();
   const { nftId } = useParams<{ nftId: string }>();
   const { collectionMap } = useSnapshot(appState);
+  const [bottomSheetType, setBottomSheetType] = useState<string>("Send");
+  const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
+  const [selectedCollectible, selectCollectible] = useState<Collectible>();
 
   if (!nftId) {
     return <Navigate to={Route.Home} />;
   }
+
+  const handleOnClick = (collectible: Collectible) => {
+    setBottomSheetType("Send");
+    setModalIsOpen(true);
+    selectCollectible(collectible);
+  };
+
+  const CurrentBottomSheetChildren = useMemo(() => {
+    const BottomSheetChildren: Record<string, React.ElementType> = {
+      Send() {
+        return (
+          <Send onSubmit={setBottomSheetType} defaultTab="Collectibles" defaultCollectible={selectedCollectible} />
+        );
+      },
+    };
+    return BottomSheetChildren[bottomSheetType];
+  }, [bottomSheetType]);
 
   // nftId = collectionId:collectibleId
   const [collectionId, collectibleId] = nftId.split(":");
@@ -75,7 +99,7 @@ const NftScreen = () => {
               />
 
               <div className="px-5 w-full">
-                <button className="gradient-button w-full !gap-1">
+                <button className="gradient-button w-full !gap-1" onClick={() => handleOnClick(collectible)}>
                   <ArrowUpIcon size={24} />
                   <p>Send</p>
                 </button>
@@ -106,6 +130,9 @@ const NftScreen = () => {
             </div>
           );
         })()}
+      <BottomSheet title={bottomSheetType} isOpen={modalIsOpen} onClose={() => setModalIsOpen(false)}>
+        <CurrentBottomSheetChildren />
+      </BottomSheet>
     </div>
   );
 };
