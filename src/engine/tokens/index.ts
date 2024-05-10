@@ -120,7 +120,7 @@ export const fetchTokens = async (pubkey: PublicKey) => {
     const parsedData = item.account.data as ParsedDataOfATA;
     const isNft = parsedData.parsed.info.tokenAmount.decimals === 0;
 
-    if (!isNft) {
+    if (!isNft && parsedData.parsed.info.tokenAmount.amount !== "0") {
       tokens.push({
         pubkey: item.pubkey,
         accountData: {
