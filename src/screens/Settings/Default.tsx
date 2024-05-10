@@ -17,6 +17,7 @@ import ChangePassword from "./ChangePassword";
 import EditAccount from "./EditAccount";
 import ManageAccounts from "./ManageAccountsBottomSheet";
 import SecurityAndPrivacy from "./SecurityAndPrivacy";
+import ShowPrivateKey from "./ShowPrivateKey";
 import ShowSecretPhrase from "./ShowSecretPhrase";
 
 const DefaultSettingsScreen = () => {
@@ -60,11 +61,16 @@ const DefaultSettingsScreen = () => {
             account={selectedAccount}
             accountType={selectedAccountType}
             onShowSecretPhrase={() => setBottomSheetType(BottomSheetType.ShowSecretPhrase)}
+            onShowPrivateKey={() => setBottomSheetType(BottomSheetType.ShowPrivateKey)}
           />
         );
       },
       [BottomSheetType.ShowSecretPhrase]: () => {
         return <ShowSecretPhrase seedPhrase={seedPhrase} />;
+      },
+      [BottomSheetType.ShowPrivateKey]: () => {
+        if (!selectedAccount) return null;
+        return <ShowPrivateKey privateKey={selectedAccount.privateKey} />;
       },
       [BottomSheetType.SecurityAndPrivacy]: () => {
         return <SecurityAndPrivacy onSettingButtonClick={setBottomSheetType} />;

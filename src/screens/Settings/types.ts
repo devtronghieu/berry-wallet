@@ -7,4 +7,5 @@ export enum BottomSheetType {
   ChangePassword = "Change password",
   EditAccount = "Edit account",
   ShowSecretPhrase = "Your secret phrase",
+  ShowPrivateKey = "Your private key",
 }

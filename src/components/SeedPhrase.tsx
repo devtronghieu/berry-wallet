@@ -1,6 +1,6 @@
 import { FC } from "react";
 
-import EyeClose2Icon from "@/icons/EyeClose2";
+import BlurOverlay from "./BlurOverlay";
 
 interface Props {
   className?: string;
@@ -45,11 +45,7 @@ export const SeedPhrase: FC<Props> = ({ className, readonly = true, blurred = fa
         </div>
       ))}
 
-      {blurred && (
-        <div className="absolute top-[-10%] left-[-10%] w-[120%] h-[120%] flex items-center justify-center glass-background">
-          <EyeClose2Icon size={80} color="#F29AAA" />
-        </div>
-      )}
+      {blurred && <BlurOverlay />}
     </div>
   );
 };

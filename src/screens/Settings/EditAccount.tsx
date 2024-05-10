@@ -7,9 +7,10 @@ interface Props {
   account: StoredPrivateKey;
   accountType: StoredAccountType;
   onShowSecretPhrase: () => void;
+  onShowPrivateKey: () => void;
 }
 
-const EditAccount: FC<Props> = ({ account, accountType, onShowSecretPhrase }) => {
+const EditAccount: FC<Props> = ({ account, accountType, onShowSecretPhrase, onShowPrivateKey }) => {
   const publicKey = useMemo(() => {
     if (!account) return null;
     console.log(account);
@@ -29,7 +30,7 @@ const EditAccount: FC<Props> = ({ account, accountType, onShowSecretPhrase }) =>
         {accountType === StoredAccountType.SeedPhrase && (
           <SettingAccount title="Show Secret Phrase" value={""} hasIcon onClick={onShowSecretPhrase} />
         )}
-        <SettingAccount title="Show Private Key" value={""} hasIcon onClick={() => {}} />
+        <SettingAccount title="Show Private Key" value={""} hasIcon onClick={onShowPrivateKey} />
       </div>
 
       <SettingAccount title="Remove account" value={""} redTitle onClick={() => {}} />
