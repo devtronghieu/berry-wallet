@@ -67,10 +67,12 @@ const CreateWalletScreen = () => {
         ctaDisabled: password === "",
         onCTAClick: async () => {
           const hashedPassword = hash(password);
-          const { encryptedSeedPhrase, keypair } = await createWallet(seedPhrase, hashedPassword);
-          appActions.setEncryptedSeedPhrase(encryptedSeedPhrase);
+          const { keypair, encryptedAccounts } = await createWallet(seedPhrase, hashedPassword);
           appActions.setKeypair(keypair);
           appActions.setHashedPassword(hashedPassword);
+          appActions.setEncryptedAccounts(encryptedAccounts);
+          appActions.setActiveWalletIndex(0);
+          appActions.setActiveKeypairIndex(0);
           navigate(Route.Home);
         },
         onGoBack: () => setScreenProgress(ScreenProgress.ConfirmSeedPhrase),
