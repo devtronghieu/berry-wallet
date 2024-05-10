@@ -1,8 +1,8 @@
+import ActionButton from "@components/ActionButton";
 import { appActions, appState } from "@state/index";
 import { FC, useState } from "react";
 
 import { CorrectIcon } from "@/icons";
-import ActionButton from "@components/ActionButton";
 
 interface Props {
   onSave: () => void;

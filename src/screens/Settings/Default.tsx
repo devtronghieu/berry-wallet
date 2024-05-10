@@ -39,6 +39,14 @@ const DefaultSettingsScreen = () => {
     setModalIsOpen(true);
   };
 
+  const handleOnBackSecurity = () => {
+    setBottomSheetType(BottomSheetType.SecurityAndPrivacy);
+  };
+
+  const handleOnBackEditAccount = () => {
+    setBottomSheetType(BottomSheetType.EditAccount);
+  };
+
   const CurrentBottomSheetChildren = useMemo(() => {
     const BottomSheetChildren: Record<string, React.ElementType> = {
       [BottomSheetType.ManageAccounts]: () => {
@@ -60,17 +68,16 @@ const DefaultSettingsScreen = () => {
           <EditAccount
             account={selectedAccount}
             accountType={selectedAccountType}
-            onShowSecretPhrase={() => setBottomSheetType(BottomSheetType.ShowSecretPhrase)}
-            onShowPrivateKey={() => setBottomSheetType(BottomSheetType.ShowPrivateKey)}
+            onBottomChange={setBottomSheetType}
           />
         );
       },
       [BottomSheetType.ShowSecretPhrase]: () => {
-        return <ShowSecretPhrase seedPhrase={seedPhrase} />;
+        return <ShowSecretPhrase seedPhrase={seedPhrase} onBack={handleOnBackEditAccount} />;
       },
       [BottomSheetType.ShowPrivateKey]: () => {
         if (!selectedAccount) return null;
-        return <ShowPrivateKey privateKey={selectedAccount.privateKey} />;
+        return <ShowPrivateKey privateKey={selectedAccount.privateKey} onBack={handleOnBackEditAccount} />;
       },
       [BottomSheetType.SecurityAndPrivacy]: () => {
         return <SecurityAndPrivacy onSettingButtonClick={setBottomSheetType} />;
@@ -82,10 +89,10 @@ const DefaultSettingsScreen = () => {
         return <div>ResetApp</div>;
       },
       [BottomSheetType.ChangeAutoLockTimer]: () => {
-        return <ChangeAutoLockTimer onSave={() => setBottomSheetType(BottomSheetType.SecurityAndPrivacy)} />;
+        return <ChangeAutoLockTimer onSave={handleOnBackSecurity} />;
       },
       [BottomSheetType.ChangePassword]: () => {
-        return <ChangePassword onSave={() => setBottomSheetType(BottomSheetType.SecurityAndPrivacy)} />;
+        return <ChangePassword onSave={handleOnBackSecurity} />;
       },
     };
     return BottomSheetChildren[bottomSheetType];

@@ -1,3 +1,4 @@
+import ActionButton from "@components/ActionButton";
 import TextArea from "@components/TextArea";
 import { FC, useState } from "react";
 
@@ -7,9 +8,10 @@ const iconSize = 18;
 
 interface Props {
   privateKey: string;
+  onBack: () => void;
 }
 
-const ShowPrivateKey: FC<Props> = ({ privateKey }) => {
+const ShowPrivateKey: FC<Props> = ({ privateKey, onBack }) => {
   const [dataBlurred, setDataBlurred] = useState<boolean>(true);
   return (
     <>
@@ -29,6 +31,7 @@ const ShowPrivateKey: FC<Props> = ({ privateKey }) => {
         </button>
       </div>
       <TextArea placeholder={privateKey} readOnly blurred={dataBlurred} />
+      <ActionButton onClick={onBack}>Done</ActionButton>
     </>
   );
 };

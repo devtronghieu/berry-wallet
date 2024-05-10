@@ -11,7 +11,6 @@ const ActionButton: FC<Props> = ({ children, onClick, disabled }) => {
     <button
       className={`rounded-xl ${!disabled ? "gradient-button" : "disabled-button"} h-[40px] mt-auto mx-5`}
       onClick={onClick}
-      onKeyDown={(e) => e.key === "Enter" && onClick()}
       disabled={disabled}
     >
       {children}
