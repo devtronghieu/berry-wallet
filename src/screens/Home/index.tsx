@@ -6,6 +6,7 @@ import { Token } from "@engine/tokens/types";
 import { swap } from "@engine/transaction/swap";
 import { getFriendlyAmount } from "@engine/utils";
 import History from "@screens/History";
+import Receive from "@screens/Receive";
 import TransactionResult from "@screens/Result";
 import Send from "@screens/Send";
 import { Keypair } from "@solana/web3.js";
@@ -41,7 +42,7 @@ const HomeScreen = () => {
         return <Send onSubmit={setBottomSheetType} />;
       },
       Receive() {
-        return <div>Receive</div>;
+        return <Receive />;
       },
       Swap() {
         return <div>Swap</div>;
