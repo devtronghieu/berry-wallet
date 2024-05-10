@@ -5,7 +5,7 @@ import { FC } from "react";
 
 interface Props {
   accounts: StoredAccount[];
-  onItemClick: (account: StoredPrivateKey, accountType: StoredAccountType) => void;
+  onItemClick: (account: StoredPrivateKey, accountType: StoredAccountType, seedPhrase: string | null) => void;
 }
 
 const ManageAccounts: FC<Props> = ({ accounts, onItemClick }) => {
@@ -19,7 +19,7 @@ const ManageAccounts: FC<Props> = ({ accounts, onItemClick }) => {
               <SettingAccount
                 title={privateKey.name}
                 value={`${formatCurrency(privateKey.lastBalance)}`}
-                onClick={() => onItemClick(privateKey, StoredAccountType.SeedPhrase)}
+                onClick={() => onItemClick(privateKey, StoredAccountType.SeedPhrase, account.seedPhrase)}
                 hasIcon={false}
                 key={privateKey.privateKey}
               />
@@ -30,7 +30,7 @@ const ManageAccounts: FC<Props> = ({ accounts, onItemClick }) => {
               <SettingAccount
                 title={account.name}
                 value={`${formatCurrency(account.lastBalance)}`}
-                onClick={() => onItemClick(account, StoredAccountType.PrivateKey)}
+                onClick={() => onItemClick(account, StoredAccountType.PrivateKey, null)}
                 hasIcon={false}
                 key={account.privateKey}
               />

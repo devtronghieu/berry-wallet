@@ -17,6 +17,7 @@ import ChangePassword from "./ChangePassword";
 import EditAccount from "./EditAccount";
 import ManageAccounts from "./ManageAccountsBottomSheet";
 import SecurityAndPrivacy from "./SecurityAndPrivacy";
+import ShowSecretPhrase from "./ShowSecretPhrase";
 
 const DefaultSettingsScreen = () => {
   const navigate = useNavigate();
@@ -25,6 +26,7 @@ const DefaultSettingsScreen = () => {
   const { encryptedAccounts, hashedPassword } = useSnapshot(appState);
   const [selectedAccount, setSelectedAccount] = useState<StoredPrivateKey | undefined>(undefined);
   const [selectedAccountType, setSelectedAccountType] = useState<StoredAccountType>(StoredAccountType.SeedPhrase);
+  const [seedPhrase, setSeedPhrase] = useState<string>("");
 
   const accounts = useMemo(() => {
     if (!encryptedAccounts || !hashedPassword) return [];
@@ -35,23 +37,34 @@ const DefaultSettingsScreen = () => {
     setBottomSheetType(type);
     setModalIsOpen(true);
   };
-  console.log(accounts);
+
   const CurrentBottomSheetChildren = useMemo(() => {
     const BottomSheetChildren: Record<string, React.ElementType> = {
       [BottomSheetType.ManageAccounts]: () => {
         return (
           <ManageAccounts
             accounts={accounts}
-            onItemClick={(account, accountType) => {
+            onItemClick={(account, accountType, seedPhrase) => {
               setBottomSheetType(BottomSheetType.EditAccount);
               setSelectedAccount(account);
               setSelectedAccountType(accountType);
+              if (seedPhrase) setSeedPhrase(seedPhrase);
             }}
           />
         );
       },
       [BottomSheetType.EditAccount]: () => {
-        return <EditAccount account={selectedAccount} accountType={selectedAccountType} />;
+        if (!selectedAccount || !selectedAccountType) return null;
+        return (
+          <EditAccount
+            account={selectedAccount}
+            accountType={selectedAccountType}
+            onShowSecretPhrase={() => setBottomSheetType(BottomSheetType.ShowSecretPhrase)}
+          />
+        );
+      },
+      [BottomSheetType.ShowSecretPhrase]: () => {
+        return <ShowSecretPhrase seedPhrase={seedPhrase} />;
       },
       [BottomSheetType.SecurityAndPrivacy]: () => {
         return <SecurityAndPrivacy onSettingButtonClick={setBottomSheetType} />;
@@ -70,7 +83,7 @@ const DefaultSettingsScreen = () => {
       },
     };
     return BottomSheetChildren[bottomSheetType];
-  }, [accounts, bottomSheetType, selectedAccount]);
+  }, [accounts, bottomSheetType, seedPhrase, selectedAccount, selectedAccountType]);
 
   return (
     <div>

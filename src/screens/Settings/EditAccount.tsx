@@ -4,11 +4,12 @@ import { generateKeypairFromPrivateKey } from "@engine/keypair";
 import { FC, useMemo } from "react";
 
 interface Props {
-  account?: StoredPrivateKey;
-  accountType?: StoredAccountType;
+  account: StoredPrivateKey;
+  accountType: StoredAccountType;
+  onShowSecretPhrase: () => void;
 }
 
-const EditAccount: FC<Props> = ({ account, accountType }) => {
+const EditAccount: FC<Props> = ({ account, accountType, onShowSecretPhrase }) => {
   const publicKey = useMemo(() => {
     if (!account) return null;
     console.log(account);
@@ -26,7 +27,7 @@ const EditAccount: FC<Props> = ({ account, accountType }) => {
       </div>
       <div className="flex flex-col gap-1">
         {accountType === StoredAccountType.SeedPhrase && (
-          <SettingAccount title="Show Secret Phrase" value={""} hasIcon onClick={() => {}} />
+          <SettingAccount title="Show Secret Phrase" value={""} hasIcon onClick={onShowSecretPhrase} />
         )}
         <SettingAccount title="Show Private Key" value={""} hasIcon onClick={() => {}} />
       </div>

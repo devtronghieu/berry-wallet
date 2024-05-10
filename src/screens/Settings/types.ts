@@ -6,4 +6,5 @@ export enum BottomSheetType {
   ChangeAutoLockTimer = "Change auto-lock timer",
   ChangePassword = "Change password",
   EditAccount = "Edit account",
+  ShowSecretPhrase = "Your secret phrase",
 }
