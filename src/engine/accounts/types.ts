@@ -3,6 +3,8 @@ export enum StoredAccountType {
   PrivateKey = "privateKey",
 }
 
+export type StoredAccount = StoredSeedPhrase | StoredPrivateKey;
+
 export interface StoredSeedPhrase {
   type: StoredAccountType.SeedPhrase;
   name: string;

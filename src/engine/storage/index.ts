@@ -29,15 +29,6 @@ export const getEncryptedSeedPhrase = async () => {
 
 const passwordId = "password";
 
-export const setPassword = async (password: string) => {
-  const doc = {
-    _id: passwordId,
-    password,
-  };
-
-  await getDB().put(doc);
-};
-
 export const upsertPassword = async (password: string) => {
   try {
     const doc = await getDB().get(passwordId);
