@@ -11,12 +11,14 @@ export interface AppState {
     showBalance: boolean;
     lockTimer: number;
   };
-  encryptedSeedPhrase?: EncryptedData;
-  keypair?: Keypair;
-  hashedPassword?: string;
   tokens: Token[];
   collectionMap: CollectionMap;
   prices: Record<string, number>;
+  encryptedAccounts?: EncryptedData;
+  keypair?: Keypair;
+  hashedPassword?: string;
+  activeWalletIndex?: number;
+  activeKeypairIndex?: number;
 }
 
 export const appState = proxy<AppState>({
@@ -31,9 +33,6 @@ export const appState = proxy<AppState>({
 });
 
 export const appActions = {
-  setEncryptedSeedPhrase: (encryptedSeedPhrase: EncryptedData) => {
-    appState.encryptedSeedPhrase = encryptedSeedPhrase;
-  },
   setKeypair: (keypair: Keypair) => {
     appState.keypair = keypair;
   },
@@ -59,5 +58,14 @@ export const appActions = {
     if (showBalance === appState.localConfig.showBalance) return;
     appState.localConfig.showBalance = showBalance;
     localStorage.setItem(BERRY_LOCAL_CONFIG_KEY, JSON.stringify(appState.localConfig));
+  },
+  setEncryptedAccounts: (encryptedAccounts: EncryptedData) => {
+    appState.encryptedAccounts = encryptedAccounts;
+  },
+  setActiveKeypairIndex: (index: number) => {
+    appState.activeKeypairIndex = index;
+  },
+  setActiveWalletIndex: (index: number) => {
+    appState.activeWalletIndex = index;
   },
 };

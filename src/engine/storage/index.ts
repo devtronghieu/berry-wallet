@@ -144,3 +144,55 @@ export const getHistory = async () => {
     throw error;
   }
 };
+
+// Account management
+export const getEncryptedAccounts = async (id: string) => {
+  try {
+    const doc = await getDB().get<{ encryptedAccounts: EncryptedData }>(id);
+    return doc.encryptedAccounts;
+  } catch (error) {
+    if ((error as PouchDB.Core.Error).status === 404) {
+      return null;
+    }
+    throw error;
+  }
+};
+
+export const upsertEncryptedAccounts = async (id: string, encryptedAccounts: EncryptedData) => {
+  try {
+    const doc = await getDB().get<{ encryptedAccounts: EncryptedData }>(id);
+    await getDB().put({ ...doc, encryptedAccounts });
+  } catch (error) {
+    if ((error as PouchDB.Core.Error).status === 404) {
+      await getDB().put({ _id: id, encryptedAccounts });
+    } else {
+      throw error;
+    }
+  }
+};
+
+export const getActiveIndex = async (id: string) => {
+  try {
+    const doc = await getDB().get<{ index: number }>(id);
+    return doc.index;
+  } catch (error) {
+    if ((error as PouchDB.Core.Error).status === 404) {
+      return null;
+    }
+
+    throw error;
+  }
+};
+
+export const upsertActiveIndex = async (id: string, newIndex: number) => {
+  try {
+    const doc = await getDB().get<{ index: number }>(id);
+    await getDB().put({ ...doc, index: newIndex });
+  } catch (error) {
+    if ((error as PouchDB.Core.Error).status === 404) {
+      await getDB().put({ _id: id, index: newIndex });
+    } else {
+      throw error;
+    }
+  }
+};
