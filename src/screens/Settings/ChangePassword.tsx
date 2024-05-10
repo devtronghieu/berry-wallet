@@ -1,3 +1,4 @@
+import ActionButton from "@components/ActionButton";
 import { upsertPassword } from "@engine/storage";
 import { appActions, appState } from "@state/index";
 import { hash } from "@utils/crypto";
@@ -99,14 +100,9 @@ const ChangePassword: FC<Props> = ({ onSave }) => {
         />
         {errorConfirmText && <p className="text-error text-xs">{errorConfirmText}</p>}
       </div>
-      <button
-        disabled={!isValid}
-        className={`rounded-xl ${isValid ? "gradient-button" : "disabled-button"} h-[40px] mt-auto mx-5`}
-        onClick={handleClickSave}
-        onKeyDown={(e) => e.key === "Enter" && handleClickSave()}
-      >
+      <ActionButton onClick={handleClickSave} disabled={!isValid}>
         Save
-      </button>
+      </ActionButton>
     </div>
   );
 };

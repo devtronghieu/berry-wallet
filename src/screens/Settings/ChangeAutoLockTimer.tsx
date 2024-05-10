@@ -2,6 +2,7 @@ import { appActions, appState } from "@state/index";
 import { FC, useState } from "react";
 
 import { CorrectIcon } from "@/icons";
+import ActionButton from "@components/ActionButton";
 
 interface Props {
   onSave: () => void;
@@ -49,13 +50,7 @@ const ChangeAutoLockTimer: FC<Props> = ({ onSave }) => {
           </div>
         ))}
       </div>
-      <button
-        className="rounded-xl gradient-button h-[40px] mt-auto mx-5"
-        onClick={handleClickSave}
-        onKeyDown={(e) => e.key === "Enter" && handleClickSave()}
-      >
-        Save
-      </button>
+      <ActionButton onClick={handleClickSave}>Save</ActionButton>
     </div>
   );
 };
