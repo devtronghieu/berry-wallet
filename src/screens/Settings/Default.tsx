@@ -12,19 +12,29 @@ import ChangeAutoLockTimer from "./ChangeAutoLockTimer";
 import ChangePassword from "./ChangePassword";
 import ManageAccounts from "./ManageAccountsBottomSheet";
 import SecurityAndPrivacy from "./SecurityAndPrivacy";
+import { useSnapshot } from "valtio";
+import { appState } from "@state/index";
+import { decryptWithPassword } from "@utils/crypto";
+import { StoredAccount } from "@engine/accounts/types";
 
 const DefaultSettingsScreen = () => {
   const navigate = useNavigate();
   const [bottomSheetType, setBottomSheetType] = useState<string>(BottomSheetType.ManageAccounts);
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
+  const { encryptedAccounts, hashedPassword } = useSnapshot(appState);
+  const accounts = useMemo(() => {
+    if (!encryptedAccounts || !hashedPassword) return [];
+    return JSON.parse(decryptWithPassword(encryptedAccounts, hashedPassword)) as StoredAccount[];
+  }, [encryptedAccounts, hashedPassword]);
   const handleOnClick = (type: string) => {
     setBottomSheetType(type);
     setModalIsOpen(true);
   };
+  console.log(accounts);
   const CurrentBottomSheetChildren = useMemo(() => {
     const BottomSheetChildren: Record<string, React.ElementType> = {
       [BottomSheetType.ManageAccounts]: () => {
-        return <ManageAccounts />;
+        return <ManageAccounts accounts={accounts} />;
       },
       [BottomSheetType.SecurityAndPrivacy]: () => {
         return <SecurityAndPrivacy onSettingButtonClick={setBottomSheetType} />;
@@ -43,7 +53,7 @@ const DefaultSettingsScreen = () => {
       },
     };
     return BottomSheetChildren[bottomSheetType];
-  }, [bottomSheetType]);
+  }, [accounts, bottomSheetType]);
 
   return (
     <div>

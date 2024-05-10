@@ -5,7 +5,7 @@ import { encode } from "bs58";
 import { derivePath } from "ed25519-hd-key";
 
 import { fetchAccountInfo } from "./accounts";
-import { StoredAccount, StoredAccountType, StoredSeedPhrase } from "./accounts/types";
+import { StoredAccount, StoredAccountType } from "./accounts/types";
 import { PouchID } from "./constants";
 import { upsertActiveIndex, upsertEncryptedAccounts, upsertPassword } from "./storage";
 

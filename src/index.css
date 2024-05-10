@@ -158,7 +158,3 @@ input[type="number"] {
   @apply bg-primary-100 !rounded-tr-3xl !rounded-tl-3xl;
   height: 572px !important;
 }
-
-.react-modal-sheet-content {
-  @apply bg-primary-100 !rounded-tr-3xl !rounded-tl-3xl;
-}

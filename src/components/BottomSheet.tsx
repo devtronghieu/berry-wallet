@@ -13,14 +13,14 @@ interface Props {
 const BottomSheet: FC<Props> = ({ title, children, isOpen, onClose }) => {
   return (
     <Sheet isOpen={isOpen} onClose={onClose}>
-      <Sheet.Container className="px-5 py-4 !bg-primary-100 rounded-t-3xl">
+      <Sheet.Container className="px-5 py-4 !bg-primary-100">
         <Sheet.Header className="flex items-center justify-between mb-6">
           <span className="font-semibold text-secondary-500 text-[26px]">{title}</span>
           <div onClick={onClose} className="cursor-pointer">
             <CloseSquareIcon size={24} />
           </div>
         </Sheet.Header>
-        <Sheet.Content>{children}</Sheet.Content>
+        <Sheet.Content className="overflow-scroll">{children}</Sheet.Content>
       </Sheet.Container>
       <Sheet.Backdrop onTap={onClose} />
     </Sheet>
