@@ -5,4 +5,5 @@ export enum BottomSheetType {
   ResetApp = "Reset app",
   ChangeAutoLockTimer = "Change auto-lock timer",
   ChangePassword = "Change password",
+  EditAccount = "Edit account",
 }

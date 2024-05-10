@@ -1,7 +1,7 @@
 import { Keypair } from "@solana/web3.js";
 import { decryptWithPassword, encryptWithPassword } from "@utils/crypto";
 import { generateMnemonic, mnemonicToSeedSync } from "bip39";
-import { encode } from "bs58";
+import base58, { encode } from "bs58";
 import { derivePath } from "ed25519-hd-key";
 
 import { fetchAccountInfo } from "./accounts";
@@ -73,5 +73,5 @@ export const generateKeypairFromSeedPhrase = (seedPhrase: string, pathIndex: num
 };
 
 export const generateKeypairFromPrivateKey = (privateKey: string) => {
-  return Keypair.fromSecretKey(Uint8Array.from(Buffer.from(privateKey, "base64")));
+  return Keypair.fromSecretKey(base58.decode(privateKey));
 };
