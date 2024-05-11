@@ -1,7 +1,7 @@
 import { PouchID } from "@engine/constants";
 import { generateKeypairFromPrivateKey, generateKeypairFromSeedPhrase } from "@engine/keypair";
 import { getActiveIndex, getEncryptedAccounts, upsertActiveIndex, upsertEncryptedAccounts } from "@engine/storage";
-import { decryptWithPassword, EncryptedData, encryptWithPassword } from "@utils/crypto";
+import { decryptWithPassword, encryptWithPassword } from "@utils/crypto";
 import { encode } from "bs58";
 
 import { StoredAccount, StoredAccountType, StoredPrivateKey, StoredSeedPhrase } from "./types";
@@ -72,8 +72,8 @@ export const addNewWallet = async (walletType: StoredAccountType, generateKey: s
 
   switch (walletType) {
     case StoredAccountType.SeedPhrase:
-      if (!checkDuplicateSeedPhrase(hashedPassword, encryptedAccounts, generateKey)) {
-        throw new Error("Duplicate seed phrase");
+      if (hasDuplicateSeedPhrase(accounts, generateKey)) {
+        throw new Error("Seed phrase already exists.");
       }
       keypair = generateKeypairFromSeedPhrase(generateKey, 0);
       activeKeypairName = `Account ${accounts.length + 1}.1`;
@@ -93,6 +93,9 @@ export const addNewWallet = async (walletType: StoredAccountType, generateKey: s
       });
       break;
     case StoredAccountType.PrivateKey:
+      if (hasDuplicatePrivateKey(accounts, generateKey)) {
+        throw new Error("Private key already exists.");
+      }
       keypair = generateKeypairFromPrivateKey(generateKey);
       activeKeypairName = `Account ${accounts.length + 1}`;
       accounts.push({
@@ -193,11 +196,26 @@ export const switchActiveAccount = async (walletIndex: number, keypairIndex: num
   await upsertActiveIndex(PouchID.activeKeypairIndex, keypairIndex);
 };
 
-export const checkDuplicateSeedPhrase = (
-  hashedPassword: string,
-  encryptedAccounts: EncryptedData,
-  seedPhrase: string,
-) => {
-  const accounts: StoredAccount[] = JSON.parse(decryptWithPassword(encryptedAccounts, hashedPassword));
-  return accounts.every((acc) => acc.type === StoredAccountType.SeedPhrase && acc.seedPhrase !== seedPhrase);
+export const hasDuplicateSeedPhrase = (accounts: StoredAccount[], seedPhrase: string) => {
+  let isDuplicate = false;
+  accounts.forEach((acc) => {
+    if (acc.type === StoredAccountType.SeedPhrase && acc.seedPhrase === seedPhrase) {
+      console.log("Seed phrase already exists.");
+      isDuplicate = true;
+      return;
+    }
+  });
+  return isDuplicate;
+};
+
+export const hasDuplicatePrivateKey = (accounts: StoredAccount[], privateKey: string) => {
+  let isDuplicate = false;
+  accounts.forEach((acc) => {
+    if (acc.type === StoredAccountType.PrivateKey && acc.privateKey === privateKey) {
+      console.log("Private key already exists.");
+      isDuplicate = true;
+      return;
+    }
+  });
+  return isDuplicate;
 };
