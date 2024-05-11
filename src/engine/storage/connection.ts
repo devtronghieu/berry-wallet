@@ -1,7 +1,7 @@
 import IDBPouch from "pouchdb-adapter-idb";
 import PouchDB from "pouchdb-core";
 
-let db: PouchDB.Database;
+let db: PouchDB.Database | null;
 
 export const getDB = () => {
   if (!db) {
@@ -10,4 +10,10 @@ export const getDB = () => {
   }
 
   return db;
+};
+
+export const clearDB = async () => {
+  if (!db) return;
+  await db.destroy();
+  db = null;
 };

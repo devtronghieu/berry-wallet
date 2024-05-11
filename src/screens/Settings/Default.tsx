@@ -61,6 +61,10 @@ const DefaultSettingsScreen = () => {
     setBottomSheetType(BottomSheetType.EditAccount);
   };
 
+  const handleResetApp = () => {
+    navigate(Route.UnlockWallet, { state: { resetApp: true, from: Route.Home } });
+  };
+
   const CurrentBottomSheetChildren = useMemo(() => {
     const BottomSheetChildren: Record<string, React.ElementType> = {
       [BottomSheetType.ManageAccounts]: () => {
@@ -100,9 +104,6 @@ const DefaultSettingsScreen = () => {
       [BottomSheetType.AddOrConnectWallet]: () => {
         return <AddOrConnectWallet onSettingButtonClick={setBottomSheetType} />;
       },
-      [BottomSheetType.ResetApp]: () => {
-        return <div>ResetApp</div>;
-      },
       [BottomSheetType.ChangeAutoLockTimer]: () => {
         return <ChangeAutoLockTimer onSave={handleOnBackSecurity} />;
       },
@@ -113,7 +114,7 @@ const DefaultSettingsScreen = () => {
         return <ImportSeedPhrase />;
       },
       [BottomSheetType.ImportPrivateKey]: () => {
-        return <ImportPrivateKey onSettingButtonClick={setBottomSheetType} />;
+        return <ImportPrivateKey />;
       },
     };
     return BottomSheetChildren[bottomSheetType];
@@ -139,7 +140,7 @@ const DefaultSettingsScreen = () => {
           title="Add or connect wallet"
           onClick={() => handleOnClick(BottomSheetType.AddOrConnectWallet)}
         />
-        <SettingButton Icon={TrashIcon} title="Reset app" onClick={() => handleOnClick(BottomSheetType.ResetApp)} />
+        <SettingButton Icon={TrashIcon} title="Reset app" onClick={handleResetApp} />
       </div>
 
       <BottomSheet title={bottomSheetType} isOpen={modalIsOpen} onClose={() => setModalIsOpen(false)} scrollable>

@@ -72,4 +72,20 @@ export const appActions = {
   setActiveKeypairName: (name: string) => {
     appState.activeKeypairName = name;
   },
+  resetAppState: () => {
+    appState.network = import.meta.env.VITE_ENV === "mainnet" ? "mainnet" : "devnet";
+    appState.localConfig = {
+      showBalance: true,
+      lockTimer: 30 * 60 * 1000, // 30 minutes
+    };
+    appState.tokens = [];
+    appState.collectionMap = new Map();
+    appState.prices = {};
+    appState.keypair = undefined;
+    appState.hashedPassword = undefined;
+    appState.encryptedAccounts = undefined;
+    appState.activeKeypairIndex = undefined;
+    appState.activeWalletIndex = undefined;
+    appState.activeKeypairName = undefined;
+  },
 };

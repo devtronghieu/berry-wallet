@@ -1,5 +1,6 @@
 import { deriveKeypairAndName } from "@engine/keypair";
 import { getPassword, getPasswordExpiredAt, upsertPasswordExpiredAt } from "@engine/storage";
+import { clearDB } from "@engine/storage/connection";
 import { appActions } from "@state/index";
 import { hash } from "@utils/crypto";
 import { Route } from "@utils/routes";
@@ -29,9 +30,9 @@ const UnlockWalletScreen = () => {
       appActions.setActiveKeypairName(keypairName);
       navigate(location.state.from || Route.Home);
     };
-
+    if (location.state?.resetApp) return;
     restoreWalletSession().catch(console.error);
-  }, [location.state.from, navigate]);
+  }, [location.state?.from, location.state?.resetApp, navigate]);
 
   const handleUnlockWallet = () => {
     const fetchKeypair = async () => {
@@ -51,7 +52,14 @@ const UnlockWalletScreen = () => {
       navigate(location.state.from || Route.Home);
     };
 
-    fetchKeypair().catch(console.error);
+    if (location.state?.resetApp === true) {
+      clearDB()
+        .then(() => {
+          appActions.resetAppState();
+          navigate(Route.SignIn);
+        })
+        .catch(console.error);
+    } else fetchKeypair().catch(console.error);
   };
 
   return (
