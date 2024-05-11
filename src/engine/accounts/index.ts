@@ -4,13 +4,12 @@ import { getActiveIndex, getEncryptedAccounts, upsertActiveIndex, upsertEncrypte
 import { decryptWithPassword, encryptWithPassword } from "@utils/crypto";
 import { encode } from "bs58";
 
-import { StoredAccount, StoredAccountType, StoredSeedPhrase } from "./types";
+import { StoredAccount, StoredAccountType, StoredPrivateKey, StoredSeedPhrase } from "./types";
 
 export const fetchAccountInfo = async () => {
   const encryptedAccounts = await getEncryptedAccounts(PouchID.encryptedAccounts);
   const activeWalletIndex = await getActiveIndex(PouchID.activeWalletIndex);
   const activeKeypairIndex = await getActiveIndex(PouchID.activeKeypairIndex);
-  console.log(encryptedAccounts, activeWalletIndex, activeKeypairIndex);
   if (encryptedAccounts === null) throw new Error("No accounts found");
   if (activeWalletIndex === null) throw new Error("No active wallet found");
   if (activeKeypairIndex === null) throw new Error("No active keypair found");
@@ -118,16 +117,58 @@ export const updateLastBalanceCheck = async (hashedPassword: string, lastBalance
     throw new Error("Failed to fetch account info");
   });
   const accounts = JSON.parse(decryptWithPassword(encryptedAccounts, hashedPassword));
+  let activeAccount: StoredPrivateKey;
   switch (accounts[activeWalletIndex].type) {
     case StoredAccountType.SeedPhrase:
-      accounts[activeWalletIndex].privateKeys[activeKeypairIndex].lastBalance = lastBalance;
+      activeAccount = accounts[activeWalletIndex].privateKeys[activeKeypairIndex];
       break;
     case StoredAccountType.PrivateKey:
-      accounts[activeWalletIndex].lastBalance = lastBalance;
+      activeAccount = accounts[activeWalletIndex];
       break;
     default:
       throw new Error("Invalid active account type");
   }
+
+  if (activeAccount.lastBalance === lastBalance) return encryptedAccounts;
+  else activeAccount.lastBalance = lastBalance;
+
+  const newEncryptedAccounts = encryptWithPassword(JSON.stringify(accounts), hashedPassword);
+
+  await upsertEncryptedAccounts(PouchID.encryptedAccounts, newEncryptedAccounts);
+
+  return newEncryptedAccounts;
+};
+
+export const updateAccountName = async (hashedPassword: string, account: StoredPrivateKey, newName: string) => {
+  const { encryptedAccounts } = await fetchAccountInfo().catch((error) => {
+    console.error(error);
+    throw new Error("Failed to fetch account info");
+  });
+  const accounts: StoredAccount[] = JSON.parse(decryptWithPassword(encryptedAccounts, hashedPassword));
+  let isFound = false;
+  accounts.forEach((acc) => {
+    if (isFound) return;
+    switch (acc.type) {
+      case StoredAccountType.SeedPhrase:
+        acc.privateKeys.forEach((key) => {
+          if (key.privateKey === account.privateKey) {
+            key.name = newName;
+            isFound = true;
+          }
+        });
+        break;
+      case StoredAccountType.PrivateKey:
+        if (acc.privateKey === account.privateKey) {
+          acc.name = newName;
+          isFound = true;
+        }
+        break;
+      default:
+        throw new Error("Invalid active account type");
+    }
+  });
+
+  if (!isFound) return encryptedAccounts;
 
   const newEncryptedAccounts = encryptWithPassword(JSON.stringify(accounts), hashedPassword);
 

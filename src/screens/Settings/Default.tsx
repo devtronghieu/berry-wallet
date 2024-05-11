@@ -1,7 +1,7 @@
 import BackHeader from "@components/BackHeader";
 import BottomSheet from "@components/BottomSheet";
 import SettingButton from "@components/SettingButton";
-import { StoredAccount, StoredAccountType, StoredPrivateKey } from "@engine/accounts/types";
+import { StoredAccount, StoredAccountType, StoredPrivateKey, StoredSeedPhrase } from "@engine/accounts/types";
 import { BottomSheetType } from "@screens/Settings/types";
 import { appState } from "@state/index";
 import { decryptWithPassword } from "@utils/crypto";
@@ -25,7 +25,9 @@ const DefaultSettingsScreen = () => {
   const [bottomSheetType, setBottomSheetType] = useState<string>(BottomSheetType.ManageAccounts);
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
   const { encryptedAccounts, hashedPassword } = useSnapshot(appState);
-  const [selectedAccount, setSelectedAccount] = useState<StoredPrivateKey | undefined>(undefined);
+  // const [selectedAccount, setSelectedAccount] = useState<StoredPrivateKey | undefined>(undefined);
+  const [selectedWalletIndex, setSelectedWalletIndex] = useState<number>(-1);
+  const [selectedKeypairIndex, setSelectedKeypairIndex] = useState<number>(-1);
   const [selectedAccountType, setSelectedAccountType] = useState<StoredAccountType>(StoredAccountType.SeedPhrase);
   const [seedPhrase, setSeedPhrase] = useState<string>("");
 
@@ -33,6 +35,16 @@ const DefaultSettingsScreen = () => {
     if (!encryptedAccounts || !hashedPassword) return [];
     return JSON.parse(decryptWithPassword(encryptedAccounts, hashedPassword)) as StoredAccount[];
   }, [encryptedAccounts, hashedPassword]);
+
+  const selectedAccount = useMemo(() => {
+    if (selectedKeypairIndex === -1 || selectedWalletIndex === -1) return null;
+    const selectedWallet = accounts[selectedWalletIndex];
+    let selectedAccount: StoredPrivateKey;
+    if (selectedAccountType === StoredAccountType.SeedPhrase)
+      selectedAccount = (selectedWallet as StoredSeedPhrase).privateKeys[selectedKeypairIndex];
+    else selectedAccount = selectedWallet as StoredPrivateKey;
+    return selectedAccount;
+  }, [accounts, selectedWalletIndex, selectedAccountType, selectedKeypairIndex]);
 
   const handleOnClick = (type: string) => {
     setBottomSheetType(type);
@@ -53,9 +65,10 @@ const DefaultSettingsScreen = () => {
         return (
           <ManageAccounts
             accounts={accounts}
-            onItemClick={(account, accountType, seedPhrase) => {
+            onItemClick={(walletIndex, keypairIndex, accountType, seedPhrase) => {
               setBottomSheetType(BottomSheetType.EditAccount);
-              setSelectedAccount(account);
+              setSelectedWalletIndex(walletIndex);
+              setSelectedKeypairIndex(keypairIndex);
               setSelectedAccountType(accountType);
               if (seedPhrase) setSeedPhrase(seedPhrase);
             }}
@@ -63,7 +76,7 @@ const DefaultSettingsScreen = () => {
         );
       },
       [BottomSheetType.EditAccount]: () => {
-        if (!selectedAccount || !selectedAccountType) return null;
+        if (!selectedAccount) return null;
         return (
           <EditAccount
             account={selectedAccount}
@@ -121,7 +134,7 @@ const DefaultSettingsScreen = () => {
         <SettingButton Icon={TrashIcon} title="Reset app" onClick={() => handleOnClick(BottomSheetType.ResetApp)} />
       </div>
 
-      <BottomSheet title={bottomSheetType} isOpen={modalIsOpen} onClose={() => setModalIsOpen(false)}>
+      <BottomSheet title={bottomSheetType} isOpen={modalIsOpen} onClose={() => setModalIsOpen(false)} scrollable>
         <CurrentBottomSheetChildren />
       </BottomSheet>
     </div>

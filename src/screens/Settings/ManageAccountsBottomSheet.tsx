@@ -1,25 +1,30 @@
 import SettingAccount from "@components/SettingAccount";
-import { StoredAccount, StoredAccountType, StoredPrivateKey } from "@engine/accounts/types";
+import { StoredAccount, StoredAccountType } from "@engine/accounts/types";
 import { formatCurrency } from "@utils/general";
 import { FC } from "react";
 
 interface Props {
   accounts: StoredAccount[];
-  onItemClick: (account: StoredPrivateKey, accountType: StoredAccountType, seedPhrase: string | null) => void;
+  onItemClick: (
+    walletIndex: number,
+    keypairIndex: number,
+    accountType: StoredAccountType,
+    seedPhrase: string | null,
+  ) => void;
 }
 
 const ManageAccounts: FC<Props> = ({ accounts, onItemClick }) => {
   return (
     <div className="flex flex-col gap-2">
-      {accounts.map((account) => {
+      {accounts.map((account, walletIndex) => {
         let jsx;
         switch (account.type) {
           case StoredAccountType.SeedPhrase:
-            jsx = account.privateKeys.map((privateKey) => (
+            jsx = account.privateKeys.map((privateKey, keypairIndex) => (
               <SettingAccount
                 title={privateKey.name}
                 value={`${formatCurrency(privateKey.lastBalance)}`}
-                onClick={() => onItemClick(privateKey, StoredAccountType.SeedPhrase, account.seedPhrase)}
+                onClick={() => onItemClick(walletIndex, keypairIndex, StoredAccountType.SeedPhrase, account.seedPhrase)}
                 hasIcon={false}
                 key={privateKey.privateKey}
               />
@@ -30,7 +35,7 @@ const ManageAccounts: FC<Props> = ({ accounts, onItemClick }) => {
               <SettingAccount
                 title={account.name}
                 value={`${formatCurrency(account.lastBalance)}`}
-                onClick={() => onItemClick(account, StoredAccountType.PrivateKey, null)}
+                onClick={() => onItemClick(walletIndex, 0, StoredAccountType.PrivateKey, null)}
                 hasIcon={false}
                 key={account.privateKey}
               />
