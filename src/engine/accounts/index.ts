@@ -52,6 +52,7 @@ export const addNewKeypair = async (hashedPassword: string) => {
   return {
     keypair,
     encryptedAccounts,
+    activeWalletIndex,
     activeKeypairIndex: activeWallet.privateKeys.length - 1,
   };
 };
@@ -106,5 +107,31 @@ export const addNewWallet = async (walletType: StoredAccountType, generateKey: s
   return {
     keypair,
     newEncryptedAccounts,
+    activeWalletIndex: accounts.length - 1,
+    activeKeypairIndex: 0,
   };
+};
+
+export const updateLastBalanceCheck = async (hashedPassword: string, lastBalance: number) => {
+  const { encryptedAccounts, activeWalletIndex, activeKeypairIndex } = await fetchAccountInfo().catch((error) => {
+    console.error(error);
+    throw new Error("Failed to fetch account info");
+  });
+  const accounts = JSON.parse(decryptWithPassword(encryptedAccounts, hashedPassword));
+  switch (accounts[activeWalletIndex].type) {
+    case StoredAccountType.SeedPhrase:
+      accounts[activeWalletIndex].privateKeys[activeKeypairIndex].lastBalance = lastBalance;
+      break;
+    case StoredAccountType.PrivateKey:
+      accounts[activeWalletIndex].lastBalance = lastBalance;
+      break;
+    default:
+      throw new Error("Invalid active account type");
+  }
+
+  const newEncryptedAccounts = encryptWithPassword(JSON.stringify(accounts), hashedPassword);
+
+  await upsertEncryptedAccounts(PouchID.encryptedAccounts, newEncryptedAccounts);
+
+  return newEncryptedAccounts;
 };

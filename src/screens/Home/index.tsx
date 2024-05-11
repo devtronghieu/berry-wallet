@@ -2,6 +2,7 @@ import strawberry from "@assets/strawberry.svg";
 import BottomSheet from "@components/BottomSheet";
 import { FeatureButton } from "@components/FeatureButton";
 import { TabBar, TokenList } from "@components/index";
+import { addNewKeypair, updateLastBalanceCheck } from "@engine/accounts";
 import { Token } from "@engine/tokens/types";
 import { swap } from "@engine/transaction/swap";
 import { getFriendlyAmount } from "@engine/utils";
@@ -13,7 +14,7 @@ import { appActions, appState } from "@state/index";
 import { formatCurrency } from "@utils/general";
 import { Route } from "@utils/routes";
 import { getSafeMintAddressForPriceAPI } from "@utils/tokens";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSnapshot } from "valtio";
 
@@ -24,7 +25,7 @@ import { ArrowDownIcon, ArrowUpIcon, ChevronDownIcon, SettingIcon, SwapIcon } fr
 import Collections from "./Collections";
 
 const HomeScreen = () => {
-  const { keypair, tokens, prices, collectionMap, localConfig } = useSnapshot(appState);
+  const { keypair, tokens, prices, collectionMap, localConfig, hashedPassword } = useSnapshot(appState);
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("Tokens");
   const [bottomSheetType, setBottomSheetType] = useState<string>("Send");
@@ -66,6 +67,14 @@ const HomeScreen = () => {
     }, 0);
   }, [tokens, prices]);
 
+  useEffect(() => {
+    if (!hashedPassword) return;
+    console.log("updateLastBalanceCheck: ", hashedPassword);
+    updateLastBalanceCheck(hashedPassword, totalBalance)
+      .then((newEncryptedAccounts) => appActions.setEncryptedAccounts(newEncryptedAccounts))
+      .catch(console.error);
+  }, [totalBalance, hashedPassword]);
+
   const handleSwap = async () => {
     swap(
       keypair as Keypair,
@@ -100,7 +109,18 @@ const HomeScreen = () => {
       <div className="flex-grow flex flex-col items-center px-5 pt-2 pb-4 overflow-hidden no-scrollbar">
         <div>
           <div className="flex items-center">
-            <h2 className="text-lg text-secondary-500 font-bold me-2">TOTAL BALANCE</h2>
+            <h2
+              className="text-lg text-secondary-500 font-bold me-2"
+              onClick={() => {
+                addNewKeypair(hashedPassword ?? "").then(({ keypair, activeKeypairIndex, encryptedAccounts }) => {
+                  appActions.setKeypair(keypair);
+                  appActions.setActiveKeypairIndex(activeKeypairIndex);
+                  appActions.setEncryptedAccounts(encryptedAccounts);
+                });
+              }}
+            >
+              TOTAL BALANCE
+            </h2>
             <button
               className="trans-mini-icon-button"
               onClick={() => appActions.setShowBalance(!localConfig.showBalance)}
