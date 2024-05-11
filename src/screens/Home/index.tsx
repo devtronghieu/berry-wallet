@@ -17,9 +17,16 @@ import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSnapshot } from "valtio";
 
-import EyeCloseIcon from "@/icons/EyeClose";
-import EyeOpenIcon from "@/icons/EyeOpen";
-import { ArrowDownIcon, ArrowUpIcon, ChevronDownIcon, SettingIcon, SwapIcon } from "@/icons/index";
+import {
+  ArrowDownIcon,
+  ArrowUpIcon,
+  ChevronDownIcon,
+  SettingIcon,
+  SwapIcon,
+  HideEyeIcon,
+  ShowEyeIcon,
+  HideBalance,
+} from "@/icons/index";
 
 import Collections from "./Collections";
 
@@ -98,23 +105,23 @@ const HomeScreen = () => {
       </div>
 
       <div className="flex-grow flex flex-col items-center px-5 pt-2 pb-4 overflow-hidden no-scrollbar">
-        <div>
+        <div className="w-full flex flex-col items-center">
           <div className="flex items-center">
             <h2 className="text-lg text-secondary-500 font-bold me-2">TOTAL BALANCE</h2>
             <button
               className="trans-mini-icon-button"
               onClick={() => appActions.setShowBalance(!localConfig.showBalance)}
             >
-              {!localConfig.showBalance ? <EyeCloseIcon size={20} /> : <EyeOpenIcon size={20} />}
+              {!localConfig.showBalance ? <ShowEyeIcon size={20} /> : <HideEyeIcon size={20} />}
             </button>
           </div>
-          <h1
-            className={`text-2xl font-semibold text-center text-primary-400 mt-2 ${
-              !localConfig.showBalance ? "blur-effect" : ""
-            }`}
-          >
-            {formatCurrency(totalBalance)}
-          </h1>
+          {!localConfig.showBalance ? (
+            <HideBalance size={16} />
+          ) : (
+            <h1 className={`text-2xl font-semibold text-center text-primary-400 mt-2`}>
+              $ {formatCurrency(totalBalance)}
+            </h1>
+          )}
         </div>
         <div className="mt-6 flex items-center gap-10">
           <FeatureButton Icon={ArrowUpIcon} title="Send" onClick={() => handleOnClick("Send")} />

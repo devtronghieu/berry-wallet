@@ -24,3 +24,6 @@ export * from "./Swap";
 export { TrashIcon } from "./Trash";
 export * from "./Wallet";
 export * from "./Wrong";
+export * from "./HideEye";
+export * from "./ShowEye";
+export * from "./HideBalance";
