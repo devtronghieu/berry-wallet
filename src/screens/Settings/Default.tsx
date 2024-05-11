@@ -28,7 +28,6 @@ const DefaultSettingsScreen = () => {
   const [bottomSheetType, setBottomSheetType] = useState<string>(BottomSheetType.ManageAccounts);
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
   const { encryptedAccounts, hashedPassword } = useSnapshot(appState);
-  // const [selectedAccount, setSelectedAccount] = useState<StoredPrivateKey | undefined>(undefined);
   const [selectedWalletIndex, setSelectedWalletIndex] = useState<number>(-1);
   const [selectedKeypairIndex, setSelectedKeypairIndex] = useState<number>(-1);
   const [selectedAccountType, setSelectedAccountType] = useState<StoredAccountType>(StoredAccountType.SeedPhrase);

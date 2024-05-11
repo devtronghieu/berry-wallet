@@ -75,7 +75,7 @@ const ChangePassword: FC<Props> = ({ onSave }) => {
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex flex-col gap-5 w-full">
+      <div className="flex flex-col gap-5 px-5">
         <input
           className="input"
           placeholder="Enter password"

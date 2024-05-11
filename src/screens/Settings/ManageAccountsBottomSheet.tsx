@@ -23,7 +23,7 @@ const ManageAccounts: FC<Props> = ({ accounts, onItemClick }) => {
             jsx = account.privateKeys.map((privateKey, keypairIndex) => (
               <SettingAccount
                 title={privateKey.name}
-                value={`${formatCurrency(privateKey.lastBalance)}`}
+                value={`$${formatCurrency(privateKey.lastBalance)}`}
                 onClick={() => onItemClick(walletIndex, keypairIndex, StoredAccountType.SeedPhrase, account.seedPhrase)}
                 hasIcon={false}
                 key={privateKey.privateKey}
