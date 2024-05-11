@@ -11,11 +11,15 @@ interface Props {
 }
 
 const BottomSheet: FC<Props> = ({ title, children, isOpen, onClose }) => {
+  const addSpace = (str: string) => {
+    return str.replace(/([A-Z])/g, " $1").trim();
+  };
+
   return (
     <Sheet isOpen={isOpen} onClose={onClose}>
       <Sheet.Container className="px-5 py-4 !bg-primary-100 rounded-t-3xl">
         <Sheet.Header className="flex items-center justify-between mb-6">
-          <span className="font-semibold text-secondary-500 text-[26px]">{title}</span>
+          <span className="font-semibold text-secondary-500 text-[26px]">{addSpace(title)}</span>
           <div onClick={onClose} className="cursor-pointer">
             <CloseSquareIcon size={24} />
           </div>
