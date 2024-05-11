@@ -43,7 +43,7 @@ const ImportSeedPhrase: FC = () => {
   }, [seedPhrase]);
 
   return (
-    <div className="flex flex-col items-center justify-around h-full">
+    <div className="flex flex-col items-center justify-around h-full mx-5">
       <div className="flex flex-col items-center gap-2">
         <SeedPhrase readonly={false} seedPhrase={seedPhrase} setSeedPhrase={setSeedPhrase} />
         {error && <p className="font-semibold text-s text-error mt-4">{error}</p>}

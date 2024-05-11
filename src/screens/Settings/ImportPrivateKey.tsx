@@ -26,7 +26,7 @@ const ImportPrivateKey: FC<Props> = ({ onSettingButtonClick }) => {
   }, [privateKey, errorMessage]);
 
   return (
-    <div className="flex flex-col items-center justify-around h-full">
+    <div className="flex flex-col items-center justify-around h-full mx-5">
       <Input
         className="input-private-key"
         placeholder="Your private key"
