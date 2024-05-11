@@ -31,10 +31,13 @@ export const addNewKeypair = async (hashedPassword: string) => {
   const lastPrivateKey = privateKeys[privateKeys.length - 1];
   const keypair = generateKeypairFromSeedPhrase(activeWallet.seedPhrase, lastPrivateKey.pathIndex + 1);
 
+  // Get active keypair name
+  const activeKeypairName = `Account ${lastPrivateKey.pathIndex + 2}`;
+
   // Add new keypair to the active wallet
   activeWallet.privateKeys.push({
     type: StoredAccountType.PrivateKey,
-    name: `Account ${lastPrivateKey.pathIndex + 2}`,
+    name: activeKeypairName,
     privateKey: encode(keypair.secretKey),
     pathIndex: lastPrivateKey.pathIndex + 1,
     lastBalance: 0,
@@ -49,6 +52,7 @@ export const addNewKeypair = async (hashedPassword: string) => {
   await upsertActiveIndex(PouchID.activeKeypairIndex, activeWallet.privateKeys.length - 1);
 
   return {
+    activeKeypairName,
     keypair,
     encryptedAccounts,
     activeWalletIndex,
@@ -64,10 +68,12 @@ export const addNewWallet = async (walletType: StoredAccountType, generateKey: s
 
   const accounts: StoredAccount[] = JSON.parse(decryptWithPassword(encryptedAccounts, hashedPassword));
   let keypair;
+  let activeKeypairName;
 
   switch (walletType) {
     case StoredAccountType.SeedPhrase:
       keypair = generateKeypairFromSeedPhrase(generateKey, 0);
+      activeKeypairName = `Account ${accounts.length + 1}.1`;
       accounts.push({
         type: StoredAccountType.SeedPhrase,
         name: `Wallet ${accounts.length + 1}`,
@@ -75,7 +81,7 @@ export const addNewWallet = async (walletType: StoredAccountType, generateKey: s
         privateKeys: [
           {
             type: StoredAccountType.PrivateKey,
-            name: "Account 1",
+            name: activeKeypairName,
             privateKey: encode(keypair.secretKey),
             pathIndex: 0,
             lastBalance: 0,
@@ -85,9 +91,10 @@ export const addNewWallet = async (walletType: StoredAccountType, generateKey: s
       break;
     case StoredAccountType.PrivateKey:
       keypair = generateKeypairFromPrivateKey(generateKey);
+      activeKeypairName = `Account ${accounts.length + 1}`;
       accounts.push({
         type: StoredAccountType.PrivateKey,
-        name: `Wallet ${accounts.length + 1}`,
+        name: activeKeypairName,
         privateKey: generateKey,
         pathIndex: 0,
         lastBalance: 0,
@@ -104,6 +111,7 @@ export const addNewWallet = async (walletType: StoredAccountType, generateKey: s
   await upsertActiveIndex(PouchID.activeKeypairIndex, 0);
 
   return {
+    activeKeypairName,
     keypair,
     newEncryptedAccounts,
     activeWalletIndex: accounts.length - 1,
@@ -175,4 +183,9 @@ export const updateAccountName = async (hashedPassword: string, account: StoredP
   await upsertEncryptedAccounts(PouchID.encryptedAccounts, newEncryptedAccounts);
 
   return newEncryptedAccounts;
+};
+
+export const switchActiveAccount = async (walletIndex: number, keypairIndex: number) => {
+  await upsertActiveIndex(PouchID.activeWalletIndex, walletIndex);
+  await upsertActiveIndex(PouchID.activeKeypairIndex, keypairIndex);
 };

@@ -1,4 +1,4 @@
-import { deriveKeypair } from "@engine/keypair";
+import { deriveKeypairAndName } from "@engine/keypair";
 import { getPassword, getPasswordExpiredAt, upsertPasswordExpiredAt } from "@engine/storage";
 import { appActions } from "@state/index";
 import { hash } from "@utils/crypto";
@@ -23,9 +23,10 @@ const UnlockWalletScreen = () => {
         return navigate(Route.SignIn);
       }
 
-      const keypair = await deriveKeypair(storedPassword);
+      const { keypair, keypairName } = await deriveKeypairAndName(storedPassword);
       appActions.setHashedPassword(storedPassword);
       appActions.setKeypair(keypair);
+      appActions.setActiveKeypairName(keypairName);
       navigate(location.state.from || Route.Home);
     };
 
@@ -43,9 +44,10 @@ const UnlockWalletScreen = () => {
 
       const { lockTimer } = JSON.parse(localStorage.getItem("berry-local-config") ?? "{}");
       await upsertPasswordExpiredAt(Date.now() + (lockTimer || 30) * 60 * 1000);
-      const keypair = await deriveKeypair(hashedPassword);
+      const { keypair, keypairName } = await deriveKeypairAndName(hashedPassword);
       appActions.setHashedPassword(hashedPassword);
       appActions.setKeypair(keypair);
+      appActions.setActiveKeypairName(keypairName);
       navigate(location.state.from || Route.Home);
     };
 

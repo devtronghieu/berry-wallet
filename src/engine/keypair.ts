@@ -27,7 +27,7 @@ export const createWallet = async (seedPhrase: string, hashedPassword: string) =
     privateKeys: [
       {
         type: StoredAccountType.PrivateKey,
-        name: "Account 1",
+        name: "Account 1.1",
         privateKey: encode(keypair.secretKey),
         pathIndex: 0,
         lastBalance: 0,
@@ -42,29 +42,41 @@ export const createWallet = async (seedPhrase: string, hashedPassword: string) =
   await upsertActiveIndex(PouchID.activeKeypairIndex, 0);
 
   return {
+    activeKeypairName: "Account 1.1",
     keypair,
     encryptedAccounts,
+    activeWalletIndex: 0,
+    activeKeypairIndex: 0,
   };
 };
 
-export const deriveKeypair = async (password: string) => {
+export const deriveKeypairAndName = async (password: string) => {
   const { encryptedAccounts, activeWalletIndex, activeKeypairIndex } = await fetchAccountInfo().catch((error) => {
     console.error(error);
     throw new Error("Failed to fetch account info");
   });
   const accounts = JSON.parse(decryptWithPassword(encryptedAccounts, password));
   const activeWallet: StoredAccount = accounts[activeWalletIndex];
+  let keypair, keypairName;
   switch (activeWallet.type) {
     case StoredAccountType.SeedPhrase:
-      return generateKeypairFromSeedPhrase(
+      keypair = generateKeypairFromSeedPhrase(
         activeWallet.seedPhrase,
         activeWallet.privateKeys[activeKeypairIndex].pathIndex,
       );
+      keypairName = activeWallet.privateKeys[activeKeypairIndex].name;
+      break;
     case StoredAccountType.PrivateKey:
-      return generateKeypairFromPrivateKey(activeWallet.privateKey);
+      keypair = generateKeypairFromPrivateKey(activeWallet.privateKey);
+      keypairName = activeWallet.name;
+      break;
     default:
       throw new Error("Invalid active account type");
   }
+  return {
+    keypair,
+    keypairName,
+  };
 };
 
 export const generateKeypairFromSeedPhrase = (seedPhrase: string, pathIndex: number) => {

@@ -17,6 +17,7 @@ export interface AppState {
   encryptedAccounts?: EncryptedData;
   keypair?: Keypair;
   hashedPassword?: string;
+  activeKeypairName?: string;
   activeWalletIndex?: number;
   activeKeypairIndex?: number;
 }
@@ -67,5 +68,8 @@ export const appActions = {
   },
   setActiveWalletIndex: (index: number) => {
     appState.activeWalletIndex = index;
+  },
+  setActiveKeypairName: (name: string) => {
+    appState.activeKeypairName = name;
   },
 };

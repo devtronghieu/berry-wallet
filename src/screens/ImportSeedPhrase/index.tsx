@@ -46,12 +46,14 @@ const ImportSeedPhraseScreen = () => {
         ctaDisabled: password === "",
         onCTAClick: async () => {
           const hashedPassword = hash(password);
-          const { keypair, encryptedAccounts } = await createWallet(seedPhrase.join(" "), hashedPassword);
+          const { keypair, encryptedAccounts, activeKeypairIndex, activeKeypairName, activeWalletIndex } =
+            await createWallet(seedPhrase.join(" "), hashedPassword);
           appActions.setKeypair(keypair);
           appActions.setHashedPassword(hashedPassword);
           appActions.setEncryptedAccounts(encryptedAccounts);
-          appActions.setActiveWalletIndex(0);
-          appActions.setActiveKeypairIndex(0);
+          appActions.setActiveKeypairName(activeKeypairName);
+          appActions.setActiveWalletIndex(activeWalletIndex);
+          appActions.setActiveKeypairIndex(activeKeypairIndex);
           navigate(Route.Home);
         },
         onGoBack: () => setScreenProgress(ScreenProgress.ImportSeedPhrase),

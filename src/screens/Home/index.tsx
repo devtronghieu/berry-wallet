@@ -2,7 +2,9 @@ import strawberry from "@assets/strawberry.svg";
 import BottomSheet from "@components/BottomSheet";
 import { FeatureButton } from "@components/FeatureButton";
 import { TabBar, TokenList } from "@components/index";
-import { addNewKeypair, updateLastBalanceCheck } from "@engine/accounts";
+import { addNewKeypair, switchActiveAccount, updateLastBalanceCheck } from "@engine/accounts";
+import { StoredAccount, StoredAccountType, StoredSeedPhrase } from "@engine/accounts/types";
+import { generateKeypairFromPrivateKey } from "@engine/keypair";
 import { Token } from "@engine/tokens/types";
 import { swap } from "@engine/transaction/swap";
 import { getFriendlyAmount } from "@engine/utils";
@@ -11,6 +13,7 @@ import TransactionResult from "@screens/Result";
 import Send from "@screens/Send";
 import { Keypair } from "@solana/web3.js";
 import { appActions, appState } from "@state/index";
+import { decryptWithPassword } from "@utils/crypto";
 import { formatCurrency, getLocalLogo } from "@utils/general";
 import { Route } from "@utils/routes";
 import { getSafeMintAddressForPriceAPI } from "@utils/tokens";
@@ -36,12 +39,24 @@ import Collections from "./Collections";
 interface AddrListItem {
   //Must update with Logic
   srcImg: string;
-  pubKey: string;
   name: string;
+  keypair: Keypair;
+  walletIndex: number;
+  keypairIndex: number;
 }
 
 const HomeScreen = () => {
-  const { keypair, tokens, prices, collectionMap, localConfig, hashedPassword } = useSnapshot(appState);
+  const {
+    keypair,
+    tokens,
+    prices,
+    collectionMap,
+    localConfig,
+    hashedPassword,
+    encryptedAccounts,
+    activeKeypairIndex,
+    activeWalletIndex,
+  } = useSnapshot(appState);
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
   const [addrListIsOpen, setAddrListIsOpen] = useState<boolean>(false);
   const [activeAddr, setActiveAddr] = useState<number>(0);
@@ -49,12 +64,46 @@ const HomeScreen = () => {
   const [bottomSheetType, setBottomSheetType] = useState<string>("Send");
   const navigate = useNavigate();
 
-  //MUST REPLACE
-  const addressList = Array.from({ length: 5 }, () => ({
-    srcImg: tokens[0]?.metadata?.image || getLocalLogo(tokens[0]?.metadata?.symbol || "Unknown"),
-    pubKey: keypair?.publicKey,
-    name: "Account 1234",
-  }));
+  const srcImage = useMemo(() => {
+    return tokens[0]?.metadata?.image || getLocalLogo(tokens[0]?.metadata?.symbol || "Unknown");
+  }, [tokens]);
+
+  const keypairs: AddrListItem[] = useMemo(() => {
+    if (!encryptedAccounts || !hashedPassword) return [];
+    const keypairs: AddrListItem[] = [];
+    const accounts = JSON.parse(decryptWithPassword(encryptedAccounts, hashedPassword)) as StoredAccount[];
+    accounts.forEach((account, walletIndex) => {
+      switch (account.type) {
+        case StoredAccountType.SeedPhrase:
+          (account as StoredSeedPhrase).privateKeys.forEach((privateKey, keypairIndex) => {
+            keypairs.push({
+              srcImg: srcImage,
+              name: privateKey.name,
+              keypair: generateKeypairFromPrivateKey(privateKey.privateKey),
+              walletIndex,
+              keypairIndex,
+            });
+            if (activeWalletIndex === walletIndex && activeKeypairIndex === keypairIndex)
+              setActiveAddr(keypairs.length - 1);
+          });
+          break;
+        case StoredAccountType.PrivateKey:
+          keypairs.push({
+            srcImg: srcImage,
+            name: account.name,
+            keypair: generateKeypairFromPrivateKey(account.privateKey),
+            walletIndex,
+            keypairIndex: 0,
+          });
+          if (activeWalletIndex === walletIndex) setActiveAddr(keypairs.length - 1);
+          break;
+        default:
+          console.error("Invalid account type");
+      }
+    });
+
+    return keypairs;
+  }, [activeKeypairIndex, activeWalletIndex, encryptedAccounts, hashedPassword, srcImage]);
 
   const handleOnClick = (type: string) => {
     setBottomSheetType(type);
@@ -62,8 +111,17 @@ const HomeScreen = () => {
   };
 
   const handleSelectAddrOption = (index: number) => {
+    const activeKeypair = keypairs[index];
     setActiveAddr(index);
     setAddrListIsOpen(false);
+    switchActiveAccount(activeKeypair.walletIndex, activeKeypair.keypairIndex)
+      .then(() => {
+        appActions.setActiveKeypairIndex(activeKeypair.walletIndex);
+        appActions.setActiveWalletIndex(activeKeypair.keypairIndex);
+        appActions.setActiveKeypairName(activeKeypair.name);
+        appActions.setKeypair(activeKeypair.keypair);
+      })
+      .catch(console.error);
   };
 
   const CurrentBottomSheetChildren = useMemo(() => {
@@ -125,7 +183,7 @@ const HomeScreen = () => {
         <div className="h-[60px] px-4 py-2 gap-1.5 flex justify-between bg-primary-300 z-0">
           <div className="flex items-center gap-2">
             <img className="w-10 h-10" src={strawberry} alt="strawberry logo" />
-            <p className="font-bold text-lg text-primary-500">Account 1</p>
+            <p className="font-bold text-lg text-primary-500">{keypairs[activeAddr].name}</p>
             <button onClick={() => setAddrListIsOpen(!addrListIsOpen)}>
               {addrListIsOpen ? <ChevronUpIcon size={24} /> : <ChevronDownIcon size={24} />}
             </button>
@@ -141,27 +199,32 @@ const HomeScreen = () => {
             addrListIsOpen ? "visible" : "invisible"
           } z-10 h-36 overflow-y-auto no-scrollbar`}
         >
-          {addressList.map((item, index) => {
+          {keypairs?.map((item, index) => {
             return (
               <div
                 key={index}
                 className={`flex items-center justify-between gap-2.5 px-2 py-2 rounded-full w-70 cursor-pointer ${
                   index === activeAddr ? "bg-primary-200" : ""
                 } hover:bg-primary-300`}
+                onClick={() => handleSelectAddrOption(index)}
               >
-                <div className="flex items-center gap-1.5" onClick={() => handleSelectAddrOption(index)}>
+                <div className="flex items-center gap-1.5">
                   <img src={item.srcImg} alt={item.name || "Unknown"} className="w-6 h-6 rounded-full" />
                   <p className="text-primary-400 font-semibold truncate text-ellipsis">{item.name}</p>
                 </div>
-                <div
-                  className="flex items-center gap-1.5"
-                  onClick={() => item.pubKey && navigator.clipboard.writeText(item.pubKey.toBase58())}
-                >
+                <div className="flex items-center gap-1.5">
                   <p className="font-semibold text-secondary-500">
-                    {item.pubKey?.toBase58().slice(0, 4)}...
-                    {item.pubKey?.toBase58().slice(-4)}
+                    {item.keypair.publicKey.toBase58().slice(0, 4)}...
+                    {item.keypair.publicKey.toBase58().slice(-4)}
                   </p>
-                  <div className="ml-auto">
+                  <div
+                    className="ml-auto"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      item.keypair.publicKey.toBase58() &&
+                        navigator.clipboard.writeText(item.keypair.publicKey.toBase58());
+                    }}
+                  >
                     <CopyIcon />
                   </div>
                 </div>
@@ -177,11 +240,14 @@ const HomeScreen = () => {
             <h2
               className="text-lg text-secondary-500 font-bold me-2"
               onClick={() => {
-                addNewKeypair(hashedPassword ?? "").then(({ keypair, activeKeypairIndex, encryptedAccounts }) => {
-                  appActions.setKeypair(keypair);
-                  appActions.setActiveKeypairIndex(activeKeypairIndex);
-                  appActions.setEncryptedAccounts(encryptedAccounts);
-                });
+                addNewKeypair(hashedPassword ?? "").then(
+                  ({ keypair, activeKeypairName, activeKeypairIndex, encryptedAccounts }) => {
+                    appActions.setKeypair(keypair);
+                    appActions.setActiveKeypairIndex(activeKeypairIndex);
+                    appActions.setEncryptedAccounts(encryptedAccounts);
+                    appActions.setActiveKeypairName(activeKeypairName);
+                  },
+                );
               }}
             >
               TOTAL BALANCE
