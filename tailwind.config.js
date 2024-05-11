@@ -38,5 +38,10 @@ export default {
       },
     },
   },
+  safelist: [
+    {
+      pattern: /rounded-(xl|2xl|full)/,
+    }
+  ],
   plugins: [],
 };
