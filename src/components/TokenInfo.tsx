@@ -7,7 +7,7 @@ interface TokenInfoProps {
   tokenImage: string;
   tokenName: string;
   amount: number;
-  receiveAmount?: string;
+  receiveAmount?: number;
   receivedTokenImage?: string;
   receivedTokenName?: string;
   signature: string;
