@@ -25,14 +25,24 @@ export const addNewKeypair = async (hashedPassword: string) => {
     console.error(error);
     throw new Error("Failed to fetch account info");
   });
-  const accounts = JSON.parse(decryptWithPassword(encryptedAccounts, hashedPassword));
-  const activeWallet: StoredSeedPhrase = accounts[activeWalletIndex];
+  const accounts = JSON.parse(decryptWithPassword(encryptedAccounts, hashedPassword)) as StoredAccount[];
+  let activeWalletIndexTemp = activeWalletIndex;
+  let activeWallet = accounts[activeWalletIndex];
+
+  // Active account is private key, change it to the first seed phrase
+  if (activeWallet.type === StoredAccountType.PrivateKey) {
+    activeWalletIndexTemp = accounts.findIndex((acc) => acc.type === StoredAccountType.SeedPhrase);
+    activeWallet = accounts[activeWalletIndexTemp];
+    await upsertActiveIndex(PouchID.activeWalletIndex, activeWalletIndexTemp);
+  }
+
+  activeWallet = activeWallet as StoredSeedPhrase;
   const privateKeys = activeWallet.privateKeys;
   const lastPrivateKey = privateKeys[privateKeys.length - 1];
   const keypair = generateKeypairFromSeedPhrase(activeWallet.seedPhrase, lastPrivateKey.pathIndex + 1);
 
   // Get active keypair name
-  const activeKeypairName = `Account ${activeWalletIndex + 1}.${lastPrivateKey.pathIndex + 2}`;
+  const activeKeypairName = `Account ${activeWalletIndexTemp + 1}.${lastPrivateKey.pathIndex + 2}`;
 
   // Add new keypair to the active wallet
   activeWallet.privateKeys.push({
