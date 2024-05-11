@@ -5,12 +5,12 @@ import { fetchNftTransactionFee } from "@engine/fee";
 import { sendCollectible } from "@engine/transaction/send";
 import { getSafeMintAddressForPriceAPI } from "@utils/tokens";
 import { getFriendlyAmount } from "@engine/utils";
-import Select from "../../components/Select";
+import Select from "@components/Select";
 import { appState } from "@state/index";
 import { validateTotalAmount, validatePublicKey } from "./utils";
 import { transactionActions as TxA, transactionState } from "@state/transaction";
 import { useSnapshot } from "valtio";
-import Input from "./Input";
+import Input from "@components/Input";
 import { FC, useMemo, useRef, useState } from "react";
 import ArrowRightBoldIcon from "@/icons/ArrowRightBoldIcon";
 
