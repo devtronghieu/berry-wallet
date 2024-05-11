@@ -10,7 +10,7 @@ interface Props {
   defaultCollectible?: Collectible;
 }
 
-const Send: FC<Props> = ({ onSubmit, defaultTab = "", defaultCollectible = undefined }) => {
+const Send: FC<Props> = ({ onSubmit, defaultTab = "Tokens", defaultCollectible = undefined }) => {
   const [activeTab, setActiveTab] = useState<string>(defaultTab);
 
   const navOnClickList = useMemo(() => {
