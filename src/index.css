@@ -133,6 +133,10 @@
     scrollbar-width: none;
     -ms-overflow-style: none;
   }
+
+  .input-private-key {
+    @apply w-full bg-primary-300 text-base font-semibold rounded-xl align-text-top px-5 py-3 placeholder-primary-100 text-primary-100 outline-primary-500 h-32;
+  }
 }
 
 body {

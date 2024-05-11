@@ -1,3 +1,5 @@
+import Input from "@components/Input";
+import Select from "@components/Select";
 import { fetchNftTransactionFee } from "@engine/fee";
 import { ATAMetadata, Collectible } from "@engine/tokens/types";
 import { sendCollectible } from "@engine/transaction/send";
@@ -12,8 +14,6 @@ import { useSnapshot } from "valtio";
 
 import ArrowRightBoldIcon from "@/icons/ArrowRightBoldIcon";
 
-import Select from "../../components/Select";
-import Input from "./Input";
 import { validatePublicKey, validateTotalAmount } from "./utils";
 
 interface Props {

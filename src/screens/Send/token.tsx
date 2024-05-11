@@ -12,8 +12,8 @@ import { useSnapshot } from "valtio";
 
 import ArrowRightBoldIcon from "@/icons/ArrowRightBoldIcon";
 
-import Select from "../../components/Select";
-import Input from "./Input";
+import Select from "@components/Select";
+import Input from "@components/Input";
 import { validateAmount, validatePublicKey } from "./utils";
 
 interface Props {

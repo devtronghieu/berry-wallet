@@ -8,4 +8,6 @@ export enum BottomSheetType {
   EditAccount = "Edit account",
   ShowSecretPhrase = "Your secret phrase",
   ShowPrivateKey = "Your private key",
+  ImportSeedPhrase = "Import seed phrase",
+  ImportPrivateKey = "Import private key",
 }
