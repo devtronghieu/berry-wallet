@@ -20,7 +20,7 @@ const BottomSheet: FC<Props> = ({ title, children, isOpen, onClose }) => {
             <CloseSquareIcon size={24} />
           </div>
         </Sheet.Header>
-        <Sheet.Content className="overflow-scroll">{children}</Sheet.Content>
+        <Sheet.Content className="overflow-scroll no-scrollbar">{children}</Sheet.Content>
       </Sheet.Container>
       <Sheet.Backdrop onTap={onClose} />
     </Sheet>

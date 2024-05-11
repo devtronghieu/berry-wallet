@@ -19,6 +19,9 @@ import ManageAccounts from "./ManageAccountsBottomSheet";
 import SecurityAndPrivacy from "./SecurityAndPrivacy";
 import ShowPrivateKey from "./ShowPrivateKey";
 import ShowSecretPhrase from "./ShowSecretPhrase";
+import AddOrConnectWallet from "./AddOrConnectWallet";
+import ImportSeedPhrase from "./ImportSeedPhrase";
+import ImportPrivateKey from "./ImportPrivateKey";
 
 const DefaultSettingsScreen = () => {
   const navigate = useNavigate();
@@ -83,7 +86,7 @@ const DefaultSettingsScreen = () => {
         return <SecurityAndPrivacy onSettingButtonClick={setBottomSheetType} />;
       },
       [BottomSheetType.AddOrConnectWallet]: () => {
-        return <div>AddOrConnectWallet</div>;
+        return <AddOrConnectWallet onSettingButtonClick={setBottomSheetType} />;
       },
       [BottomSheetType.ResetApp]: () => {
         return <div>ResetApp</div>;
@@ -93,6 +96,12 @@ const DefaultSettingsScreen = () => {
       },
       [BottomSheetType.ChangePassword]: () => {
         return <ChangePassword onSave={handleOnBackSecurity} />;
+      },
+      [BottomSheetType.ImportSeedPhrase]: () => {
+        return <ImportSeedPhrase onSettingButtonClick={setBottomSheetType} />;
+      },
+      [BottomSheetType.ImportPrivateKey]: () => {
+        return <ImportPrivateKey onSettingButtonClick={setBottomSheetType} />;
       },
     };
     return BottomSheetChildren[bottomSheetType];
