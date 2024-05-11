@@ -1,52 +1,64 @@
-import { getSignatures, getTransaction } from "@engine/history";
+import unknown from "@assets/tokens/unknown.svg";
+import { TransferTransaction } from "@engine/history/types";
 import { useHistory } from "@hooks/history";
-import { PublicKey } from "@solana/web3.js";
 import { historyActions } from "@state/history";
-import { appState } from "@state/index";
-import pThrottle from "p-throttle";
-import { useEffect } from "react";
-import { useSnapshot } from "valtio";
+import { formatDate } from "@utils/general";
+import { FC, useCallback } from "react";
 
-import TokenHistoryItem from "./HistoryItem/TokenHistoryItem";
+import TransactionHistoryItem from "./HistoryItem/TransactionHistoryItem";
 
-const History = () => {
+interface HistoryProps {
+  onItemClick?: () => void;
+}
+
+const History: FC<HistoryProps> = ({ onItemClick }) => {
   const history = useHistory();
-  const { keypair } = useSnapshot(appState);
-  const solanaDelayTime = 550;
-  const throttle = pThrottle({ limit: 1, interval: solanaDelayTime });
-
-  useEffect(() => {
-    const pubKey = keypair?.publicKey;
-
-    const func = async () => {
-      const signatures = await getSignatures(pubKey as PublicKey);
-      for (const signature of signatures) {
-        throttle(async () => {
-          console.log(signature);
-          const tx = await getTransaction(signature);
-          if (!tx) return;
-          historyActions.addTransaction(tx);
-        });
-      }
-    };
-
-    func();
-  }, [throttle, keypair]);
+  let date = new Date();
+  const checkDateIsChanged = useCallback((transactionDate: Date) => {
+    return date.toLocaleDateString() === transactionDate.toLocaleDateString();
+  }, []);
 
   return (
-    <div className="extension-container">
-      <div className="flex flex-col gap-3">
-        <h1>History {history.length}</h1>
-        {history.map((transaction, index) => (
-          <TokenHistoryItem
+    <div className="flex flex-col gap-3">
+      {history.map((transaction, index) => {
+        const handleItemClick = () => {
+          historyActions.setCurrentTransaction(transaction);
+          onItemClick && onItemClick();
+        };
+        if (index === 0 || !checkDateIsChanged(transaction.date)) {
+          date = transaction.date;
+
+          return (
+            <div>
+              <p>{formatDate(date)}</p>
+              <TransactionHistoryItem
+                key={index}
+                onClick={handleItemClick}
+                tokenType={(transaction as TransferTransaction).tokenType}
+                amount={transaction.amount}
+                tokenImage={transaction.token.metadata?.image || unknown}
+                tokenName={transaction.token.metadata?.symbol || "Unknown"}
+                transactionType={transaction.transactionType}
+                receiver={(transaction as TransferTransaction).receiver}
+                sender={(transaction as TransferTransaction).sender}
+              />
+            </div>
+          );
+        }
+
+        return (
+          <TransactionHistoryItem
             key={index}
+            tokenType={(transaction as TransferTransaction).tokenType}
             amount={transaction.amount}
-            tokenImage={transaction.token.metadata?.image || ""}
-            tokenName={transaction.token.metadata?.name || "Unknown"}
+            tokenImage={transaction.token.metadata?.image || unknown}
+            tokenName={transaction.token.metadata?.symbol || "Unknown"}
             transactionType={transaction.transactionType}
+            receiver={(transaction as TransferTransaction).receiver}
+            sender={(transaction as TransferTransaction).sender}
           />
-        ))}
-      </div>
+        );
+      })}
     </div>
   );
 };
