@@ -1,18 +1,20 @@
-import { formatCurrency } from "@utils/general";
-import { Collectible, ATAMetadata } from "@engine/tokens/types";
-import { Keypair, PublicKey } from "@solana/web3.js";
 import { fetchNftTransactionFee } from "@engine/fee";
+import { ATAMetadata, Collectible } from "@engine/tokens/types";
 import { sendCollectible } from "@engine/transaction/send";
-import { getSafeMintAddressForPriceAPI } from "@utils/tokens";
 import { getFriendlyAmount } from "@engine/utils";
-import Select from "../../components/Select";
+import { Keypair, PublicKey } from "@solana/web3.js";
 import { appState } from "@state/index";
-import { validateTotalAmount, validatePublicKey } from "./utils";
 import { transactionActions as TxA, transactionState } from "@state/transaction";
-import { useSnapshot } from "valtio";
-import Input from "./Input";
+import { formatCurrency } from "@utils/general";
+import { getSafeMintAddressForPriceAPI } from "@utils/tokens";
 import { FC, useMemo, useRef, useState } from "react";
+import { useSnapshot } from "valtio";
+
 import ArrowRightBoldIcon from "@/icons/ArrowRightBoldIcon";
+
+import Select from "../../components/Select";
+import Input from "./Input";
+import { validatePublicKey, validateTotalAmount } from "./utils";
 
 interface Props {
   onSubmit: (type: string) => void;
@@ -98,8 +100,7 @@ const SendCollectible: FC<Props> = ({ onSubmit, defaultCollectible = undefined }
       keypair: keypair as Keypair,
       NFT: collection?.[selectedCollectionIndex]?.collectibles?.[selectedCollectibleIndex] as Collectible,
     });
-    console.log("fetchTransactionFee");
-  }, [keypair]);
+  }, [collection, keypair, selectedCollectibleIndex, selectedCollectionIndex]);
 
   useMemo(() => {
     setIsValidAmount(false);

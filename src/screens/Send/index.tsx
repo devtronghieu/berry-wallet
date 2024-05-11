@@ -1,8 +1,9 @@
 import TabBar from "@components/TabBar";
-import SendToken from "./token";
-import { FC, useMemo, useState } from "react";
-import SendCollectible from "./collectible";
 import { Collectible } from "@engine/tokens/types";
+import { FC, useMemo, useState } from "react";
+
+import SendCollectible from "./collectible";
+import SendToken from "./token";
 
 interface Props {
   onSubmit: (type: string) => void;
@@ -19,12 +20,7 @@ const Send: FC<Props> = ({ onSubmit, defaultTab = "Tokens", defaultCollectible =
 
   return (
     <>
-      <TabBar
-        className="mt-4"
-        navTitle={["Tokens", "Collectibles"]}
-        navOnClick={navOnClickList}
-        activeTab={activeTab}
-      />
+      <TabBar navTitle={["Tokens", "Collectibles"]} navOnClick={navOnClickList} activeTab={activeTab} />
       <div>
         {activeTab === "Tokens" && <SendToken onSubmit={onSubmit} />}
         {activeTab === "Collectibles" && (

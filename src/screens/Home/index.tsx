@@ -23,12 +23,12 @@ import {
   ArrowUpIcon,
   ChevronDownIcon,
   ChevronUpIcon,
-  SettingIcon,
-  SwapIcon,
-  HideEyeIcon,
-  ShowEyeIcon,
-  HideBalance,
   CopyIcon,
+  HideBalance,
+  HideEyeIcon,
+  SettingIcon,
+  ShowEyeIcon,
+  SwapIcon,
 } from "@/icons/index";
 
 import Collections from "./Collections";
@@ -99,7 +99,6 @@ const HomeScreen = () => {
 
   useEffect(() => {
     if (!hashedPassword) return;
-    console.log("updateLastBalanceCheck: ", hashedPassword);
     updateLastBalanceCheck(hashedPassword, totalBalance)
       .then((newEncryptedAccounts) => appActions.setEncryptedAccounts(newEncryptedAccounts))
       .catch(console.error);

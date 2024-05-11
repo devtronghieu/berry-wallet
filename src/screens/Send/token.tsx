@@ -14,6 +14,7 @@ import ArrowRightBoldIcon from "@/icons/ArrowRightBoldIcon";
 import Select from "../../components/Select";
 import Input from "./Input";
 import { validateAmount, validatePublicKey } from "./utils";
+import ActionButton from "@components/ActionButton";
 
 interface Props {
   onSubmit: (type: string) => void;
@@ -62,7 +63,6 @@ const SendToken: FC<Props> = ({ onSubmit }) => {
   useMemo(() => {
     if (!keypair) return;
     fetchTransactionFee(keypair.publicKey);
-    console.log("fetchTransactionFee");
   }, [keypair]);
 
   useMemo(() => {
@@ -82,7 +82,7 @@ const SendToken: FC<Props> = ({ onSubmit }) => {
   }, [tokens, prices, selectedIndex]);
 
   return (
-    <>
+    <div className="flex flex-col h-full">
       <Select items={tokens as Token[]} selectedItemIndex={selectedIndex} onSelectedItem={setSelectedIndex} />
       <Input
         placeholder="Receiver"
@@ -91,7 +91,7 @@ const SendToken: FC<Props> = ({ onSubmit }) => {
         error={receiverError}
       />
       <Input placeholder="Amount" type="number" value={amount} onChange={handleOnChangeAmount} error={amountError} />
-      <div className="text-secondary-500 font-semibold text-base py-10 flex flex-col gap-y-2">
+      <div className="text-secondary-500 font-semibold text-base py-8 flex flex-col gap-y-2">
         <p className="flex justify-between">
           <span>Balance</span>
           <span>
@@ -107,17 +107,11 @@ const SendToken: FC<Props> = ({ onSubmit }) => {
           <span>{formatCurrency((parseFloat(amount) || 0 + fee) * price.current)} USD</span>
         </p>
       </div>
-      <div className="px-3">
-        <button
-          disabled={!isValidTransaction}
-          className={`mt-auto w-full rounded-xl ${isValidTransaction ? "gradient-button" : "disabled-button"}`}
-          onClick={handleSubmitButton}
-        >
-          <span>Continue</span>
-          <ArrowRightBoldIcon size={20} />
-        </button>
-      </div>
-    </>
+      <ActionButton disabled={!isValidTransaction} onClick={handleSubmitButton}>
+        <span>Continue</span>
+        <ArrowRightBoldIcon size={20} />
+      </ActionButton>
+    </div>
   );
 };
 

@@ -60,7 +60,6 @@ const passwordExpiredAtId = "passwordExpiredAt";
 export const upsertPasswordExpiredAt = async (expiredAt: number) => {
   try {
     const doc = await getDB().get<{ expiredAt: number }>(passwordExpiredAtId);
-    console.log(doc);
     await getDB().put({ ...doc, expiredAt });
   } catch (error) {
     if ((error as PouchDB.Core.Error).status === 404) {
