@@ -6,6 +6,7 @@ import { Token } from "@engine/tokens/types";
 import { swap } from "@engine/transaction/swap";
 import { getFriendlyAmount } from "@engine/utils";
 import History from "@screens/History";
+import HistoryDetails from "@screens/History/HistoryDetails";
 import Receive from "@screens/Receive";
 import TransactionResult from "@screens/Result";
 import Send from "@screens/Send";
@@ -49,6 +50,9 @@ const HomeScreen = () => {
       },
       Transaction() {
         return <TransactionResult />;
+      },
+      HistoryDetails() {
+        return <HistoryDetails />;
       },
     };
     return BottomSheetChildren[bottomSheetType];
@@ -114,7 +118,7 @@ const HomeScreen = () => {
               !localConfig.showBalance ? "blur-effect" : ""
             }`}
           >
-            {formatCurrency(totalBalance)}
+            ${formatCurrency(totalBalance)}
           </h1>
         </div>
         <div className="mt-6 flex items-center gap-10">
@@ -134,10 +138,8 @@ const HomeScreen = () => {
 
         <div className="mt-4 w-full overflow-y-scroll no-scrollbar">
           {activeTab === "Tokens" && <TokenList tokens={tokens as Token[]} />}
-
           {activeTab === "Collectibles" && <Collections collectionMap={collectionMap} />}
-
-          {activeTab === "Activities" && <History />}
+          {activeTab === "Activities" && <History onItemClick={() => handleOnClick("HistoryDetails")} />}
         </div>
       </div>
 
