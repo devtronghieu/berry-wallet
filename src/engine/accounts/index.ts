@@ -1,7 +1,7 @@
 import { PouchID } from "@engine/constants";
 import { generateKeypairFromPrivateKey, generateKeypairFromSeedPhrase } from "@engine/keypair";
 import { getActiveIndex, getEncryptedAccounts, upsertActiveIndex, upsertEncryptedAccounts } from "@engine/storage";
-import { decryptWithPassword, encryptWithPassword } from "@utils/crypto";
+import { decryptWithPassword, EncryptedData, encryptWithPassword } from "@utils/crypto";
 import { encode } from "bs58";
 
 import { StoredAccount, StoredAccountType, StoredPrivateKey, StoredSeedPhrase } from "./types";
@@ -32,7 +32,7 @@ export const addNewKeypair = async (hashedPassword: string) => {
   const keypair = generateKeypairFromSeedPhrase(activeWallet.seedPhrase, lastPrivateKey.pathIndex + 1);
 
   // Get active keypair name
-  const activeKeypairName = `Account ${lastPrivateKey.pathIndex + 2}`;
+  const activeKeypairName = `Account ${activeWalletIndex + 1}.${lastPrivateKey.pathIndex + 2}`;
 
   // Add new keypair to the active wallet
   activeWallet.privateKeys.push({
@@ -72,6 +72,9 @@ export const addNewWallet = async (walletType: StoredAccountType, generateKey: s
 
   switch (walletType) {
     case StoredAccountType.SeedPhrase:
+      if (!checkDuplicateSeedPhrase(hashedPassword, encryptedAccounts, generateKey)) {
+        throw new Error("Duplicate seed phrase");
+      }
       keypair = generateKeypairFromSeedPhrase(generateKey, 0);
       activeKeypairName = `Account ${accounts.length + 1}.1`;
       accounts.push({
@@ -188,4 +191,13 @@ export const updateAccountName = async (hashedPassword: string, account: StoredP
 export const switchActiveAccount = async (walletIndex: number, keypairIndex: number) => {
   await upsertActiveIndex(PouchID.activeWalletIndex, walletIndex);
   await upsertActiveIndex(PouchID.activeKeypairIndex, keypairIndex);
+};
+
+export const checkDuplicateSeedPhrase = (
+  hashedPassword: string,
+  encryptedAccounts: EncryptedData,
+  seedPhrase: string,
+) => {
+  const accounts: StoredAccount[] = JSON.parse(decryptWithPassword(encryptedAccounts, hashedPassword));
+  return accounts.every((acc) => acc.type === StoredAccountType.SeedPhrase && acc.seedPhrase !== seedPhrase);
 };

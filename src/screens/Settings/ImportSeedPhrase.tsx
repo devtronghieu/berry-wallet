@@ -1,32 +1,42 @@
 import SeedPhrase from "@components/SeedPhrase";
-import { BottomSheetType } from "@screens/Settings/types";
-import { FC, useEffect } from "react";
+import { addNewWallet } from "@engine/accounts";
+import { StoredAccountType } from "@engine/accounts/types";
+import { appActions, appState } from "@state/index";
+import { Route } from "@utils/routes";
+import { validateMnemonic } from "bip39";
+import { FC } from "react";
 import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useSnapshot } from "valtio";
 
-interface Props {
-  onSettingButtonClick: (bottomSheetType: string) => void;
-}
-
-const ImportSeedPhrase: FC<Props> = ({ onSettingButtonClick }) => {
+const ImportSeedPhrase: FC = () => {
+  const { encryptedAccounts, hashedPassword } = useSnapshot(appState);
   const [seedPhrase, setSeedPhrase] = useState<string[]>(new Array(12).fill(""));
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
+  const [error, setError] = useState<string>("");
+  const navigate = useNavigate();
 
+  // Add new wallet from imported seed phrase
   const handleConfirm = () => {
-    onSettingButtonClick(BottomSheetType.EditAccount);
+    if (!hashedPassword || !encryptedAccounts) {
+      console.error("No hashed password or encrypted accounts found");
+      return;
+    }
+    if (validateMnemonic(seedPhrase.join(" "))) {
+      addNewWallet(StoredAccountType.SeedPhrase, seedPhrase.join(" "), hashedPassword)
+        .then(({ activeKeypairIndex, newEncryptedAccounts, activeWalletIndex, activeKeypairName, keypair }) => {
+          appActions.setActiveKeypairIndex(activeKeypairIndex);
+          appActions.setActiveKeypairName(activeKeypairName);
+          appActions.setEncryptedAccounts(newEncryptedAccounts);
+          appActions.setActiveWalletIndex(activeWalletIndex);
+          appActions.setKeypair(keypair);
+          navigate(Route.Home);
+        })
+        .catch((error) => {
+          setError(error.message);
+        });
+    } else setError("Seedphrase is invalid! Please try again.");
   };
-
-  useEffect(() => {
-    const handleEnter = (e: KeyboardEvent) => {
-      if (e.key === "Enter" && !isDisabled) {
-        handleConfirm();
-      }
-    };
-    window.addEventListener("keydown", handleEnter);
-
-    return () => {
-      window.removeEventListener("keydown", handleEnter);
-    };
-  }, [isDisabled]);
 
   useMemo(() => {
     setIsDisabled(seedPhrase.some((word) => word === ""));
@@ -36,6 +46,7 @@ const ImportSeedPhrase: FC<Props> = ({ onSettingButtonClick }) => {
     <div className="flex flex-col items-center justify-around h-full">
       <div className="flex flex-col items-center gap-2">
         <SeedPhrase readonly={false} seedPhrase={seedPhrase} setSeedPhrase={setSeedPhrase} />
+        {error && <p className="font-semibold text-s text-error mt-4">{error}</p>}
       </div>
 
       <button

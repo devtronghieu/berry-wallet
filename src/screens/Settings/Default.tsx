@@ -110,7 +110,7 @@ const DefaultSettingsScreen = () => {
         return <ChangePassword onSave={handleOnBackSecurity} />;
       },
       [BottomSheetType.ImportSeedPhrase]: () => {
-        return <ImportSeedPhrase onSettingButtonClick={setBottomSheetType} />;
+        return <ImportSeedPhrase />;
       },
       [BottomSheetType.ImportPrivateKey]: () => {
         return <ImportPrivateKey onSettingButtonClick={setBottomSheetType} />;
