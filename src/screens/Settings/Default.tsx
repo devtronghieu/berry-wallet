@@ -12,16 +12,16 @@ import { useSnapshot } from "valtio";
 
 import { PlusIcon, ShieldDoneIcon, TrashIcon, WalletIcon } from "@/icons";
 
+import AddOrConnectWallet from "./AddOrConnectWallet";
 import ChangeAutoLockTimer from "./ChangeAutoLockTimer";
 import ChangePassword from "./ChangePassword";
 import EditAccount from "./EditAccount";
+import ImportPrivateKey from "./ImportPrivateKey";
+import ImportSeedPhrase from "./ImportSeedPhrase";
 import ManageAccounts from "./ManageAccountsBottomSheet";
 import SecurityAndPrivacy from "./SecurityAndPrivacy";
 import ShowPrivateKey from "./ShowPrivateKey";
 import ShowSecretPhrase from "./ShowSecretPhrase";
-import AddOrConnectWallet from "./AddOrConnectWallet";
-import ImportSeedPhrase from "./ImportSeedPhrase";
-import ImportPrivateKey from "./ImportPrivateKey";
 
 const DefaultSettingsScreen = () => {
   const navigate = useNavigate();

@@ -1,6 +1,6 @@
-import { FC, useEffect } from "react";
-import { BottomSheetType } from "@screens/Settings/types";
 import SeedPhrase from "@components/SeedPhrase";
+import { BottomSheetType } from "@screens/Settings/types";
+import { FC, useEffect } from "react";
 import { useMemo, useState } from "react";
 
 interface Props {

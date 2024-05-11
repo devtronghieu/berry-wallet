@@ -2,7 +2,7 @@ import SettingButton from "@components/SettingButton";
 import { BottomSheetType } from "@screens/Settings/types";
 import { FC } from "react";
 
-import { PlusIcon, DownloadIcon, ArrowDownSquareIcon } from "@/icons";
+import { ArrowDownSquareIcon,DownloadIcon, PlusIcon } from "@/icons";
 
 interface Props {
   onSettingButtonClick: (bottomSheetType: string) => void;

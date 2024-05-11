@@ -1,7 +1,6 @@
-import { FC } from "react";
-import { BottomSheetType } from "@screens/Settings/types";
 import Input from "@components/Input";
-
+import { BottomSheetType } from "@screens/Settings/types";
+import { FC } from "react";
 import { useMemo, useState } from "react";
 
 interface Props {

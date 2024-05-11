@@ -1,4 +1,6 @@
 import ActionButton from "@components/ActionButton";
+import Input from "@components/Input";
+import Select from "@components/Select";
 import { Token } from "@engine/tokens/types";
 import { fetchTransactionFee, sendTransaction } from "@engine/transaction/send";
 import { getFriendlyAmount } from "@engine/utils";
@@ -12,8 +14,6 @@ import { useSnapshot } from "valtio";
 
 import ArrowRightBoldIcon from "@/icons/ArrowRightBoldIcon";
 
-import Select from "@components/Select";
-import Input from "@components/Input";
 import { validateAmount, validatePublicKey } from "./utils";
 
 interface Props {
