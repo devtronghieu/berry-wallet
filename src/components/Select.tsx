@@ -1,4 +1,4 @@
-import { Token, Collectible, ATAMetadata } from "@engine/tokens/types";
+import { ATAMetadata, Collectible, Token } from "@engine/tokens/types";
 import { transactionActions as TxA } from "@state/transaction";
 import { getLocalLogo } from "@utils/general";
 import { FC, useState } from "react";
@@ -74,7 +74,7 @@ const Select: FC<Props> = ({ items, selectedItemIndex, onSelectedItem, disabled 
       </div>
       {!isOpen ? <ArrowDownCircleIcon size={20} /> : <ArrowUpCircleIcon size={20} />}
       <div
-        className={`mt-2 border border-solid rounded-xl border-primary-300 bg-primary-100 p-1 flex flex-col gap-y-2 absolute top-full w-full left-0 ${
+        className={`mt-2 border border-solid rounded-xl border-primary-300 bg-primary-100 p-1 flex flex-col gap-y-2 absolute top-full w-full left-0 max-h-[144px] overflow-scroll no-scrollbar ${
           isOpen ? "visible" : "invisible"
         } z-10`}
       >
