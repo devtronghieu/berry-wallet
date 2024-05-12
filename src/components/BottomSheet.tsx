@@ -11,7 +11,7 @@ interface Props {
   onClose: () => void;
 }
 
-const BottomSheet: FC<Props> = ({ title, children, isOpen, onClose }) => {
+const BottomSheet: FC<Props> = ({ title, children, isOpen, onClose, scrollable }) => {
   const addSpace = (str: string) => {
     return str.replace(/([A-Z])/g, " $1").trim();
   };
