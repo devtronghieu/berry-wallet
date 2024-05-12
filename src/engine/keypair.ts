@@ -1,5 +1,5 @@
 import { Keypair } from "@solana/web3.js";
-import { decryptWithPassword, encryptWithPassword } from "@utils/crypto";
+import { EncryptedData, decryptWithPassword, encryptWithPassword } from "@utils/crypto";
 import { generateMnemonic, mnemonicToSeedSync } from "bip39";
 import base58, { encode } from "bs58";
 import { derivePath } from "ed25519-hd-key";
@@ -15,36 +15,66 @@ export const createSeedPhrase = () => {
   return generateMnemonic();
 };
 
-export const createWallet = async (seedPhrase: string, hashedPassword: string) => {
-  const keypair = generateKeypairFromSeedPhrase(seedPhrase, 0);
-  await upsertPassword(hashedPassword);
+export const createWallet = async (
+  walletType: StoredAccountType,
+  seedPhraseOrPrivateKey: string,
+  hashedPassword: string,
+) => {
+  let keypair: Keypair;
+  let encryptedAccounts: EncryptedData;
+  switch (walletType) {
+    case StoredAccountType.SeedPhrase:
+      const seedPhrase = seedPhraseOrPrivateKey;
+      keypair = generateKeypairFromSeedPhrase(seedPhrase, 0);
+      await upsertPassword(hashedPassword);
 
-  // Store the initial seed phrase
-  const storedSeedPhrase = {
-    type: StoredAccountType.SeedPhrase,
-    name: "Wallet 1",
-    seedPhrase: seedPhrase,
-    privateKeys: [
-      {
+      // Store the initial seed phrase
+      const storedSeedPhrase = {
+        type: StoredAccountType.SeedPhrase,
+        name: "Wallet 1",
+        seedPhrase: seedPhrase,
+        privateKeys: [
+          {
+            type: StoredAccountType.PrivateKey,
+            name: "Account 1.1",
+            privateKey: encode(keypair.secretKey),
+            pathIndex: 0,
+            lastBalance: 0,
+          },
+        ],
+      };
+
+      encryptedAccounts = encryptWithPassword(JSON.stringify([storedSeedPhrase]), hashedPassword);
+
+      await upsertEncryptedAccounts(PouchID.encryptedAccounts, encryptedAccounts);
+      await upsertActiveIndex(PouchID.activeWalletIndex, 0);
+      await upsertActiveIndex(PouchID.activeKeypairIndex, 0);
+      break;
+    case StoredAccountType.PrivateKey:
+      const privateKey = seedPhraseOrPrivateKey;
+      keypair = generateKeypairFromPrivateKey(privateKey);
+      await upsertPassword(hashedPassword);
+
+      const storedPrivateKey = {
         type: StoredAccountType.PrivateKey,
         name: "Account 1.1",
-        privateKey: encode(keypair.secretKey),
+        privateKey,
         pathIndex: 0,
         lastBalance: 0,
-      },
-    ],
-  };
+      };
 
-  const encryptedAccounts = encryptWithPassword(JSON.stringify([storedSeedPhrase]), hashedPassword);
-
-  await upsertEncryptedAccounts(PouchID.encryptedAccounts, encryptedAccounts);
-  await upsertActiveIndex(PouchID.activeWalletIndex, 0);
-  await upsertActiveIndex(PouchID.activeKeypairIndex, 0);
-
+      encryptedAccounts = encryptWithPassword(JSON.stringify([storedPrivateKey]), hashedPassword);
+      await upsertEncryptedAccounts(PouchID.encryptedAccounts, encryptedAccounts);
+      await upsertActiveIndex(PouchID.activeWalletIndex, 0);
+      await upsertActiveIndex(PouchID.activeKeypairIndex, 0);
+      break;
+    default:
+      throw new Error("Invalid active account type");
+  }
   return {
     activeKeypairName: "Account 1.1",
-    keypair,
-    encryptedAccounts,
+    keypair: keypair!,
+    encryptedAccounts: encryptedAccounts!,
     activeWalletIndex: 0,
     activeKeypairIndex: 0,
   };
