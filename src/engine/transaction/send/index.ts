@@ -1,6 +1,6 @@
 import { getConnection } from "@engine/connection";
 import { WRAPPED_SOL_MINT } from "@engine/constants";
-import { Token, Collectible } from "@engine/tokens/types";
+import { Collectible,Token } from "@engine/tokens/types";
 import { convertDateToReadable } from "@engine/utils";
 import {
   createAssociatedTokenAccountInstruction,
@@ -158,7 +158,7 @@ export const constructNftTransaction = async (
 export const sendCollectible = async (tranferNFTConfig: SendNFTConfig) => {
   const connection = getConnection();
   try {
-    let transaction = await constructNftTransaction(tranferNFTConfig);
+    const transaction = await constructNftTransaction(tranferNFTConfig);
     transaction.feePayer = tranferNFTConfig.keypair.publicKey;
     transaction.recentBlockhash = (await connection.getLatestBlockhash("finalized")).blockhash;
     const signature = await sendAndConfirmTransaction(connection, transaction, [tranferNFTConfig.keypair]);

@@ -16,7 +16,7 @@ const ShowSeedPhrase: FC<Props> = ({ seedPhrase }) => {
 
   return (
     <>
-      <div className="flex items-center gap-2 my-2">
+      <div className="flex items-center justify-center gap-2 my-2">
         <button className="mini-icon-button" onClick={() => setDataBlurred(!dataBlurred)}>
           {dataBlurred ? <EyeCloseIcon size={iconSize} /> : <EyeOpenIcon size={iconSize} />}
         </button>

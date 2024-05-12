@@ -1,4 +1,5 @@
-import { getEncryptedSeedPhrase } from "@engine/storage";
+import { PouchID } from "@engine/constants";
+import { getEncryptedAccounts } from "@engine/storage";
 import { Route } from "@utils/routes";
 import { FC, ReactNode, useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
@@ -12,14 +13,14 @@ interface Props {
 
 export const ProtectedRoute: FC<Props> = ({ children }) => {
   const [loading, setLoading] = useState<boolean>(true);
-  const { encryptedSeedPhrase, hashedPassword: password } = useSnapshot(appState);
+  const { encryptedAccounts, hashedPassword: password } = useSnapshot(appState);
   const location = useLocation();
 
   useEffect(() => {
     const fetchStoredWallet = async () => {
-      const storedSeedPhrase = await getEncryptedSeedPhrase();
-      if (storedSeedPhrase) {
-        appActions.setEncryptedSeedPhrase(storedSeedPhrase);
+      const encryptedAccounts = await getEncryptedAccounts(PouchID.encryptedAccounts);
+      if (encryptedAccounts) {
+        appActions.setEncryptedAccounts(encryptedAccounts);
       }
     };
 
@@ -30,7 +31,7 @@ export const ProtectedRoute: FC<Props> = ({ children }) => {
 
   if (loading) return <p>Loading...</p>;
 
-  if (!encryptedSeedPhrase) return <Navigate to={Route.SignIn} />;
+  if (!encryptedAccounts) return <Navigate to={Route.SignIn} />;
 
   if (!password) return <Navigate to={Route.UnlockWallet} state={{ from: location.pathname }} />;
 

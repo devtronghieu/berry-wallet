@@ -7,6 +7,7 @@ interface Props {
   title: string;
   children: React.ReactNode;
   isOpen: boolean;
+  scrollable?: boolean;
   onClose: () => void;
 }
 
@@ -24,7 +25,7 @@ const BottomSheet: FC<Props> = ({ title, children, isOpen, onClose }) => {
             <CloseSquareIcon size={24} />
           </div>
         </Sheet.Header>
-        <Sheet.Content>{children}</Sheet.Content>
+        <Sheet.Content className={scrollable ? "overflow-scroll no-scrollbar" : ""}>{children}</Sheet.Content>
       </Sheet.Container>
       <Sheet.Backdrop onTap={onClose} />
     </Sheet>

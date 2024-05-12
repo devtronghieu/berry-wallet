@@ -1,3 +1,4 @@
+import { fetchAccountInfo } from "@engine/accounts";
 import { getConnection } from "@engine/connection";
 import { BERRY_LOCAL_CONFIG_KEY } from "@engine/constants";
 import { getSignatures, getTransaction } from "@engine/history";
@@ -23,6 +24,14 @@ export const useStartup = () => {
 
     fetchNFTs(keypair.publicKey)
       .then((collectionMap) => appActions.setCollectionMap(collectionMap))
+      .catch(console.error);
+
+    fetchAccountInfo()
+      .then(({ encryptedAccounts, activeKeypairIndex, activeWalletIndex }) => {
+        appActions.setEncryptedAccounts(encryptedAccounts);
+        appActions.setActiveKeypairIndex(activeKeypairIndex);
+        appActions.setActiveWalletIndex(activeWalletIndex);
+      })
       .catch(console.error);
 
     // fetch local config

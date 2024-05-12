@@ -133,6 +133,10 @@
     scrollbar-width: none;
     -ms-overflow-style: none;
   }
+
+  .input-private-key {
+    @apply w-full bg-primary-300 text-base font-semibold rounded-xl align-text-top px-5 py-3 placeholder-primary-100 text-primary-100 outline-primary-500 h-32;
+  }
 }
 
 body {
@@ -157,8 +161,4 @@ input[type="number"] {
 .react-modal-sheet-container {
   @apply bg-primary-100 !rounded-tr-3xl !rounded-tl-3xl;
   height: 572px !important;
-}
-
-.react-modal-sheet-content {
-  @apply bg-primary-100 !rounded-tr-3xl !rounded-tl-3xl;
 }
