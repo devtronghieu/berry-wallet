@@ -132,9 +132,71 @@ export const addNewWallet = async (walletType: StoredAccountType, generateKey: s
   return {
     activeKeypairName,
     keypair,
-    newEncryptedAccounts,
+    encryptedAccounts: newEncryptedAccounts,
     activeWalletIndex: accounts.length - 1,
     activeKeypairIndex: 0,
+  };
+};
+
+export const removeWallet = async (hashedPassword: string, account: StoredPrivateKey, activeKeypairName: string) => {
+  const { encryptedAccounts, activeWalletIndex, activeKeypairIndex } = await fetchAccountInfo().catch((error) => {
+    console.error(error);
+    throw new Error("Failed to fetch account info");
+  });
+  const accounts = JSON.parse(decryptWithPassword(encryptedAccounts, hashedPassword)) as StoredAccount[];
+  let isFound = false;
+  let newActiveWalletIndex = activeWalletIndex;
+  let newActiveKeypairIndex = activeKeypairIndex;
+  let newActiveKeypairName = activeKeypairName;
+  accounts.forEach((acc, walletIndex) => {
+    if (isFound) return;
+    switch (acc.type) {
+      case StoredAccountType.SeedPhrase:
+        acc.privateKeys.forEach((key, keypairIndex) => {
+          if (key.privateKey === account.privateKey) {
+            acc.privateKeys.splice(keypairIndex, 1);
+            // In case the active keypair belongs to the removed seephrase accounts
+            if (walletIndex === activeWalletIndex && acc.privateKeys.length <= activeKeypairIndex)
+              newActiveKeypairIndex = acc.privateKeys.length - 1;
+            if (acc.privateKeys.length === 0) {
+              // Remove the seed phrase if there are no more keypairs
+              accounts.splice(walletIndex, 1);
+              // Update the active wallet index and active keypair in case all of the seedphrase keypairs is removed
+              newActiveWalletIndex = accounts.length - 1;
+              newActiveKeypairIndex = 0;
+            }
+            newActiveKeypairName = acc.privateKeys[newActiveKeypairIndex].name;
+            isFound = true;
+          }
+        });
+        break;
+      case StoredAccountType.PrivateKey:
+        if (acc.privateKey === account.privateKey) {
+          accounts.splice(walletIndex, 1);
+          // Update the active wallet index and active keypair in case active private key is removed
+          if (activeWalletIndex === walletIndex) {
+            newActiveWalletIndex = accounts.length - 1;
+            newActiveKeypairIndex = 0;
+          }
+          newActiveKeypairName = accounts[newActiveWalletIndex].name;
+          isFound = true;
+        }
+        break;
+      default:
+        throw new Error("Invalid active account type");
+    }
+  });
+  const newEncryptedAccounts = encryptWithPassword(JSON.stringify(accounts), hashedPassword);
+
+  await upsertEncryptedAccounts(PouchID.encryptedAccounts, newEncryptedAccounts);
+  await upsertActiveIndex(PouchID.activeWalletIndex, newActiveWalletIndex);
+  await upsertActiveIndex(PouchID.activeKeypairIndex, newActiveKeypairIndex);
+
+  return {
+    activeKeypairName: newActiveKeypairName,
+    encryptedAccounts: newEncryptedAccounts,
+    activeWalletIndex: newActiveWalletIndex,
+    activeKeypairIndex: newActiveKeypairIndex,
   };
 };
 
@@ -172,6 +234,7 @@ export const updateAccountName = async (hashedPassword: string, account: StoredP
     throw new Error("Failed to fetch account info");
   });
   const accounts: StoredAccount[] = JSON.parse(decryptWithPassword(encryptedAccounts, hashedPassword));
+  let updateAccount: StoredPrivateKey | undefined = undefined;
   let isFound = false;
   accounts.forEach((acc) => {
     if (isFound) return;
@@ -179,14 +242,14 @@ export const updateAccountName = async (hashedPassword: string, account: StoredP
       case StoredAccountType.SeedPhrase:
         acc.privateKeys.forEach((key) => {
           if (key.privateKey === account.privateKey) {
-            key.name = newName;
+            updateAccount = key;
             isFound = true;
           }
         });
         break;
       case StoredAccountType.PrivateKey:
         if (acc.privateKey === account.privateKey) {
-          acc.name = newName;
+          updateAccount = acc;
           isFound = true;
         }
         break;
@@ -195,7 +258,8 @@ export const updateAccountName = async (hashedPassword: string, account: StoredP
     }
   });
 
-  if (!isFound) return encryptedAccounts;
+  if (updateAccount === undefined) return encryptedAccounts;
+  if ((updateAccount as StoredPrivateKey).name === newName) return encryptedAccounts;
 
   const newEncryptedAccounts = encryptWithPassword(JSON.stringify(accounts), hashedPassword);
 

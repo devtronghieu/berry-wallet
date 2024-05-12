@@ -23,10 +23,10 @@ const ImportPrivateKey: FC = () => {
       return;
     }
     addNewWallet(StoredAccountType.PrivateKey, privateKey, hashedPassword)
-      .then(({ activeKeypairIndex, newEncryptedAccounts, activeWalletIndex, activeKeypairName, keypair }) => {
+      .then(({ activeKeypairIndex, encryptedAccounts, activeWalletIndex, activeKeypairName, keypair }) => {
         appActions.setActiveKeypairIndex(activeKeypairIndex);
         appActions.setActiveKeypairName(activeKeypairName);
-        appActions.setEncryptedAccounts(newEncryptedAccounts);
+        appActions.setEncryptedAccounts(encryptedAccounts);
         appActions.setActiveWalletIndex(activeWalletIndex);
         appActions.setKeypair(keypair);
         navigate(Route.Home);

@@ -1,3 +1,4 @@
+import { removeWallet } from "@engine/accounts";
 import { deriveKeypairAndName } from "@engine/keypair";
 import { getPassword, getPasswordExpiredAt, upsertPasswordExpiredAt } from "@engine/storage";
 import { clearDB } from "@engine/storage/connection";
@@ -30,36 +31,63 @@ const UnlockWalletScreen = () => {
       appActions.setActiveKeypairName(keypairName);
       navigate(location.state.from || Route.Home);
     };
-    if (location.state?.resetApp) return;
+    if (location.state?.resetApp || location.state?.removeWallet) return;
     restoreWalletSession().catch(console.error);
-  }, [location.state?.from, location.state?.resetApp, navigate]);
+  }, [location.state.from, location.state?.removeWallet, location.state?.resetApp, navigate]);
 
   const handleUnlockWallet = () => {
-    const fetchKeypair = async () => {
+    const getCorrectHashedPassword = async () => {
       const storedPassword = await getPassword();
       const hashedPassword = hash(password);
       if (hashedPassword !== storedPassword) {
         alert("Incorrect password");
-        return;
+        return null;
       }
 
+      return hashedPassword;
+    };
+
+    const fetchKeypair = async () => {
+      const correctHashedPassword = await getCorrectHashedPassword();
+      if (!correctHashedPassword) return;
       const { lockTimer } = JSON.parse(localStorage.getItem("berry-local-config") ?? "{}");
       await upsertPasswordExpiredAt(Date.now() + (lockTimer || 30) * 60 * 1000);
-      const { keypair, keypairName } = await deriveKeypairAndName(hashedPassword);
-      appActions.setHashedPassword(hashedPassword);
+      const { keypair, keypairName } = await deriveKeypairAndName(correctHashedPassword);
+      appActions.setHashedPassword(correctHashedPassword);
       appActions.setKeypair(keypair);
       appActions.setActiveKeypairName(keypairName);
       navigate(location.state.from || Route.Home);
     };
 
-    if (location.state?.resetApp === true) {
+    const handleRemoveWallet = async () => {
+      const correctHashedPassword = await getCorrectHashedPassword();
+      if (!correctHashedPassword) return;
+      const props = location.state.props;
+      removeWallet(props.hashedPassword, props.account, props.activeKeypairName)
+        .then(({ encryptedAccounts, activeKeypairIndex, activeKeypairName, activeWalletIndex }) => {
+          appActions.setEncryptedAccounts(encryptedAccounts);
+          appActions.setActiveKeypairIndex(activeKeypairIndex);
+          appActions.setActiveKeypairName(activeKeypairName);
+          appActions.setActiveWalletIndex(activeWalletIndex);
+          navigate(Route.Home);
+        })
+        .catch(console.error);
+    };
+
+    const handleResetApp = async () => {
+      const correctHashedPassword = await getCorrectHashedPassword();
+      if (!correctHashedPassword) return;
       clearDB()
         .then(() => {
           appActions.resetAppState();
           navigate(Route.SignIn);
         })
         .catch(console.error);
-    } else fetchKeypair().catch(console.error);
+    };
+
+    if (location.state?.removeWallet === true) handleRemoveWallet().catch(console.error);
+    else if (location.state?.resetApp === true) handleResetApp().catch(console.error);
+    else fetchKeypair().catch(console.error);
   };
 
   return (

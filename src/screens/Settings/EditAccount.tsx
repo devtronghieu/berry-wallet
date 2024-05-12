@@ -4,7 +4,9 @@ import { updateAccountName } from "@engine/accounts";
 import { StoredAccountType, StoredPrivateKey } from "@engine/accounts/types";
 import { generateKeypairFromPrivateKey } from "@engine/keypair";
 import { appActions, appState } from "@state/index";
+import { Route } from "@utils/routes";
 import { FC, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useSnapshot } from "valtio";
 
 import { BottomSheetType } from "./types";
@@ -16,9 +18,10 @@ interface Props {
 }
 
 const EditAccount: FC<Props> = ({ account, accountType, onBottomChange }) => {
-  const { hashedPassword } = useSnapshot(appState);
+  const { hashedPassword, activeKeypairName } = useSnapshot(appState);
   const [isEditingAccountName, setIsEditingAccountName] = useState<boolean>(false);
   const [accountName, setAccountName] = useState<string>(account.name);
+  const navigate = useNavigate();
   const saveAccountName = () => {
     if (!hashedPassword) {
       console.error("No hashed password");
@@ -30,6 +33,24 @@ const EditAccount: FC<Props> = ({ account, accountType, onBottomChange }) => {
         appActions.setEncryptedAccounts(newEncryptedAccounts);
       })
       .catch(console.error);
+  };
+
+  const handleRemoveAccount = () => {
+    if (!hashedPassword || !activeKeypairName) {
+      console.error("No hashed password or active keypair name found");
+      return;
+    }
+    navigate(Route.UnlockWallet, {
+      state: {
+        removeWallet: true,
+        from: Route.Home,
+        props: {
+          hashedPassword,
+          account,
+          activeKeypairName,
+        },
+      },
+    });
   };
 
   const publicKey = useMemo(() => {
@@ -70,7 +91,7 @@ const EditAccount: FC<Props> = ({ account, accountType, onBottomChange }) => {
           />
         </div>
 
-        <SettingAccount title="Remove account" value={""} redTitle hasIcon onClick={() => {}} />
+        <SettingAccount title="Remove account" value={""} redTitle hasIcon onClick={handleRemoveAccount} />
       </div>
       {!isEditingAccountName ? (
         <ActionButton onClick={() => onBottomChange(BottomSheetType.ManageAccounts)}>Done</ActionButton>
