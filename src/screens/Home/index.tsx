@@ -197,7 +197,7 @@ const HomeScreen = () => {
         <div
           className={`mt-2 ms-2 border border-solid rounded-3xl border-primary-300 bg-primary-100 p-1 flex flex-col gap-y-2 absolute ${
             addrListIsOpen ? "visible" : "invisible"
-          } z-10 h-36 overflow-y-auto no-scrollbar`}
+          } z-10 max-h-36 overflow-y-auto no-scrollbar`}
         >
           {keypairs?.map((item, index) => {
             return (
