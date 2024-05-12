@@ -1,7 +1,7 @@
 import IDBPouch from "pouchdb-adapter-idb";
 import PouchDB from "pouchdb-core";
 
-let db: PouchDB.Database | null;
+let db: PouchDB.Database | null = null;
 
 export const getDB = () => {
   if (!db) {

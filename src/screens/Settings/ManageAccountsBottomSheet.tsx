@@ -17,10 +17,9 @@ const ManageAccounts: FC<Props> = ({ accounts, onItemClick }) => {
   return (
     <div className="flex flex-col gap-2">
       {accounts.map((account, walletIndex) => {
-        let jsx;
         switch (account.type) {
           case StoredAccountType.SeedPhrase:
-            jsx = account.privateKeys.map((privateKey, keypairIndex) => (
+            return account.privateKeys.map((privateKey, keypairIndex) => (
               <SettingAccount
                 title={privateKey.name}
                 value={`$${formatCurrency(privateKey.lastBalance)}`}
@@ -29,7 +28,6 @@ const ManageAccounts: FC<Props> = ({ accounts, onItemClick }) => {
                 key={privateKey.privateKey}
               />
             ));
-            return jsx;
           case StoredAccountType.PrivateKey:
             return (
               <SettingAccount

@@ -32,7 +32,7 @@ export const createWallet = async (
         privateKeys: [
           {
             type: StoredAccountType.PrivateKey,
-            name: "Account 1.1",
+            name: "Account 1",
             privateKey: encode(keypair.secretKey),
             pathIndex: 0,
             lastBalance: 0,
@@ -45,7 +45,7 @@ export const createWallet = async (
       keypair = generateKeypairFromPrivateKey(seedPhraseOrPrivateKey);
       storedInitialAccount = {
         type: StoredAccountType.PrivateKey,
-        name: "Account 1.1",
+        name: "Account 1",
         privateKey: seedPhraseOrPrivateKey,
         pathIndex: 0,
         lastBalance: 0,
@@ -60,9 +60,10 @@ export const createWallet = async (
   await upsertEncryptedAccounts(PouchID.encryptedAccounts, encryptedAccounts);
   await upsertActiveIndex(PouchID.activeWalletIndex, 0);
   await upsertActiveIndex(PouchID.activeKeypairIndex, 0);
+  await upsertActiveIndex(PouchID.nextAccountIndex, 1);
 
   return {
-    activeKeypairName: "Account 1.1",
+    activeKeypairName: "Account 1",
     keypair: keypair!,
     encryptedAccounts: encryptedAccounts!,
     activeWalletIndex: 0,

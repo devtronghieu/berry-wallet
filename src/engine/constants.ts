@@ -5,4 +5,5 @@ export const enum PouchID {
   activeWalletIndex = "activeWalletIndex",
   activeKeypairIndex = "activeKeypairIndex",
   encryptedAccounts = "encryptedAccounts",
+  nextAccountIndex = "nextAccountIndex",
 }
