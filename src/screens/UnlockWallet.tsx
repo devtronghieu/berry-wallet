@@ -65,11 +65,11 @@ const UnlockWalletScreen = () => {
       if (!correctHashedPassword) return;
       const props = location.state.props;
       removeWallet(props.hashedPassword, props.account, props.activeKeypairName)
-        .then(({ encryptedAccounts, activeKeypairIndex, activeKeypairName, activeWalletIndex }) => {
+        .then(({ encryptedAccounts, activeKeypairIndex, activeKeypairName, activeProfileIndex }) => {
           appActions.setEncryptedAccounts(encryptedAccounts);
           appActions.setActiveKeypairIndex(activeKeypairIndex);
           appActions.setActiveKeypairName(activeKeypairName);
-          appActions.setActiveWalletIndex(activeWalletIndex);
+          appActions.setActiveWalletIndex(activeProfileIndex);
           toast.success("Wallet removed successfully!");
           navigate(Route.Home);
         })

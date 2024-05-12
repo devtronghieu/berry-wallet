@@ -76,13 +76,13 @@ const ImportPrivateKeyScreen = () => {
         ctaDisabled: password === "",
         onCTAClick: async () => {
           const hashedPassword = hash(password);
-          const { keypair, encryptedAccounts, activeKeypairIndex, activeKeypairName, activeWalletIndex } =
+          const { keypair, encryptedAccounts, activeKeypairIndex, activeKeypairName, activeProfileIndex } =
             await createWallet(StoredAccountType.PrivateKey, privateKey, hashedPassword);
           appActions.setKeypair(keypair);
           appActions.setHashedPassword(hashedPassword);
           appActions.setEncryptedAccounts(encryptedAccounts);
           appActions.setActiveKeypairName(activeKeypairName);
-          appActions.setActiveWalletIndex(activeWalletIndex);
+          appActions.setActiveWalletIndex(activeProfileIndex);
           appActions.setActiveKeypairIndex(activeKeypairIndex);
           navigate(Route.Home);
         },
