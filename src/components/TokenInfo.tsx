@@ -1,4 +1,5 @@
 import { TokenType, TransactionType } from "@engine/history/types";
+import { formatCurrency } from "@utils/general";
 import { FC, useMemo } from "react";
 
 interface TokenInfoProps {
@@ -55,7 +56,7 @@ export const TokenInfo: FC<TokenInfoProps> = ({
     );
   }, [transactionType, tokenType, tokenImage, tokenName, receivedTokenImage, receivedTokenName]);
 
-  const Address = useMemo(() => {
+  const Amount = useMemo(() => {
     if (tokenType === TokenType.NFT) {
       return <p className="text-secondary-500 font-semibold text-xl">{tokenName}</p>;
     }
@@ -64,10 +65,10 @@ export const TokenInfo: FC<TokenInfoProps> = ({
       return (
         <div className="flex flex-col items-center">
           <p className="text-secondary-500 font-semibold text-xl">
-            -{amount} {tokenName}
+            -{formatCurrency(amount)} {tokenName}
           </p>
           <p className="text-secondary-500 font-semibold text-xl">
-            +{receiveAmount} {receivedTokenName}
+            +{formatCurrency(receiveAmount || 0)} {receivedTokenName}
           </p>
         </div>
       );
@@ -75,7 +76,7 @@ export const TokenInfo: FC<TokenInfoProps> = ({
 
     return (
       <p className="text-secondary-500 font-semibold text-xl">
-        {amount} {tokenName}
+        {formatCurrency(amount)} {tokenName}
       </p>
     );
   }, [transactionType, tokenType, amount, tokenName, receiveAmount, receivedTokenName]);
@@ -83,7 +84,7 @@ export const TokenInfo: FC<TokenInfoProps> = ({
   return (
     <div className="flex flex-col items-center">
       {Icon}
-      {Address}
+      {Amount}
       <a
         href={`https://explorer.solana.com/tx/${signature}${network === "mainnet" ? "" : "?cluster=devnet"}`}
         className="text-primary-500 font-semibold"

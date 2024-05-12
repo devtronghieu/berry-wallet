@@ -43,10 +43,10 @@ export const TransactionInfo: FC<TransactionInfoProps> = ({ date, status, transa
       <TransactionInfoItem
         title="Status"
         value={
-          <div className="flex">
+          <div className="flex items-center gap-1">
             {status}
-            <div className="flex justify-center items-center p-1 bg-secondary-100 rounded-full">
-              {status === TransactionStatus.SUCCESS && <CorrectIcon />}
+            <div className="flex justify-center items-center w-5 h-5 bg-secondary-100 rounded-full">
+              {status === TransactionStatus.SUCCESS && <CorrectIcon size={12} />}
             </div>
           </div>
         }
@@ -62,13 +62,10 @@ export const TransactionInfo: FC<TransactionInfoProps> = ({ date, status, transa
     <div className="bg-primary-200 rounded-3xl">
       {Address}
       <SeparatedLine />
-
       {Date}
       <SeparatedLine />
-
       {Status}
       <SeparatedLine />
-
       {Fee}
     </div>
   );
