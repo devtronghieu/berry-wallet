@@ -1,5 +1,6 @@
 import SeparatedLine from "@components/SeparatedLine";
 import { TransactionStatus, TransactionType } from "@engine/history/types";
+import { formatDate, shortenAddress } from "@utils/general";
 import { FC, useMemo } from "react";
 
 import { CorrectIcon } from "@/icons";
@@ -24,17 +25,17 @@ export const TransactionInfo: FC<TransactionInfoProps> = ({ date, status, transa
       value = "Jupiter";
     } else if (transactionType === TransactionType.SEND) {
       title = "To";
-      value = receiver as string;
+      value = shortenAddress(receiver as string);
     } else if (transactionType === TransactionType.RECEIVE) {
       title = "From";
-      value = sender as string;
+      value = shortenAddress(sender as string);
     }
 
     return <TransactionInfoItem title={title} value={value} />;
   }, [transactionType, receiver, sender]);
 
   const Date = useMemo(() => {
-    return <TransactionInfoItem title="Date" value={date.toDateString()} />;
+    return <TransactionInfoItem title="Date" value={formatDate(date)} />;
   }, [date]);
 
   const Status = useMemo(() => {
@@ -42,9 +43,11 @@ export const TransactionInfo: FC<TransactionInfoProps> = ({ date, status, transa
       <TransactionInfoItem
         title="Status"
         value={
-          <div>
+          <div className="flex items-center gap-1">
             {status}
-            {status === TransactionStatus.SUCCESS ? <CorrectIcon /> : status === TransactionStatus.PENDING ? "..." : ""}
+            <div className="flex justify-center items-center w-5 h-5 bg-secondary-100 rounded-full">
+              {status === TransactionStatus.SUCCESS && <CorrectIcon size={12} />}
+            </div>
           </div>
         }
       />
@@ -59,13 +62,10 @@ export const TransactionInfo: FC<TransactionInfoProps> = ({ date, status, transa
     <div className="bg-primary-200 rounded-3xl">
       {Address}
       <SeparatedLine />
-
       {Date}
       <SeparatedLine />
-
       {Status}
       <SeparatedLine />
-
       {Fee}
     </div>
   );

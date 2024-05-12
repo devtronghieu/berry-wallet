@@ -1,5 +1,6 @@
 import solIcon from "@assets/tokens/sol.svg";
 import { appState } from "@state/index";
+import { shortenAddress } from "@utils/general";
 import { FC } from "react";
 import QRCode from "react-qr-code";
 import { useSnapshot } from "valtio";
@@ -10,7 +11,7 @@ const Receive: FC = () => {
   const { keypair } = useSnapshot(appState);
 
   const handleCopy = () => {
-    window.navigator.clipboard.writeText("address");
+    window.navigator.clipboard.writeText(keypair?.publicKey.toString() as string);
   };
 
   return (
@@ -24,7 +25,7 @@ const Receive: FC = () => {
 
         <div className="flex flex-1 flex-col">
           <p className="text-secondary-500 font-bold">Account 1</p>
-          <p className="text-secondary-500">A4sd...rkjF</p>
+          <p className="text-secondary-500">{shortenAddress(keypair?.publicKey.toString() as string)}</p>
         </div>
 
         <button className="flex justify-center items-center bg-primary-100 rounded-full w-8 h-8" onClick={handleCopy}>

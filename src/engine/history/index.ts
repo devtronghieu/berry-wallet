@@ -2,6 +2,7 @@ import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { ParsedInstruction, ParsedTransactionWithMeta, PublicKey } from '@solana/web3.js';
 
 import { getConnection } from '../connection';
+import { isSwapTransaction } from './swapTransaction';
 import { transferTokenTransationDetail } from './transferTransaction/transfer';
 import { transferCheckedTransationDetail } from './transferTransaction/transferChecked';
 
@@ -9,7 +10,8 @@ export const connection = getConnection();
 
 export const getSignatures = async (address: PublicKey, limit: number = 1000) => {
     const confirmedSignatureInfos = await connection.getSignaturesForAddress(address, {limit});
-    const signatures = confirmedSignatureInfos.map((info) => info.signature);
+    const confirmedSignatureInfosWithoutDuplicates = new Set(confirmedSignatureInfos);
+    const signatures = Array.from(confirmedSignatureInfosWithoutDuplicates).map((info) => info.signature);
 
     return signatures;
 };
@@ -39,12 +41,6 @@ export const getSpecificInstructionByProgramId = (instructions: ParsedInstructio
     
     return specificInstruction;
 };
-
-export const isSwapTransaction = (instructions: ParsedInstruction[]) => {
-    const isSwap = instructions.some((instruction) => instruction.programId.equals(new PublicKey(import.meta.env.VITE_JUPITER_PROGRAM_ID)));
-
-    return isSwap;
-}
 
 export const getTransaction = async (signature: string) => {
     const transaction = await connection.getParsedTransaction(signature, {maxSupportedTransactionVersion: 2});

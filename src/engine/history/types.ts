@@ -12,9 +12,9 @@ export enum TokenType {
 }
 
 export enum TransactionStatus {
-    PENDING = "PENDING",
-    SUCCESS = "SUCCESS",
-    FAILED = "FAILED",
+    PENDING = "Pending",
+    SUCCESS = "Success",
+    FAILED = "Failed",
 }
 
 export type Transaction = {
