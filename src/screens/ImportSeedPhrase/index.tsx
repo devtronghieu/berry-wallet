@@ -1,5 +1,6 @@
 import OnboardingContainer, { OnboardingContainerProps } from "@components/OnboardingContainer";
 import SeedPhrase from "@components/SeedPhrase";
+import { StoredAccountType } from "@engine/accounts/types";
 import { createWallet } from "@engine/keypair";
 import CreatePassword from "@screens/CreatePassword";
 import { appActions } from "@state/index";
@@ -46,10 +47,14 @@ const ImportSeedPhraseScreen = () => {
         ctaDisabled: password === "",
         onCTAClick: async () => {
           const hashedPassword = hash(password);
-          const { encryptedSeedPhrase, keypair } = await createWallet(seedPhrase.join(" "), hashedPassword);
-          appActions.setEncryptedSeedPhrase(encryptedSeedPhrase);
+          const { keypair, encryptedAccounts, activeKeypairIndex, activeKeypairName, activeWalletIndex } =
+            await createWallet(StoredAccountType.SeedPhrase, seedPhrase.join(" "), hashedPassword);
           appActions.setKeypair(keypair);
           appActions.setHashedPassword(hashedPassword);
+          appActions.setEncryptedAccounts(encryptedAccounts);
+          appActions.setActiveKeypairName(activeKeypairName);
+          appActions.setActiveWalletIndex(activeWalletIndex);
+          appActions.setActiveKeypairIndex(activeKeypairIndex);
           navigate(Route.Home);
         },
         onGoBack: () => setScreenProgress(ScreenProgress.ImportSeedPhrase),

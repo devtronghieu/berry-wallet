@@ -1,14 +1,14 @@
 import BackHeader from "@components/BackHeader";
+import BottomSheet from "@components/BottomSheet";
+import { Collectible } from "@engine/tokens/types";
+import Send from "@screens/Send";
 import { appState } from "@state/index";
 import { Route } from "@utils/routes";
+import { useMemo, useState } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useSnapshot } from "valtio";
-import { useMemo, useState } from "react";
-import Send from "@screens/Send";
-import BottomSheet from "@components/BottomSheet";
 
 import { ArrowUpIcon } from "@/icons";
-import { Collectible } from "@engine/tokens/types";
 
 const NftScreen = () => {
   const navigate = useNavigate();

@@ -1,3 +1,4 @@
+import ActionButton from "@components/ActionButton";
 import { appActions, appState } from "@state/index";
 import { FC, useState } from "react";
 
@@ -49,9 +50,7 @@ const ChangeAutoLockTimer: FC<Props> = ({ onSave }) => {
           </div>
         ))}
       </div>
-      <button className="rounded-xl gradient-button h-[40px] mt-auto mx-5" onClick={handleClickSave}>
-        Save
-      </button>
+      <ActionButton onClick={handleClickSave}>Save</ActionButton>
     </div>
   );
 };

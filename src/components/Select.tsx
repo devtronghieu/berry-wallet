@@ -81,7 +81,7 @@ const Select: FC<Props> = ({ items, selectedItemIndex, onSelectedItem, disabled 
         {items.map((item, index) => {
           const { symbol, logo } = getSymbolOrNameAndLogo(item);
           return (
-            <div className="select-option" onClick={() => handleSelectOption(index)}>
+            <div key={index} className="select-option" onClick={() => handleSelectOption(index)}>
               <div className="flex items-center gap-1.5">
                 <img src={logo} alt={item.metadata?.name || "Unknown"} className="w-7 h-7 rounded-full" />
                 <p className="text-secondary-200 font-semibold">{symbol}</p>
