@@ -1,6 +1,12 @@
 import { PouchID } from "@engine/constants";
 import { generateKeypairFromPrivateKey, generateKeypairFromSeedPhrase } from "@engine/keypair";
-import { getActiveIndex, getEncryptedAccounts, upsertActiveIndex, upsertEncryptedAccounts } from "@engine/storage";
+import {
+  getActiveIndex,
+  getEncryptedAccounts,
+  upsertActiveIndex,
+  upsertEncryptedAccounts,
+  upsertPassword,
+} from "@engine/storage";
 import { decryptWithPassword, encryptWithPassword } from "@utils/crypto";
 import { encode } from "bs58";
 
@@ -295,4 +301,22 @@ export const hasDuplicatePrivateKey = (accounts: StoredAccount[], privateKey: st
     }
   });
   return isDuplicate;
+};
+
+export const changePassword = async (oldPassword: string, newPassword: string) => {
+  const { encryptedAccounts } = await fetchAccountInfo().catch((error) => {
+    console.error(error);
+    throw new Error("Failed to fetch account info");
+  });
+
+  const accounts = JSON.parse(decryptWithPassword(encryptedAccounts, oldPassword));
+
+  if (oldPassword === newPassword) return encryptedAccounts;
+
+  const newEncryptedAccounts = encryptWithPassword(JSON.stringify(accounts), newPassword);
+
+  await upsertEncryptedAccounts(PouchID.encryptedAccounts, newEncryptedAccounts);
+  await upsertPassword(newPassword);
+
+  return newEncryptedAccounts;
 };

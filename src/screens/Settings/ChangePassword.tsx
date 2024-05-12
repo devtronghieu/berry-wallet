@@ -1,5 +1,5 @@
 import ActionButton from "@components/ActionButton";
-import { upsertPassword } from "@engine/storage";
+import { changePassword } from "@engine/accounts";
 import { appActions, appState } from "@state/index";
 import { hash } from "@utils/crypto";
 import { FC, useEffect, useState } from "react";
@@ -20,10 +20,18 @@ const ChangePassword: FC<Props> = ({ onSave }) => {
   const [isValidNewPassword, setIsValidNewPassword] = useState<boolean>(false);
   const isValid = isValidPasswod && isValidNewPassword;
   const handleClickSave = () => {
-    const hashedPassword = hash(newPassword);
-    appActions.setHashedPassword(hashedPassword);
-    upsertPassword(hashedPassword);
-    onSave();
+    if (!hashedPassword) {
+      console.error("No hashed password found");
+      return;
+    }
+    const newHashedPassword = hash(newPassword);
+    changePassword(hashedPassword, newHashedPassword)
+      .then((newEncryptedAccounts) => {
+        appActions.setHashedPassword(newHashedPassword);
+        appActions.setEncryptedAccounts(newEncryptedAccounts);
+        onSave();
+      })
+      .catch(console.error);
   };
 
   useEffect(() => {
