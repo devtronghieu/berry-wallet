@@ -80,12 +80,12 @@ export const createWallet = async (
   };
 };
 
-export const deriveKeypairAndName = async (password: string) => {
+export const deriveKeypairAndName = async (hashedpassword: string) => {
   const { encryptedAccounts, activeWalletIndex, activeKeypairIndex } = await fetchAccountInfo().catch((error) => {
     console.error(error);
     throw new Error("Failed to fetch account info");
   });
-  const accounts = JSON.parse(decryptWithPassword(encryptedAccounts, password));
+  const accounts = JSON.parse(decryptWithPassword(encryptedAccounts, hashedpassword));
   const activeWallet: StoredAccount = accounts[activeWalletIndex];
   let keypair, keypairName;
   switch (activeWallet.type) {
