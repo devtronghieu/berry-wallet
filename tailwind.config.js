@@ -21,6 +21,7 @@ export default {
       tertiary: {
         100: "#FFDFBE",
         200: "#C69881",
+        300: "#491F27",
       },
       gray: {
         100: "#E8E8E8",
