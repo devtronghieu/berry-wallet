@@ -86,7 +86,7 @@ export const transferCheckedTransationDetail = async (
   const fee = (meta?.fee || 0) / LAMPORTS_PER_SOL;
   const status = meta?.err ? TransactionStatus.FAILED : TransactionStatus.SUCCESS;
   const transactionType =
-    receiver === appState.keypair?.publicKey.toBase58() ? TransactionType.RECEIVE : TransactionType.SEND;
+    sender === appState.keypair?.publicKey.toBase58() ? TransactionType.SEND : TransactionType.RECEIVE;
   const tokenType = getCheckedTokenType(instruction);
 
   const transactionDetail: TransferTransaction = {

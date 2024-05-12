@@ -1,13 +1,15 @@
-import { TransactionType } from "@engine/history/types";
+import { TokenType, TransactionType } from "@engine/history/types";
+import { formatCurrency, shortenAddress } from "@utils/general";
 import { FC, useMemo } from "react";
 
 import { ArrowDownIcon, ArrowUpIcon } from "@/icons";
 
-import { TokenHistoryItemProps } from "../internal";
+import { HistoryItemProps } from "../internal";
 import HistoryItem from ".";
 
-const TokenHistoryItem: FC<TokenHistoryItemProps> = ({
+const TransactionHistoryItem: FC<HistoryItemProps> = ({
   transactionType,
+  tokenType,
   amount,
   tokenImage,
   tokenName,
@@ -16,6 +18,7 @@ const TokenHistoryItem: FC<TokenHistoryItemProps> = ({
   receivedAmount,
   receivedTokenImage,
   receivedTokenName,
+  onClick,
 }) => {
   const Icon = useMemo(() => {
     if (transactionType === TransactionType.SWAP) {
@@ -32,7 +35,13 @@ const TokenHistoryItem: FC<TokenHistoryItemProps> = ({
     } else {
       return (
         <div className="flex items-end">
-          <img src={tokenImage} alt="icon" className="h-10 w-10 rounded-full border-2 border-primary-200" />
+          <img
+            src={tokenImage}
+            alt="icon"
+            className={`h-10 w-10 ${
+              tokenType === TokenType.NFT ? "rounded-xl" : "rounded-full"
+            } border-2 border-primary-200`}
+          />
           <div className="flex justify-center items-center w-5 h-5 bg-secondary-100 rounded-full border-2 border-primary-200 ml-[-12px]">
             {transactionType === TransactionType.SEND ? (
               <ArrowUpIcon size={16} color="#EF5385" />
@@ -43,7 +52,7 @@ const TokenHistoryItem: FC<TokenHistoryItemProps> = ({
         </div>
       );
     }
-  }, [transactionType, tokenImage, receivedTokenImage]);
+  }, [transactionType, tokenImage, receivedTokenImage, tokenType]);
 
   const Address = useMemo(() => {
     if (transactionType === TransactionType.SWAP) {
@@ -56,48 +65,49 @@ const TokenHistoryItem: FC<TokenHistoryItemProps> = ({
     } else if (transactionType === TransactionType.SEND) {
       return (
         <div className="flex flex-1 flex-col items-start">
-          <p className="text-primary-400 font-semibold">Sent</p>
-          <p className="text-primary-400">{receiver}</p>
+          <p className="text-primary-400 font-semibold">Sent {tokenType === TokenType.NFT && tokenName}</p>
+          <p className="text-primary-400">{shortenAddress(receiver || "")}</p>
         </div>
       );
     } else if (transactionType === TransactionType.RECEIVE) {
       return (
         <div className="flex flex-1 flex-col items-start">
-          <p className="text-secondary-500 font-semibold">Received</p>
-          <p className="text-secondary-500">{sender}</p>
+          <p className="text-secondary-500 font-semibold">Received {tokenType === TokenType.NFT && tokenName}</p>
+          <p className="text-secondary-500">{shortenAddress(sender || "")}</p>
         </div>
       );
     }
-  }, [sender, receiver, transactionType]);
+  }, [sender, receiver, transactionType, tokenType, tokenName]);
 
   const TotalAmount = useMemo(() => {
+    if (tokenType === TokenType.NFT) return null;
     if (transactionType === TransactionType.SWAP) {
       return (
         <div>
           <p className="text-primary-400  font-semibold text-end">
-            -{amount} {tokenName}
+            -{formatCurrency(amount)} {tokenName}
           </p>
           <p className="text-secondary-500  font-semibold text-end">
-            +{receivedAmount} {receivedTokenName}
+            +{formatCurrency(receivedAmount || 0)} {receivedTokenName}
           </p>
         </div>
       );
     } else if (transactionType === TransactionType.SEND) {
       return (
         <p className="flex text-primary-400  font-semibold text-end">
-          -{amount} {tokenName}
+          -{formatCurrency(amount)} {tokenName}
         </p>
       );
     } else if (transactionType === TransactionType.RECEIVE) {
       return (
         <p className="flex text-secondary-500  font-semibold text-end">
-          +{amount} {tokenName}
+          +{formatCurrency(amount)} {tokenName}
         </p>
       );
     }
-  }, [transactionType, amount, tokenName, receivedAmount, receivedTokenName]);
+  }, [transactionType, amount, tokenName, receivedAmount, receivedTokenName, tokenType]);
 
-  return <HistoryItem Icon={Icon} Address={Address} Amount={TotalAmount} />;
+  return <HistoryItem Icon={Icon} Address={Address} Amount={TotalAmount} onClick={onClick} />;
 };
 
-export default TokenHistoryItem;
+export default TransactionHistoryItem;

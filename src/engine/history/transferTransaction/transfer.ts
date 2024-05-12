@@ -49,7 +49,7 @@ export const transferTokenTransationDetail = async (
   const fee = (meta?.fee || 0) / Math.pow(10, 9);
   const status = meta?.err ? TransactionStatus.FAILED : TransactionStatus.SUCCESS;
   const transactionType =
-    receiver === appState.keypair?.publicKey.toBase58() ? TransactionType.RECEIVE : TransactionType.SEND;
+    sender === appState.keypair?.publicKey.toBase58() ? TransactionType.SEND : TransactionType.RECEIVE;
 
   const transactionDetail: TransferTransaction = {
     signature,

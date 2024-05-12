@@ -1,34 +1,42 @@
+import unknown from "@assets/tokens/unknown.svg";
 import { TokenInfo } from "@components/TokenInfo";
 import { TransactionInfo } from "@components/TransactionInfo";
-import { TokenType, TransactionStatus, TransactionType } from "@engine/history/types";
+import {
+  SwapTransaction,
+  TokenType,
+  TransactionStatus,
+  TransactionType,
+  TransferTransaction,
+} from "@engine/history/types";
+import { historyState } from "@state/history";
 import { appState } from "@state/index";
 import { useSnapshot } from "valtio";
 
-export interface HistoryDetailsProps {}
-
 const HistoryDetails = () => {
   const { network: env } = useSnapshot(appState);
+  const { currentTransaction } = useSnapshot(historyState);
 
   return (
     <div className="flex flex-col gap-5">
       <TokenInfo
-        transactionType={TransactionType.SEND}
-        tokenType={TokenType.TOKEN}
-        amount={0.1}
-        tokenImage="https://via.placeholder.com/150"
-        tokenName="SOL"
-        receiveAmount="0.1"
-        receivedTokenImage="https://via.placeholder.com/150"
-        receivedTokenName="USDC"
-        signature="iiGrord2A8pYAjevjegVxge59Dgx33FTncP8ZvBk7KNtpSEXt6A7urGtG4tuMWWCtv6D8X7o6HJBBwWPVhPzhvP"
+        transactionType={currentTransaction?.transactionType || TransactionType.SEND}
+        tokenType={(currentTransaction as TransferTransaction)?.tokenType || TokenType.TOKEN}
+        amount={currentTransaction?.amount || 0}
+        tokenImage={(currentTransaction as TransferTransaction)?.token.metadata?.image || unknown}
+        tokenName={(currentTransaction as TransferTransaction)?.token.metadata?.symbol || "Unknown"}
+        receiveAmount={(currentTransaction as SwapTransaction)?.receivedAmount || 0}
+        receivedTokenImage={(currentTransaction as SwapTransaction)?.receivedToken?.metadata?.image || unknown}
+        receivedTokenName={(currentTransaction as SwapTransaction)?.receivedToken?.metadata?.symbol || "Unknown"}
+        signature={currentTransaction?.signature || ""}
         network={env}
       />
       <TransactionInfo
-        date={new Date()}
-        status={TransactionStatus.SUCCESS}
-        transactionType={TransactionType.SEND}
-        receiver="0x1234567890"
-        fee={0.1}
+        date={currentTransaction?.date || new Date()}
+        status={currentTransaction?.status || TransactionStatus.SUCCESS}
+        transactionType={currentTransaction?.transactionType || TransactionType.SEND}
+        receiver={(currentTransaction as TransferTransaction)?.receiver || ""}
+        sender={(currentTransaction as TransferTransaction)?.sender || ""}
+        fee={currentTransaction?.fee || 0}
       />
     </div>
   );

@@ -1,7 +1,8 @@
-import { TransactionType } from "@engine/history/types";
+import { TokenType, TransactionType } from "@engine/history/types";
 
-export interface TokenHistoryItemProps {
+export interface HistoryItemProps {
     transactionType: TransactionType;
+    tokenType: TokenType;
     amount: number;
     tokenImage: string;
     tokenName: string;
@@ -10,12 +11,5 @@ export interface TokenHistoryItemProps {
     receivedAmount?: number;
     receivedTokenImage?: string;
     receivedTokenName?: string;
-}
-
-export interface NFTHistoryItemProps {
-    transactionType: TransactionType;
-    nftImage: string;
-    nftName: string;
-    sender?: string;
-    receiver?: string;
+    onClick?: () => void;
 }

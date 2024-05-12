@@ -1,8 +1,10 @@
 import { fetchAccountInfo } from "@engine/accounts";
 import { getConnection } from "@engine/connection";
 import { BERRY_LOCAL_CONFIG_KEY } from "@engine/constants";
+import { getSignatures, getTransaction } from "@engine/history";
 import { fetchNFTs, fetchTokens } from "@engine/tokens";
 import { ParsedDataOfATA } from "@engine/tokens/types";
+import { historyActions } from "@state/history";
 import { appActions, appState } from "@state/index";
 import { Token as GqlToken } from "@utils/gqlTypes";
 import { queryTokenPrice } from "@utils/graphql";
@@ -38,6 +40,21 @@ export const useStartup = () => {
     const { showBalance, lockTimer } = JSON.parse(localConfig);
     appActions.setLockTimer(lockTimer);
     appActions.setShowBalance(showBalance);
+
+    // fetch history
+    getSignatures(keypair.publicKey)
+      .then((signatures) => {
+        for (const signature of signatures) {
+          getTransaction(signature).then((tx) => {
+            if (!tx) return;
+            historyActions.addTransaction(tx);
+          }).catch(console.error);
+        }
+      })
+      .catch((err) => {
+        console.error("history -->", err);
+      });
+
   }, [keypair]);
 
   useEffect(() => {
@@ -72,6 +89,12 @@ export const useStartup = () => {
           const parsedData = parsedAccountValue.data as ParsedDataOfATA;
           const ataIndex = appState.tokens.findIndex((t) => t.pubkey.equals(token.pubkey));
           appState.tokens[ataIndex].accountData.amount = parsedData.parsed.info.tokenAmount.amount;
+
+          const [signature] = await getSignatures(token.pubkey, 1);
+          if (!signature) return;
+          const transaction = await getTransaction(signature);
+          if (!transaction) return;
+          historyActions.addTransaction(transaction);
         }
       });
       subscriptionList.push(subscriptionId);
