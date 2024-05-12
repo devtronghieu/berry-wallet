@@ -1,3 +1,4 @@
+import { StoredAccountType } from "@engine/accounts/types";
 import { createSeedPhrase, createWallet } from "@engine/keypair";
 import { hash } from "@utils/crypto";
 import { Route } from "@utils/routes";
@@ -67,10 +68,14 @@ const CreateWalletScreen = () => {
         ctaDisabled: password === "",
         onCTAClick: async () => {
           const hashedPassword = hash(password);
-          const { encryptedSeedPhrase, keypair } = await createWallet(seedPhrase, hashedPassword);
-          appActions.setEncryptedSeedPhrase(encryptedSeedPhrase);
+          const { keypair, encryptedAccounts, activeKeypairIndex, activeKeypairName, activeWalletIndex } =
+            await createWallet(StoredAccountType.SeedPhrase, seedPhrase, hashedPassword);
           appActions.setKeypair(keypair);
           appActions.setHashedPassword(hashedPassword);
+          appActions.setEncryptedAccounts(encryptedAccounts);
+          appActions.setActiveKeypairName(activeKeypairName);
+          appActions.setActiveWalletIndex(activeWalletIndex);
+          appActions.setActiveKeypairIndex(activeKeypairIndex);
           navigate(Route.Home);
         },
         onGoBack: () => setScreenProgress(ScreenProgress.ConfirmSeedPhrase),
