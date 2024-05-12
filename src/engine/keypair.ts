@@ -7,7 +7,7 @@ import { derivePath } from "ed25519-hd-key";
 import { fetchAccountInfo } from "./accounts";
 import { StoredAccount, StoredAccountType } from "./accounts/types";
 import { PouchID } from "./constants";
-import { upsertActiveIndex, upsertEncryptedAccounts, upsertPassword } from "./storage";
+import { upsertActiveIndex, upsertEncryptedAccounts, upsertPassword, upsertPasswordExpiredAt } from "./storage";
 
 export const getDerivedPath = (pathIndex: number) => `m/44'/501'/${pathIndex}'/0'`;
 
@@ -61,6 +61,7 @@ export const createWallet = async (
   await upsertActiveIndex(PouchID.activeProfileIndex, 0);
   await upsertActiveIndex(PouchID.activeKeypairIndex, 0);
   await upsertActiveIndex(PouchID.nextAccountIndex, 1);
+  await upsertPasswordExpiredAt(Date.now() + 30 * 60 * 1000);
 
   return {
     activeKeypairName: "Account 1",
