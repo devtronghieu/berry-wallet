@@ -5,8 +5,6 @@ import { FeatureButton } from "@components/FeatureButton";
 import { HideBalance } from "@components/HideBalance";
 import { TabBar, TokenList } from "@components/index";
 import { addNewKeypair, switchActiveAccount, updateLastBalanceCheck } from "@engine/accounts";
-import { StoredAccount, StoredAccountType, StoredSeedPhrase } from "@engine/accounts/types";
-import { generateKeypairFromPrivateKey } from "@engine/keypair";
 import { Token } from "@engine/tokens/types";
 import { swap } from "@engine/transaction/swap";
 import { getFriendlyAmount } from "@engine/utils";
@@ -15,7 +13,6 @@ import TransactionResult from "@screens/Result";
 import Send from "@screens/Send";
 import { Keypair } from "@solana/web3.js";
 import { appActions, appState } from "@state/index";
-import { decryptWithPassword } from "@utils/crypto";
 import { formatCurrency, getLocalLogo } from "@utils/general";
 import { Route } from "@utils/routes";
 import { getSafeMintAddressForPriceAPI } from "@utils/tokens";
@@ -35,15 +32,7 @@ import {
 } from "@/icons/index";
 
 import Collections from "./Collections";
-
-export interface AddrListItem {
-  //Must update with Logic
-  srcImg: string;
-  name: string;
-  keypair: Keypair;
-  walletIndex: number;
-  keypairIndex: number;
-}
+import { AddrListItem, generateAddrList } from "./utils";
 
 const HomeScreen = () => {
   const {
@@ -68,42 +57,18 @@ const HomeScreen = () => {
     return tokens[0]?.metadata?.image || getLocalLogo(tokens[0]?.metadata?.symbol || "Unknown");
   }, [tokens]);
 
-  const keypairs: AddrListItem[] = useMemo(() => {
-    if (!encryptedAccounts || !hashedPassword) return [];
-    const keypairs: AddrListItem[] = [];
-    const accounts = JSON.parse(decryptWithPassword(encryptedAccounts, hashedPassword)) as StoredAccount[];
-    accounts.forEach((account, walletIndex) => {
-      switch (account.type) {
-        case StoredAccountType.SeedPhrase:
-          (account as StoredSeedPhrase).privateKeys.forEach((privateKey, keypairIndex) => {
-            keypairs.push({
-              srcImg: srcImage,
-              name: privateKey.name,
-              keypair: generateKeypairFromPrivateKey(privateKey.privateKey),
-              walletIndex,
-              keypairIndex,
-            });
-            if (activeWalletIndex === walletIndex && activeKeypairIndex === keypairIndex)
-              setActiveAddr(keypairs.length - 1);
-          });
-          break;
-        case StoredAccountType.PrivateKey:
-          keypairs.push({
-            srcImg: srcImage,
-            name: account.name,
-            keypair: generateKeypairFromPrivateKey(account.privateKey),
-            walletIndex,
-            keypairIndex: 0,
-          });
-          if (activeWalletIndex === walletIndex) setActiveAddr(keypairs.length - 1);
-          break;
-        default:
-          console.error("Invalid account type");
-      }
-    });
-
-    return keypairs;
-  }, [activeKeypairIndex, activeWalletIndex, encryptedAccounts, hashedPassword, srcImage]);
+  const keypairs: AddrListItem[] = useMemo(
+    () =>
+      generateAddrList(
+        activeKeypairIndex!,
+        activeWalletIndex!,
+        encryptedAccounts!,
+        hashedPassword!,
+        srcImage!,
+        setActiveAddr,
+      ),
+    [activeKeypairIndex, activeWalletIndex, encryptedAccounts, hashedPassword, srcImage],
+  );
 
   const handleOnClick = (type: string) => {
     setBottomSheetType(type);
