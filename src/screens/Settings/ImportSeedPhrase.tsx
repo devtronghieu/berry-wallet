@@ -6,6 +6,7 @@ import { Route } from "@utils/routes";
 import { validateMnemonic } from "bip39";
 import { FC } from "react";
 import { useMemo, useState } from "react";
+import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useSnapshot } from "valtio";
 
@@ -31,9 +32,11 @@ const ImportSeedPhrase: FC = () => {
           appActions.setActiveWalletIndex(activeWalletIndex);
           appActions.setKeypair(keypair);
           navigate(Route.Home);
+          toast.success("New wallet added successfully!");
         })
         .catch((error) => {
           setError(error.message);
+          toast.error("Failed to add new wallet");
         });
     } else setError("Seedphrase is invalid! Please try again.");
   };

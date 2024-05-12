@@ -4,7 +4,7 @@ import BottomSheet from "@components/BottomSheet";
 import { FeatureButton } from "@components/FeatureButton";
 import { HideBalance } from "@components/HideBalance";
 import { TabBar, TokenList } from "@components/index";
-import { addNewKeypair, switchActiveAccount, updateLastBalanceCheck } from "@engine/accounts";
+import { switchActiveAccount, updateLastBalanceCheck } from "@engine/accounts";
 import { Token } from "@engine/tokens/types";
 import { swap } from "@engine/transaction/swap";
 import { getFriendlyAmount } from "@engine/utils";
@@ -170,21 +170,7 @@ const HomeScreen = () => {
       <div className="flex-grow flex flex-col items-center px-5 pt-2 pb-4 overflow-hidden no-scrollbar z-0">
         <div className="w-full flex flex-col items-center">
           <div className="flex items-center">
-            <h2
-              className="text-lg text-secondary-500 font-bold me-2"
-              onClick={() => {
-                addNewKeypair(hashedPassword ?? "").then(
-                  ({ keypair, activeKeypairName, activeKeypairIndex, encryptedAccounts }) => {
-                    appActions.setKeypair(keypair);
-                    appActions.setActiveKeypairIndex(activeKeypairIndex);
-                    appActions.setEncryptedAccounts(encryptedAccounts);
-                    appActions.setActiveKeypairName(activeKeypairName);
-                  },
-                );
-              }}
-            >
-              TOTAL BALANCE
-            </h2>
+            <h2 className="text-lg text-secondary-500 font-bold me-2">TOTAL BALANCE</h2>
             <button
               className="trans-mini-icon-button"
               onClick={() => appActions.setShowBalance(!localConfig.showBalance)}

@@ -6,6 +6,7 @@ import { generateKeypairFromPrivateKey } from "@engine/keypair";
 import { appActions, appState } from "@state/index";
 import { Route } from "@utils/routes";
 import { FC, useMemo, useState } from "react";
+import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useSnapshot } from "valtio";
 
@@ -31,8 +32,12 @@ const EditAccount: FC<Props> = ({ account, accountType, onBottomChange }) => {
     updateAccountName(hashedPassword, account, accountName)
       .then((newEncryptedAccounts) => {
         appActions.setEncryptedAccounts(newEncryptedAccounts);
+        toast.success("Account name updated successfully");
       })
-      .catch(console.error);
+      .catch((error) => {
+        console.error(error);
+        toast.error("Failed to update account name");
+      });
   };
 
   const handleRemoveAccount = () => {

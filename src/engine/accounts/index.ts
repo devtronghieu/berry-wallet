@@ -265,7 +265,9 @@ export const updateAccountName = async (hashedPassword: string, account: StoredP
   });
 
   if (updateAccount === undefined) return encryptedAccounts;
-  if ((updateAccount as StoredPrivateKey).name === newName) return encryptedAccounts;
+  updateAccount = updateAccount as StoredPrivateKey;
+  if (updateAccount.name === newName) return encryptedAccounts;
+  else updateAccount.name = newName;
 
   const newEncryptedAccounts = encryptWithPassword(JSON.stringify(accounts), hashedPassword);
 

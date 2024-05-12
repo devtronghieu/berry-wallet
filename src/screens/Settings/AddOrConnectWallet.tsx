@@ -6,6 +6,7 @@ import { appActions, appState } from "@state/index";
 import { decryptWithPassword } from "@utils/crypto";
 import { Route } from "@utils/routes";
 import { FC, useMemo } from "react";
+import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useSnapshot } from "valtio";
 
@@ -40,9 +41,11 @@ const AddOrConnectWallet: FC<Props> = ({ onSettingButtonClick }) => {
         appActions.setActiveWalletIndex(activeWalletIndex);
         appActions.setKeypair(keypair);
         navigate(Route.Home);
+        toast.success("New wallet added successfully!");
       })
       .catch((error) => {
         console.error(error);
+        toast.error("Failed to add new wallet");
       });
   };
   return (

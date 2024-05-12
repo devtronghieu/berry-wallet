@@ -6,6 +6,7 @@ import { appActions, appState } from "@state/index";
 import { Route } from "@utils/routes";
 import { FC } from "react";
 import { useMemo, useState } from "react";
+import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useSnapshot } from "valtio";
 
@@ -30,9 +31,11 @@ const ImportPrivateKey: FC = () => {
         appActions.setActiveWalletIndex(activeWalletIndex);
         appActions.setKeypair(keypair);
         navigate(Route.Home);
+        toast.success("New wallet added successfully!");
       })
       .catch((error) => {
         setErrorMessage(error.message);
+        toast.error("Failed to add new wallet");
       });
   };
 

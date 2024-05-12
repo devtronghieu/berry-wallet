@@ -3,6 +3,7 @@ import { changePassword } from "@engine/accounts";
 import { appActions, appState } from "@state/index";
 import { hash } from "@utils/crypto";
 import { FC, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { useSnapshot } from "valtio";
 
 interface Props {
@@ -29,9 +30,13 @@ const ChangePassword: FC<Props> = ({ onSave }) => {
       .then((newEncryptedAccounts) => {
         appActions.setHashedPassword(newHashedPassword);
         appActions.setEncryptedAccounts(newEncryptedAccounts);
+        toast.success("Password changed successfully");
         onSave();
       })
-      .catch(console.error);
+      .catch((error) => {
+        console.error(error);
+        toast.error("Failed to change password");
+      });
   };
 
   useEffect(() => {
