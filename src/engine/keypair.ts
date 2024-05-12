@@ -1,5 +1,5 @@
 import { Keypair } from "@solana/web3.js";
-import { EncryptedData, decryptWithPassword, encryptWithPassword } from "@utils/crypto";
+import { decryptWithPassword, encryptWithPassword } from "@utils/crypto";
 import { generateMnemonic, mnemonicToSeedSync } from "bip39";
 import base58, { encode } from "bs58";
 import { derivePath } from "ed25519-hd-key";
@@ -21,16 +21,14 @@ export const createWallet = async (
   hashedPassword: string,
 ) => {
   let keypair: Keypair;
-  let encryptedAccounts: EncryptedData;
   let storedInitialAccount: StoredAccount;
   switch (walletType) {
     case StoredAccountType.SeedPhrase:
-      const seedPhrase = seedPhraseOrPrivateKey;
-      keypair = generateKeypairFromSeedPhrase(seedPhrase, 0);
+      keypair = generateKeypairFromSeedPhrase(seedPhraseOrPrivateKey, 0);
       storedInitialAccount = {
         type: StoredAccountType.SeedPhrase,
         name: "Wallet 1",
-        seedPhrase: seedPhrase,
+        seedPhrase: seedPhraseOrPrivateKey,
         privateKeys: [
           {
             type: StoredAccountType.PrivateKey,
@@ -44,12 +42,11 @@ export const createWallet = async (
 
       break;
     case StoredAccountType.PrivateKey:
-      const privateKey = seedPhraseOrPrivateKey;
-      keypair = generateKeypairFromPrivateKey(privateKey);
+      keypair = generateKeypairFromPrivateKey(seedPhraseOrPrivateKey);
       storedInitialAccount = {
         type: StoredAccountType.PrivateKey,
         name: "Account 1.1",
-        privateKey,
+        privateKey: seedPhraseOrPrivateKey,
         pathIndex: 0,
         lastBalance: 0,
       };
@@ -58,7 +55,7 @@ export const createWallet = async (
       throw new Error("Invalid active account type");
   }
   await upsertPassword(hashedPassword);
-  encryptedAccounts = encryptWithPassword(JSON.stringify([storedInitialAccount]), hashedPassword);
+  const encryptedAccounts = encryptWithPassword(JSON.stringify([storedInitialAccount]), hashedPassword);
 
   await upsertEncryptedAccounts(PouchID.encryptedAccounts, encryptedAccounts);
   await upsertActiveIndex(PouchID.activeWalletIndex, 0);

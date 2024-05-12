@@ -1,6 +1,7 @@
 import strawberry from "@assets/strawberry.svg";
 import BottomSheet from "@components/BottomSheet";
 import { FeatureButton } from "@components/FeatureButton";
+import { HideBalance } from "@components/HideBalance";
 import { TabBar, TokenList } from "@components/index";
 import { addNewKeypair, switchActiveAccount, updateLastBalanceCheck } from "@engine/accounts";
 import { StoredAccount, StoredAccountType, StoredSeedPhrase } from "@engine/accounts/types";
@@ -20,7 +21,6 @@ import { getSafeMintAddressForPriceAPI } from "@utils/tokens";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSnapshot } from "valtio";
-import { HideBalance } from "@components/HideBalance";
 
 import {
   ArrowDownIcon,

@@ -1,14 +1,14 @@
-import OnboardingContainer, { OnboardingContainerProps } from "@components/OnboardingContainer";
 import Input from "@components/Input";
+import OnboardingContainer, { OnboardingContainerProps } from "@components/OnboardingContainer";
+import { StoredAccountType } from "@engine/accounts/types";
 import { generateKeypairFromPrivateKey } from "@engine/keypair";
-import CreatePassword from "@screens/CreatePassword";
 import { createWallet } from "@engine/keypair";
+import CreatePassword from "@screens/CreatePassword";
 import { appActions } from "@state/index";
 import { hash } from "@utils/crypto";
 import { Route } from "@utils/routes";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { StoredAccountType } from "@engine/accounts/types";
 
 enum ScreenProgress {
   ImportPrivateKey,
