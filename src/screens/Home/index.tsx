@@ -20,6 +20,7 @@ import { getSafeMintAddressForPriceAPI } from "@utils/tokens";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSnapshot } from "valtio";
+import { HideBalance } from "@components/HideBalance";
 
 import {
   ArrowDownIcon,
@@ -27,7 +28,6 @@ import {
   ChevronDownIcon,
   ChevronUpIcon,
   CopyIcon,
-  HideBalance,
   HideEyeIcon,
   SettingIcon,
   ShowEyeIcon,

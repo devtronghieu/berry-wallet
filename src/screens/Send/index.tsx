@@ -2,8 +2,8 @@ import TabBar from "@components/TabBar";
 import { Collectible } from "@engine/tokens/types";
 import { FC, useMemo, useState } from "react";
 
-import SendCollectible from "./collectible";
-import SendToken from "./token";
+import SendCollectible from "./Collectible";
+import SendToken from "./Token";
 
 interface Props {
   onSubmit: (type: string) => void;
