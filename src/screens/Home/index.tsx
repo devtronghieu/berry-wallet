@@ -1,4 +1,5 @@
 import strawberry from "@assets/strawberry.svg";
+import AddressListPopup from "@components/AddressListPopup";
 import BottomSheet from "@components/BottomSheet";
 import { FeatureButton } from "@components/FeatureButton";
 import { HideBalance } from "@components/HideBalance";
@@ -27,7 +28,6 @@ import {
   ArrowUpIcon,
   ChevronDownIcon,
   ChevronUpIcon,
-  CopyIcon,
   HideEyeIcon,
   SettingIcon,
   ShowEyeIcon,
@@ -36,7 +36,7 @@ import {
 
 import Collections from "./Collections";
 
-interface AddrListItem {
+export interface AddrListItem {
   //Must update with Logic
   srcImg: string;
   name: string;
@@ -193,45 +193,13 @@ const HomeScreen = () => {
             <SettingIcon size={20} />
           </button>
         </div>
-
-        <div
-          className={`mt-2 ms-2 border border-solid rounded-3xl border-primary-300 bg-primary-100 p-1 flex flex-col gap-y-2 absolute ${
-            addrListIsOpen ? "visible" : "invisible"
-          } z-10 max-h-36 overflow-y-auto no-scrollbar`}
-        >
-          {keypairs?.map((item, index) => {
-            return (
-              <div
-                key={index}
-                className={`flex items-center justify-between gap-2.5 px-2 py-2 rounded-full w-70 cursor-pointer ${
-                  index === activeAddr ? "bg-primary-200" : ""
-                } hover:bg-primary-300`}
-                onClick={() => handleSelectAddrOption(index)}
-              >
-                <div className="flex items-center gap-1.5">
-                  <img src={item.srcImg} alt={item.name || "Unknown"} className="w-6 h-6 rounded-full" />
-                  <p className="text-primary-400 font-semibold truncate text-ellipsis">{item.name}</p>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <p className="font-semibold text-secondary-500">
-                    {item.keypair.publicKey.toBase58().slice(0, 4)}...
-                    {item.keypair.publicKey.toBase58().slice(-4)}
-                  </p>
-                  <div
-                    className="ml-auto"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      item.keypair.publicKey.toBase58() &&
-                        navigator.clipboard.writeText(item.keypair.publicKey.toBase58());
-                    }}
-                  >
-                    <CopyIcon />
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+        <AddressListPopup
+          className="z-10"
+          activeAddr={activeAddr}
+          keypairs={keypairs}
+          isOpen={addrListIsOpen}
+          handleSelectAddrOption={handleSelectAddrOption}
+        />
       </div>
 
       <div className="flex-grow flex flex-col items-center px-5 pt-2 pb-4 overflow-hidden no-scrollbar z-0">
