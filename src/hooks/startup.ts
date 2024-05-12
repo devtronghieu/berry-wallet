@@ -25,10 +25,10 @@ export const useStartup = () => {
       .catch(console.error);
 
     fetchAccountInfo()
-      .then(({ encryptedAccounts, activeKeypairIndex, activeWalletIndex }) => {
+      .then(({ encryptedAccounts, activeKeypairIndex, activeProfileIndex }) => {
         appActions.setEncryptedAccounts(encryptedAccounts);
         appActions.setActiveKeypairIndex(activeKeypairIndex);
-        appActions.setActiveWalletIndex(activeWalletIndex);
+        appActions.setActiveWalletIndex(activeProfileIndex);
       })
       .catch(console.error);
 

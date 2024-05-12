@@ -17,15 +17,15 @@ interface Props {
 }
 
 const AddOrConnectWallet: FC<Props> = ({ onSettingButtonClick }) => {
-  const { hashedPassword, encryptedAccounts, activeWalletIndex } = useSnapshot(appState);
+  const { hashedPassword, encryptedAccounts, activeProfileIndex } = useSnapshot(appState);
   const navigate = useNavigate();
 
   // Check if there is a seed phrase in the wallet
   const hasSeedPhrase = useMemo(() => {
-    if (!encryptedAccounts || activeWalletIndex === undefined || !hashedPassword) return false;
+    if (!encryptedAccounts || activeProfileIndex === undefined || !hashedPassword) return false;
     const accounts = JSON.parse(decryptWithPassword(encryptedAccounts, hashedPassword)) as StoredAccount[];
     return accounts.some((account) => account.type === StoredAccountType.SeedPhrase);
-  }, [activeWalletIndex, encryptedAccounts, hashedPassword]);
+  }, [activeProfileIndex, encryptedAccounts, hashedPassword]);
 
   // Create a new wallet from existing seed phrase
   const handleAddWallet = () => {
@@ -34,11 +34,11 @@ const AddOrConnectWallet: FC<Props> = ({ onSettingButtonClick }) => {
       return;
     }
     addNewKeypair(hashedPassword)
-      .then(({ activeKeypairIndex, encryptedAccounts, activeWalletIndex, activeKeypairName, keypair }) => {
+      .then(({ activeKeypairIndex, encryptedAccounts, activeProfileIndex, activeKeypairName, keypair }) => {
         appActions.setActiveKeypairIndex(activeKeypairIndex);
         appActions.setActiveKeypairName(activeKeypairName);
         appActions.setEncryptedAccounts(encryptedAccounts);
-        appActions.setActiveWalletIndex(activeWalletIndex);
+        appActions.setActiveWalletIndex(activeProfileIndex);
         appActions.setKeypair(keypair);
         navigate(Route.Home);
         toast.success("New wallet added successfully!");
