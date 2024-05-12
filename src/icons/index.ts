@@ -16,7 +16,6 @@ export * from "./EyeClose";
 export * from "./EyeClose2";
 export * from "./EyeOpen";
 export * from "./Google";
-export * from "./HideBalance";
 export * from "./HideEye";
 export { KeyIcon } from "./Key";
 export * from "./PaperPlus";
