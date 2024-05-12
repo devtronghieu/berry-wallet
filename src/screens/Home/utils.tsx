@@ -13,7 +13,7 @@ export interface AddrListItem {
 
 export const generateAddrList = (
   activeKeypairIndex: number,
-  activeWalletIndex: number,
+  activeProfileIndex: number,
   encryptedAccounts: EncryptedData,
   hashedPassword: string,
   srcImage: string,
@@ -33,7 +33,7 @@ export const generateAddrList = (
             walletIndex,
             keypairIndex,
           });
-          if (activeWalletIndex === walletIndex && activeKeypairIndex === keypairIndex)
+          if (activeProfileIndex === walletIndex && activeKeypairIndex === keypairIndex)
             setActiveAddr(keypairs.length - 1);
         });
         break;
@@ -45,7 +45,7 @@ export const generateAddrList = (
           walletIndex,
           keypairIndex: 0,
         });
-        if (activeWalletIndex === walletIndex) setActiveAddr(keypairs.length - 1);
+        if (activeProfileIndex === walletIndex) setActiveAddr(keypairs.length - 1);
         break;
       default:
         console.error("Invalid account type");
