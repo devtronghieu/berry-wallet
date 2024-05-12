@@ -171,7 +171,11 @@ export const removeWallet = async (hashedPassword: string, account: StoredPrivat
               newActiveWalletIndex = accounts.length - 1;
               newActiveKeypairIndex = 0;
             }
-            newActiveKeypairName = acc.privateKeys[newActiveKeypairIndex].name;
+            if (accounts[newActiveWalletIndex].type === StoredAccountType.SeedPhrase) {
+              newActiveKeypairName = (accounts[newActiveWalletIndex] as StoredSeedPhrase).privateKeys[
+                newActiveKeypairIndex
+              ].name;
+            } else newActiveKeypairName = accounts[newActiveWalletIndex].name;
             isFound = true;
           }
         });
@@ -180,11 +184,15 @@ export const removeWallet = async (hashedPassword: string, account: StoredPrivat
         if (acc.privateKey === account.privateKey) {
           accounts.splice(walletIndex, 1);
           // Update the active wallet index and active keypair in case active private key is removed
-          if (activeProfileIndex === walletIndex) {
+          if (activeProfileIndex >= walletIndex) {
             newActiveWalletIndex = accounts.length - 1;
             newActiveKeypairIndex = 0;
           }
-          newActiveKeypairName = accounts[newActiveWalletIndex].name;
+          if (accounts[newActiveWalletIndex].type === StoredAccountType.SeedPhrase) {
+            newActiveKeypairName = (accounts[newActiveWalletIndex] as StoredSeedPhrase).privateKeys[
+              newActiveKeypairIndex
+            ].name;
+          } else newActiveKeypairName = accounts[newActiveWalletIndex].name;
           isFound = true;
         }
         break;
