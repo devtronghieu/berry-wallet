@@ -1,4 +1,4 @@
-import { Token, Collectible, ATAMetadata } from "@engine/tokens/types";
+import { ATAMetadata, Collectible, Token } from "@engine/tokens/types";
 import { transactionActions as TxA } from "@state/transaction";
 import { getLocalLogo } from "@utils/general";
 import { FC, useState } from "react";
