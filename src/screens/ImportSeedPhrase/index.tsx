@@ -7,6 +7,7 @@ import { hash } from "@utils/crypto";
 import { Route } from "@utils/routes";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { StoredAccountType } from "@engine/accounts/types";
 
 enum ScreenProgress {
   ImportSeedPhrase,
@@ -47,7 +48,7 @@ const ImportSeedPhraseScreen = () => {
         onCTAClick: async () => {
           const hashedPassword = hash(password);
           const { keypair, encryptedAccounts, activeKeypairIndex, activeKeypairName, activeWalletIndex } =
-            await createWallet(seedPhrase.join(" "), hashedPassword);
+            await createWallet(StoredAccountType.SeedPhrase, seedPhrase.join(" "), hashedPassword);
           appActions.setKeypair(keypair);
           appActions.setHashedPassword(hashedPassword);
           appActions.setEncryptedAccounts(encryptedAccounts);
