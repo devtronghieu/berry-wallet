@@ -1,4 +1,4 @@
-import { AddrListItem } from "@screens/Home";
+import { AddrListItem } from "@screens/Home/utils";
 import { FC } from "react";
 
 import { CopyIcon } from "@/icons";
