@@ -4,7 +4,7 @@ import { BERRY_LOCAL_CONFIG_KEY } from "@engine/constants";
 import { getSignatures, getTransaction } from "@engine/history";
 import { fetchNFTs, getLocalTokens, getOwnedTokens, getRemoteTokens } from "@engine/tokens";
 import { ParsedDataOfATA } from "@engine/tokens/types";
-import { historyActions } from "@state/history";
+import { historyActions, historyState } from "@state/history";
 import { appActions, appState } from "@state/index";
 import { Token as GqlToken } from "@utils/gqlTypes";
 import { queryTokenPrice } from "@utils/graphql";
@@ -50,6 +50,8 @@ export const useStartup = () => {
     // fetch history
     getSignatures(keypair.publicKey, 250)
       .then(async (signatures) => {
+        historyState.transactions = [];
+
         appState.loading.history = true;
 
         for (const signature of signatures) {

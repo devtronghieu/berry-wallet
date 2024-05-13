@@ -71,11 +71,13 @@ const EditAccount: FC<Props> = ({ account, accountType, onBottomChange }) => {
             value={accountName}
             setValue={setAccountName}
             hasIcon
+            hasInput
             editing={isEditingAccountName}
             setEditing={setIsEditingAccountName}
           />
           <SettingAccount
             title="Account Address"
+            hasInput
             value={`${publicKey?.toBase58().slice(0, 4)}...${publicKey?.toBase58().slice(-4)}`}
           />
         </div>
