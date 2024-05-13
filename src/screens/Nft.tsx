@@ -7,6 +7,7 @@ import { Route } from "@utils/routes";
 import { useMemo, useState } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useSnapshot } from "valtio";
+import TransactionResult from "@screens/Result";
 
 import { ArrowUpIcon } from "@/icons";
 
@@ -30,6 +31,9 @@ const NftScreen = () => {
         return (
           <Send onSubmit={setBottomSheetType} defaultTab="Collectibles" defaultCollectible={selectedCollectible} />
         );
+      },
+      Transaction() {
+        return <TransactionResult />;
       },
     };
     return BottomSheetChildren[bottomSheetType];
