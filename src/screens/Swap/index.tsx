@@ -12,6 +12,7 @@ import { swapActions, swapContext } from "@state/swap";
 import { formatCurrency } from "@utils/general";
 import { getSafeMintAddressForPriceAPI } from "@utils/tokens";
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import toast from "react-hot-toast";
 import { useSnapshot } from "valtio";
 
 interface Props {
@@ -22,12 +23,11 @@ const Swap: FC<Props> = ({ onSubmit }) => {
   const { tokens, remoteTokens, prices, keypair } = useSnapshot(appState);
   const { sourceToken, amount, fee, receiveAmount, destinationToken } = useSnapshot(swapContext);
   const initialSourceTokenIndex = useMemo(() => {
-    console.log(tokens);
-    return tokens.findIndex((token) => token.accountData.mint === WRAPPED_SOL_MINT);
+    return tokens.findIndex((token) => token.accountData.mint === sourceToken.accountData.mint);
   }, []);
 
   const initialDesTokenIndex = useMemo(() => {
-    return remoteTokens.findIndex((token) => token.accountData.mint === USDC_MINT);
+    return remoteTokens.findIndex((token) => token.accountData.mint === destinationToken.accountData.mint);
   }, []);
 
   const [selectedSourceTokenIndex, setSelectedSourceTokenIndex] = useState(initialSourceTokenIndex);
@@ -50,11 +50,18 @@ const Swap: FC<Props> = ({ onSubmit }) => {
 
   const handleOnSwap = () => {
     setLoading(true);
-    swapActions.executeSwap().then((swapTransaction) => {
-      setLoading(false);
-      historyActions.setCurrentTransaction(swapTransaction);
-      onSubmit("SwapTransaction");
-    });
+    swapActions
+      .executeSwap()
+      .then((swapTransaction) => {
+        setLoading(false);
+        historyActions.setCurrentTransaction(swapTransaction);
+        onSubmit("SwapTransaction");
+      })
+      .catch(() => {
+        setLoading(false);
+        toast.error("Failed to swap tokens");
+        onSubmit("SwapTransaction");
+      });
   };
 
   const updateQuote = useCallback(async () => {
@@ -71,8 +78,6 @@ const Swap: FC<Props> = ({ onSubmit }) => {
   }, [amount, sourceToken, destinationToken, remoteTokens, selectedDestinationTokenIndex]);
 
   const onBlurAmount = () => {
-    const { errorMessage } = validateAmount(amount, balanceAmount.current);
-    setAmountError(errorMessage);
     updateQuote().catch(console.error);
   };
 
@@ -84,6 +89,9 @@ const Swap: FC<Props> = ({ onSubmit }) => {
       tokens[selectedSourceTokenIndex]?.accountData.amount || "0",
       tokens[selectedSourceTokenIndex]?.accountData.decimals || 0,
     );
+
+    const { errorMessage } = validateAmount(amount, balanceAmount.current);
+    setAmountError(errorMessage);
   }, [
     tokens,
     prices,
