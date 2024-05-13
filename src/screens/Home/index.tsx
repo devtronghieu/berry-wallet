@@ -6,7 +6,6 @@ import { HideBalance } from "@components/HideBalance";
 import { TabBar, TokenList } from "@components/index";
 import { switchActiveAccount, updateLastBalanceCheck } from "@engine/accounts";
 import { Token } from "@engine/tokens/types";
-import { swap } from "@engine/transaction/swap";
 import { getFriendlyAmount } from "@engine/utils";
 import History from "@screens/History";
 import HistoryDetails from "@screens/History/HistoryDetails";
@@ -14,7 +13,6 @@ import Receive from "@screens/Receive";
 import TransactionResult from "@screens/Result";
 import Send from "@screens/Send";
 import Swap from "@screens/Swap";
-import { Keypair } from "@solana/web3.js";
 import { appActions, appState } from "@state/index";
 import { formatCurrency, getLocalLogo } from "@utils/general";
 import { Route } from "@utils/routes";
@@ -39,7 +37,6 @@ import { AddrListItem, generateAddrList } from "./utils";
 
 const HomeScreen = () => {
   const {
-    keypair,
     tokens,
     prices,
     collectionMap,
@@ -133,21 +130,6 @@ const HomeScreen = () => {
       .catch(console.error);
   }, [totalBalance, hashedPassword]);
 
-  const handleSwap = async () => {
-    swap(
-      keypair as Keypair,
-      "So11111111111111111111111111111111111111112",
-      "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
-      1000,
-    )
-      .then((signature) => {
-        const decoder = new TextDecoder();
-        const decodedSignature = decoder.decode(signature);
-        console.log(decodedSignature.toString());
-      })
-      .catch(console.error);
-  };
-
   return (
     <div className="extension-container flex flex-col">
       <div className="relative">
@@ -195,14 +177,7 @@ const HomeScreen = () => {
         <div className="mt-6 flex items-center gap-10">
           <FeatureButton Icon={ArrowUpIcon} title="Send" onClick={() => handleOnClick("Send")} />
           <FeatureButton Icon={ArrowDownIcon} title="Receive" onClick={() => handleOnClick("Receive")} />
-          <FeatureButton
-            Icon={SwapIcon}
-            title="Swap"
-            onClick={() => {
-              handleOnClick("Swap");
-              handleSwap();
-            }}
-          />
+          <FeatureButton Icon={SwapIcon} title="Swap" onClick={() => handleOnClick("Swap")} />
         </div>
 
         <TabBar className="mt-4" navTitle={["Tokens", "Collectibles", "Activities"]} navOnClick={navOnClickList} />
