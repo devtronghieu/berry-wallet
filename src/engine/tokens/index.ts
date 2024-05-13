@@ -210,8 +210,6 @@ export const getOwnedTokens = async (pubkey: PublicKey) => {
     }
   });
 
-  console.log("--> before fetchTokenMetadata");
-
   // Token Metadata
   const tokenMetadataPromises: Promise<ATAMetadata | undefined>[] = [];
   tokens.forEach((token) => {
@@ -221,8 +219,6 @@ export const getOwnedTokens = async (pubkey: PublicKey) => {
   tokenMetadataList.forEach((metadata, index) => {
     tokens[index].metadata = metadata;
   });
-
-  console.log("--> after fetchTokenMetadata");
 
   return tokens;
 };

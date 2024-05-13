@@ -18,7 +18,7 @@ export const getAccountInfo = async (pubkey: PublicKey) => {
   return { owner, mint };
 };
 
-export const transferTokenTransationDetail = async (
+export const transferTokenTransactionDetail = async (
   instruction: ParsedInstruction,
   meta: ParsedTransactionMeta | null,
   blockTime: number,

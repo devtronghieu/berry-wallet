@@ -8,6 +8,7 @@ import { historyActions } from "@state/history";
 import { appActions, appState } from "@state/index";
 import { Token as GqlToken } from "@utils/gqlTypes";
 import { queryTokenPrice } from "@utils/graphql";
+import { delay } from "@utils/time";
 import { getSafeMintAddressForPriceAPI } from "@utils/tokens";
 import { useEffect } from "react";
 import { useSnapshot } from "valtio";
@@ -47,20 +48,24 @@ export const useStartup = () => {
     appActions.setShowBalance(showBalance);
 
     // fetch history
-    // getSignatures(keypair.publicKey)
-    //   .then((signatures) => {
-    //     for (const signature of signatures) {
-    //       getTransaction(signature)
-    //         .then((tx) => {
-    //           if (!tx) return;
-    //           historyActions.addTransaction(tx);
-    //         })
-    //         .catch(console.error);
-    //     }
-    //   })
-    //   .catch((err) => {
-    //     console.error("history -->", err);
-    //   });
+    getSignatures(keypair.publicKey, 250)
+      .then(async (signatures) => {
+        appState.loading.history = true;
+
+        for (const signature of signatures) {
+          try {
+            const tx = await getTransaction(signature);
+            if (tx) historyActions.addTransaction(tx);
+          } catch (error) {
+            console.error(error);
+          }
+          await delay(300);
+        }
+      })
+      .catch((err) => {
+        console.error("history -->", err);
+      })
+      .finally(() => (appState.loading.history = false));
 
     // fetch local tokens
     appActions.setLocalTokens(getLocalTokens());

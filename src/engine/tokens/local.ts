@@ -17,7 +17,7 @@ export const localTokens: Record<string, LocalToken> = {
   },
   "7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU": {
     address: "7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU",
-    symbol: "SAMo",
+    symbol: "SAMO",
     name: "Samoyed Coin",
     decimals: 9,
     logoURI:

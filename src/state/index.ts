@@ -11,6 +11,7 @@ export interface AppState {
     tokens: boolean;
     prices: boolean;
     nfts: boolean;
+    history: boolean;
   };
   localConfig: {
     showBalance: boolean;
@@ -39,6 +40,7 @@ export const appState = proxy<AppState>({
     tokens: false,
     prices: false,
     nfts: false,
+    history: false,
   },
   tokens: [],
   localTokens: [],

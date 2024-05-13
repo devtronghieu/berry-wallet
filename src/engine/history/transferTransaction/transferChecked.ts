@@ -57,7 +57,7 @@ export const getCheckedStakeHolders = async (instruction: ParsedInstruction) => 
   return { receiver, sender };
 };
 
-export const transferCheckedTransationDetail = async (
+export const transferCheckedTransactionDetail = async (
   instruction: ParsedInstruction,
   meta: ParsedTransactionMeta | null,
   blockTime: number,

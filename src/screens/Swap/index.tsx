@@ -1,7 +1,7 @@
 import ActionButton from "@components/ActionButton";
 import Input from "@components/Input";
 import Select from "@components/Select";
-import { USDC_MINT, WRAPPED_SOL_MINT } from "@engine/constants";
+import { WRAPPED_SOL_MINT } from "@engine/constants";
 import { Token } from "@engine/tokens/types";
 import { getQuote } from "@engine/transaction/swap/core";
 import { getFriendlyAmount } from "@engine/utils";
@@ -24,11 +24,11 @@ const Swap: FC<Props> = ({ onSubmit }) => {
   const { sourceToken, amount, fee, receiveAmount, destinationToken } = useSnapshot(swapContext);
   const initialSourceTokenIndex = useMemo(() => {
     return tokens.findIndex((token) => token.accountData.mint === sourceToken.accountData.mint);
-  }, []);
+  }, [sourceToken.accountData.mint, tokens]);
 
   const initialDesTokenIndex = useMemo(() => {
     return remoteTokens.findIndex((token) => token.accountData.mint === destinationToken.accountData.mint);
-  }, []);
+  }, [destinationToken.accountData.mint, remoteTokens]);
 
   const [selectedSourceTokenIndex, setSelectedSourceTokenIndex] = useState(initialSourceTokenIndex);
   const [selectedDestinationTokenIndex, setSelectedDestinationTokenIndex] = useState(initialDesTokenIndex);
