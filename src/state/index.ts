@@ -12,6 +12,8 @@ export interface AppState {
     lockTimer: number;
   };
   tokens: Token[];
+  localTokens: Token[];
+  remoteTokens: Token[];
   collectionMap: CollectionMap;
   prices: Record<string, number>;
   encryptedAccounts?: EncryptedData;
@@ -29,6 +31,8 @@ export const appState = proxy<AppState>({
     lockTimer: 30 * 60 * 1000, // 30 minutes
   },
   tokens: [],
+  localTokens: [],
+  remoteTokens: [],
   collectionMap: new Map(),
   prices: {},
 });
@@ -87,5 +91,12 @@ export const appActions = {
     appState.activeKeypairIndex = undefined;
     appState.activeWalletIndex = undefined;
     appState.activeKeypairName = undefined;
+  },
+  setLocalTokens: (tokens: Token[]) => {
+    appState.localTokens = tokens;
+  },
+  setRemoteTokens: (tokens: Token[]) => {
+    console.log(tokens);
+    appState.remoteTokens = tokens;
   },
 };
