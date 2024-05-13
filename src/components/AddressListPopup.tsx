@@ -1,5 +1,6 @@
 import { AddrListItem } from "@screens/Home/utils";
 import { FC } from "react";
+import toast from "react-hot-toast";
 
 import { CopyIcon } from "@/icons";
 
@@ -12,6 +13,11 @@ interface Props {
 }
 
 const AddressListPopup: FC<Props> = ({ className, activeAddr, isOpen, keypairs, handleSelectAddrOption }) => {
+  const handleCopy = (publicKey: string) => {
+    navigator.clipboard.writeText(publicKey);
+    toast.success("Copied to clipboard");
+  };
+
   return (
     <div
       className={`mt-2 ms-2 border border-solid rounded-3xl border-primary-300 bg-primary-100 p-1 flex flex-col gap-y-2 absolute ${
@@ -40,7 +46,7 @@ const AddressListPopup: FC<Props> = ({ className, activeAddr, isOpen, keypairs, 
                 className="ml-auto"
                 onClick={(e) => {
                   e.stopPropagation();
-                  item.keypair.publicKey.toBase58() && navigator.clipboard.writeText(item.keypair.publicKey.toBase58());
+                  item.keypair.publicKey.toBase58() && handleCopy(item.keypair.publicKey.toBase58());
                 }}
               >
                 <CopyIcon />
