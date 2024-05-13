@@ -5,18 +5,19 @@ import { sign } from "tweetnacl";
 export const signTransaction = async (key: Keypair, serializedTransaction: Uint8Array) => {
   const transaction = VersionedTransaction.deserialize(serializedTransaction);
 
+  const connection = getConnection();
+  const blockhash = await connection.getLatestBlockhash("finalized");
+  transaction.message.recentBlockhash = blockhash.blockhash;
+
   transaction.sign([
     {
       publicKey: key.publicKey,
       secretKey: key.secretKey,
     },
   ]);
-
-  const connection = getConnection();
-  const blockhash = await connection.getLatestBlockhash("finalized");
-  transaction.message.recentBlockhash = blockhash.blockhash;
-
-  return transaction.signatures[0];
+  
+  const signature = await connection.sendTransaction(transaction);
+  return signature;
 };
 
 export const signMessage = (key: Keypair, message: Uint8Array): Uint8Array => {
