@@ -1,5 +1,5 @@
 import { SOL } from "@engine/constants";
-import { Token } from "@engine/tokens/types";
+import { Token, Collectible } from "@engine/tokens/types";
 import { proxy } from "valtio";
 
 export enum TransactionStatus {
@@ -16,6 +16,7 @@ export interface TransactionState {
   status: TransactionStatus;
   date: string;
   token: Token;
+  collectible: Collectible;
   signature: string;
 }
 
@@ -27,6 +28,7 @@ export const transactionState = proxy<TransactionState>({
   status: TransactionStatus.PENDING,
   date: "",
   token: SOL as Token,
+  collectible: {} as Collectible,
   signature: "",
 });
 
@@ -51,6 +53,9 @@ export const transactionActions = {
   },
   setToken: (token: Token) => {
     transactionState.token = token;
+  },
+  setCollectible: (collectible: Collectible) => {
+    transactionState.collectible = collectible;
   },
   setSignature: (signature: string) => {
     transactionState.signature = signature;

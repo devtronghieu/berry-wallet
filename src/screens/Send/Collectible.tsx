@@ -45,6 +45,10 @@ const SendCollectible: FC<Props> = ({ onSubmit, defaultCollectible = undefined }
     return { mint: mint, ...collectionMap.get(mint) };
   });
 
+  const [collectible, setCollectible] = useState<Collectible>(
+    collection[selectedCollectionIndex]?.collectibles?.[selectedCollectibleIndex] as Collectible,
+  );
+
   useEffect(() => {
     // Set default collectible
     if (defaultCollectible && collection.length) {
@@ -56,11 +60,15 @@ const SendCollectible: FC<Props> = ({ onSubmit, defaultCollectible = undefined }
         })
         .flat();
       const collectionIndex = collectibles.findIndex((item) => item?.mint === defaultCollectible.accountData.mint);
-      console.log(collectibles[collectionIndex]);
-      setSelectedCollectionIndex(collectibles[collectionIndex]?.collectionIndex || 0);
-      setSelectedCollectibleIndex(collectibles[collectionIndex]?.collectibleIndex || 0);
+      console.log("DefaultCollectible:", collectibles[collectionIndex]);
+      setSelectedCollectionIndex(collectibles[collectionIndex]?.collectionIndex ?? 0);
+      setSelectedCollectibleIndex(collectibles[collectionIndex]?.collectibleIndex ?? 0);
     }
   }, [defaultCollectible, collection]);
+
+  useMemo(() => {
+    setCollectible(collection[selectedCollectionIndex]?.collectibles?.[selectedCollectibleIndex] as Collectible);
+  }, [selectedCollectionIndex, selectedCollectibleIndex]);
 
   // Check if collection is empty
   const disabled = !collection.length;
@@ -72,7 +80,7 @@ const SendCollectible: FC<Props> = ({ onSubmit, defaultCollectible = undefined }
     sendCollectible({
       keypair: keypair as Keypair,
       receiverPublicKey: new PublicKey(receiverPublicKey),
-      NFT: collection?.[selectedCollectionIndex]?.collectibles?.[selectedCollectibleIndex] as Collectible,
+      NFT: collectible,
     });
   };
 
@@ -92,22 +100,22 @@ const SendCollectible: FC<Props> = ({ onSubmit, defaultCollectible = undefined }
       solToken?.accountData.amount || "0",
       solToken?.accountData.decimals || 0,
     );
-    console.log("solBalanceAmount", solBalanceAmount.current);
-    console.log("solToken", solToken);
 
+    TxA.resetTransactionState();
+    TxA.setCollectible(collectible);
     setReceiverError("");
     setIsValidReceiver(false);
     setIsValidAmount(false);
-  }, [solToken, prices]);
+  }, [solToken, prices, collectible]);
 
   // Fetch transaction fee
   useMemo(() => {
     if (!keypair) return;
     fetchNftTransactionFee({
       keypair: keypair as Keypair,
-      NFT: collection?.[selectedCollectionIndex]?.collectibles?.[selectedCollectibleIndex] as Collectible,
+      NFT: collectible,
     });
-  }, [collection, keypair, selectedCollectibleIndex, selectedCollectionIndex]);
+  }, [collection, keypair, collectible]);
 
   useMemo(() => {
     setIsValidAmount(false);
