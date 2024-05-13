@@ -2,7 +2,7 @@ import { fetchAccountInfo } from "@engine/accounts";
 import { getConnection } from "@engine/connection";
 import { BERRY_LOCAL_CONFIG_KEY } from "@engine/constants";
 import { getSignatures, getTransaction } from "@engine/history";
-import { fetchNFTs, fetchTokens } from "@engine/tokens";
+import { fetchNFTs, getLocalTokens, getOwnedTokens, getRemoteTokens } from "@engine/tokens";
 import { ParsedDataOfATA } from "@engine/tokens/types";
 import { historyActions } from "@state/history";
 import { appActions, appState } from "@state/index";
@@ -18,7 +18,7 @@ export const useStartup = () => {
   useEffect(() => {
     if (!keypair) return;
 
-    fetchTokens(keypair.publicKey)
+    getOwnedTokens(keypair.publicKey)
       .then((tokens) => appActions.setTokens(tokens))
       .catch(console.error);
 
@@ -54,6 +54,16 @@ export const useStartup = () => {
       .catch((err) => {
         console.error("history -->", err);
       });
+
+    // fetch local tokens
+    getLocalTokens().then((tokens) => {
+      appActions.setLocalTokens(tokens);
+    });
+
+    // fetch remote tokens
+    getRemoteTokens().then((tokens) => {
+      appActions.setRemoteTokens(tokens);
+    });
 
   }, [keypair]);
 

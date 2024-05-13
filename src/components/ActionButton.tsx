@@ -9,7 +9,7 @@ interface Props {
 const ActionButton: FC<Props> = ({ children, onClick, disabled }) => {
   return (
     <button
-      className={`rounded-xl ${!disabled ? "gradient-button" : "disabled-button"} h-[40px] mt-auto mx-5`}
+      className={`rounded-xl ${!disabled ? "gradient-button" : "disabled-button"} h-[40px] w-full mt-auto`}
       onClick={onClick}
       disabled={disabled}
     >

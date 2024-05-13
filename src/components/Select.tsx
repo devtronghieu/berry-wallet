@@ -26,7 +26,7 @@ const Select: FC<Props> = ({ items, selectedItemIndex, onSelectedItem, disabled 
 
   if (disabled) {
     return (
-      <div className="bg-primary-200 text-base font-semibold w-full rounded-xl flex items-center justify-between px-5 py-2.5 text-secondary-500 mt-6 relative">
+      <div className="bg-primary-200 text-base font-semibold w-full rounded-xl flex items-center justify-between px-5 py-2.5 text-secondary-500 relative">
         <p>{disabledMessage}</p>
       </div>
     );
@@ -34,11 +34,11 @@ const Select: FC<Props> = ({ items, selectedItemIndex, onSelectedItem, disabled 
 
   // Check items is Collections, Collectibles or Tokens
   const isCollection = (item: Token | Collectible | Collection): item is Collection => {
-    return (item as Collection).collectibles !== undefined;
+    return item && (item as Collection).collectibles !== undefined;
   };
 
   const isCollectible = (item: Token | Collectible | Collection): item is Collectible => {
-    return (item as Collectible).metadata?.attributes !== undefined;
+    return item && (item as Collectible).metadata?.attributes !== undefined;
   };
 
   const isToken = (item: Token | Collectible | Collection): item is Token => {
@@ -65,7 +65,7 @@ const Select: FC<Props> = ({ items, selectedItemIndex, onSelectedItem, disabled 
   return (
     <div
       key={selectedItemIndex}
-      className="bg-primary-200 text-base font-semibold w-full rounded-xl flex items-center justify-between px-5 py-2.5 text-secondary-500 mt-6 relative cursor-pointer"
+      className="bg-primary-200 text-base font-semibold w-full rounded-xl flex items-center justify-between px-5 py-2.5 text-secondary-500 relative cursor-pointer"
       onClick={() => setIsOpen(!isOpen)}
     >
       <div className="flex items-center gap-2 z-0">
@@ -74,7 +74,7 @@ const Select: FC<Props> = ({ items, selectedItemIndex, onSelectedItem, disabled 
       </div>
       {!isOpen ? <ArrowDownCircleIcon size={20} /> : <ArrowUpCircleIcon size={20} />}
       <div
-        className={`mt-2 border border-solid rounded-xl border-primary-300 bg-primary-100 p-1 flex flex-col gap-y-2 absolute top-full w-full left-0 ${
+        className={`mt-2 border border-solid rounded-xl border-primary-300 bg-primary-100 p-1 flex flex-col gap-y-2 absolute top-full w-full left-0 max-h-[144px] overflow-scroll no-scrollbar ${
           isOpen ? "visible" : "invisible"
         } z-10 max-h-36 overflow-y-auto no-scrollbar`}
       >

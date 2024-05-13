@@ -4,7 +4,7 @@ import unknownLogo from "@assets/tokens/unknown.svg";
 export const formatCurrency = (num: number) => {
   return num.toLocaleString("en-US", {
     minimumFractionDigits: 0,
-    maximumFractionDigits: 6,
+    maximumFractionDigits: 7,
   });
 };
 

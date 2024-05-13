@@ -91,7 +91,62 @@ export const fetchCollectibleMetadata = async (mintAddress: string) => {
   return metadata;
 };
 
-export const fetchTokens = async (pubkey: PublicKey) => {
+export const getLocalTokens = async () => {
+  const response = await fetch("/localTokenList.json");
+  const tokenList = await response.json();
+
+  const tokens: Token[] = tokenList.tokens.map((localToken, index) => {
+    if (index === 200) return;
+    const mint = localToken.address;
+    const token: Token = {
+      pubkey: new PublicKey(mint),
+      accountData: {
+        mint,
+        owner: "",
+        amount: "0",
+        decimals: localToken.decimals,
+      },
+      metadata: {
+        name: localToken.name,
+        symbol: localToken.symbol,
+        image: localToken.logoURI,
+      },
+    };
+
+    return token;
+  });
+
+  return tokens;
+};
+
+export const getRemoteTokens = async () => {
+  const response = await fetch("https://token.jup.ag/strict");
+  const tokenList = await response.json();
+
+  const tokens: Token[] = tokenList.map((remoteToken) => {
+    const mint = remoteToken.address;
+    const token: Token = {
+      pubkey: new PublicKey(mint),
+      accountData: {
+        mint,
+        owner: "",
+        amount: "0",
+        decimals: remoteToken.decimals,
+      },
+      metadata: {
+        name: remoteToken.name,
+        symbol: remoteToken.symbol,
+        image: remoteToken.logoURI,
+      },
+    };
+
+    return token;
+  });
+
+  return tokens;
+};
+
+export const getOwnedTokens = async (pubkey: PublicKey) => {
   const connection = getConnection();
 
   const tokens: Token[] = [];
