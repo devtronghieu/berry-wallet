@@ -119,28 +119,31 @@ const SendCollectible: FC<Props> = ({ onSubmit, defaultCollectible = undefined }
 
   return (
     <>
-      <Select
-        items={collection as Collection[]}
-        selectedItemIndex={selectedCollectionIndex}
-        onSelectedItem={setSelectedCollectionIndex}
-        disabled={disabled}
-        disabledMessage={disabledMessage}
-      />
-      <Select
-        items={collection[selectedCollectionIndex]?.collectibles as Collectible[]}
-        selectedItemIndex={selectedCollectibleIndex}
-        onSelectedItem={setSelectedCollectibleIndex}
-        disabled={disabled}
-        disabledMessage={disabledMessage}
-      />
-      <Input
-        placeholder="Receiver"
-        value={receiverPublicKey}
-        onChange={handleOnChangeReceiverPublicKey}
-        error={receiverError}
-        disabled={disabled}
-        disabledMessage={disabledMessage}
-      />
+      <div className="flex flex-col gap-6">
+        <Select
+          items={collection as Collection[]}
+          selectedItemIndex={selectedCollectionIndex}
+          onSelectedItem={setSelectedCollectionIndex}
+          disabled={disabled}
+          disabledMessage={disabledMessage}
+        />
+        <Select
+          items={collection[selectedCollectionIndex]?.collectibles as Collectible[]}
+          selectedItemIndex={selectedCollectibleIndex}
+          onSelectedItem={setSelectedCollectibleIndex}
+          disabled={disabled}
+          disabledMessage={disabledMessage}
+        />
+        <Input
+          placeholder="Receiver"
+          value={receiverPublicKey}
+          onChange={handleOnChangeReceiverPublicKey}
+          error={receiverError}
+          disabled={disabled}
+          disabledMessage={disabledMessage}
+        />
+      </div>
+
       <div className="text-secondary-500 font-semibold text-base mt-10 flex flex-col gap-y-2">
         <p className="flex justify-between">
           <span>Transaction fee</span>

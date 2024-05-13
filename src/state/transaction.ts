@@ -1,3 +1,4 @@
+import { SOL } from "@engine/constants";
 import { Token } from "@engine/tokens/types";
 import { proxy } from "valtio";
 
@@ -25,7 +26,7 @@ export const transactionState = proxy<TransactionState>({
   fee: 0,
   status: TransactionStatus.PENDING,
   date: "",
-  token: {} as Token,
+  token: SOL as Token,
   signature: "",
 });
 
@@ -61,5 +62,6 @@ export const transactionActions = {
     transactionState.status = TransactionStatus.PENDING;
     transactionState.date = "";
     transactionState.signature = "";
+    transactionState.token = SOL as Token;
   },
 };

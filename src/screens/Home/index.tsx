@@ -13,6 +13,7 @@ import HistoryDetails from "@screens/History/HistoryDetails";
 import Receive from "@screens/Receive";
 import TransactionResult from "@screens/Result";
 import Send from "@screens/Send";
+import Swap from "@screens/Swap";
 import { Keypair } from "@solana/web3.js";
 import { appActions, appState } from "@state/index";
 import { formatCurrency, getLocalLogo } from "@utils/general";
@@ -100,7 +101,7 @@ const HomeScreen = () => {
         return <Receive />;
       },
       Swap() {
-        return <div>Swap</div>;
+        return <Swap />;
       },
       Transaction() {
         return <TransactionResult />;
