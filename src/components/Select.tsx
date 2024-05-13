@@ -49,10 +49,10 @@ const Select: FC<Props> = ({ items, selectedItemIndex, onSelectedItem, disabled 
   const getSymbolOrNameAndLogo = (item: Token | Collectible | Collection) => {
     const symbol = (isToken(item) ? item?.metadata?.symbol : item?.metadata?.name) || "Unknown";
     const logo = item?.metadata?.image || getLocalLogoBySymbol(symbol);
-    return { symbol, logo };
+    return { name: item?.metadata?.name, symbol, logo };
   };
 
-  const { symbol, logo } = getSymbolOrNameAndLogo(items[selectedItemIndex]);
+  const { name, symbol, logo } = getSymbolOrNameAndLogo(items[selectedItemIndex]);
 
   const handleSelectOption = (index: number) => {
     onSelectedItem(index);
@@ -70,7 +70,7 @@ const Select: FC<Props> = ({ items, selectedItemIndex, onSelectedItem, disabled 
     >
       <div className="flex items-center gap-2 z-0">
         <img src={logo} alt={symbol} className="w-7 h-7 rounded-full" />
-        <p>{symbol}</p>
+        <p>{name || symbol}</p>
       </div>
       {!isOpen ? <ArrowDownCircleIcon size={20} /> : <ArrowUpCircleIcon size={20} />}
       <div
@@ -79,12 +79,12 @@ const Select: FC<Props> = ({ items, selectedItemIndex, onSelectedItem, disabled 
         } z-10 max-h-36 overflow-y-auto no-scrollbar`}
       >
         {items.map((item, index) => {
-          const { symbol, logo } = getSymbolOrNameAndLogo(item);
+          const { name, symbol, logo } = getSymbolOrNameAndLogo(item);
           return (
             <div key={index} className="select-option" onClick={() => handleSelectOption(index)}>
               <div className="flex items-center gap-1.5">
                 <img src={logo} alt={item.metadata?.name || "Unknown"} className="w-7 h-7 rounded-full" />
-                <p className="text-secondary-200 font-semibold">{symbol}</p>
+                <p className="text-secondary-200 font-semibold">{name || symbol}</p>
               </div>
               {index === selectedItemIndex && <TickSquareIcon size={20} />}
             </div>

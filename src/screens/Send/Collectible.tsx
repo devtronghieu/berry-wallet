@@ -41,18 +41,20 @@ const SendCollectible: FC<Props> = ({ onSubmit, defaultCollectible = undefined }
   const isValidTransaction = isValidReceiver && isValidAmount;
 
   // Generate Collection Array
-  const collection = Array.from(collectionMap.keys()).map((mint) => {
-    return { mint: mint, ...collectionMap.get(mint) };
-  });
+  const collections = useMemo(() => {
+    return Array.from(collectionMap.keys()).map((mint) => {
+      return { mint: mint, ...collectionMap.get(mint) };
+    });
+  }, [collectionMap]);
 
   const [collectible, setCollectible] = useState<Collectible>(
-    collection[selectedCollectionIndex]?.collectibles?.[selectedCollectibleIndex] as Collectible,
+    collections[selectedCollectionIndex]?.collectibles?.[selectedCollectibleIndex] as Collectible,
   );
 
   useEffect(() => {
     // Set default collectible
-    if (defaultCollectible && collection.length) {
-      const collectibles = collection
+    if (defaultCollectible && collections.length) {
+      const collectibles = collections
         .map((item, collectionIndex) => {
           return item.collectibles?.map((collectible, collectibleIndex) => {
             return { collectionIndex, collectibleIndex, mint: collectible.accountData.mint };
@@ -60,18 +62,14 @@ const SendCollectible: FC<Props> = ({ onSubmit, defaultCollectible = undefined }
         })
         .flat();
       const collectionIndex = collectibles.findIndex((item) => item?.mint === defaultCollectible.accountData.mint);
-      console.log("DefaultCollectible:", collectibles[collectionIndex]);
       setSelectedCollectionIndex(collectibles[collectionIndex]?.collectionIndex ?? 0);
       setSelectedCollectibleIndex(collectibles[collectionIndex]?.collectibleIndex ?? 0);
+      setCollectible(defaultCollectible);
     }
-  }, [defaultCollectible, collection]);
-
-  useMemo(() => {
-    setCollectible(collection[selectedCollectionIndex]?.collectibles?.[selectedCollectibleIndex] as Collectible);
-  }, [collection, selectedCollectionIndex, selectedCollectibleIndex]);
+  }, [defaultCollectible, collections]);
 
   // Check if collection is empty
-  const disabled = !collection.length;
+  const disabled = !collections.length;
   const disabledMessage = disabled ? "No collectibles available" : undefined;
 
   const handleSubmitButton = () => {
@@ -121,7 +119,6 @@ const SendCollectible: FC<Props> = ({ onSubmit, defaultCollectible = undefined }
     setIsValidAmount(false);
     const { isValid, errorMessage } = validateTotalAmount(fee.toString(), solBalanceAmount.current);
     isValid && setIsValidAmount(true);
-    console.log(solBalanceAmount.current, fee);
     setAmountError(errorMessage);
   }, [fee]);
 
@@ -129,14 +126,14 @@ const SendCollectible: FC<Props> = ({ onSubmit, defaultCollectible = undefined }
     <>
       <div className="flex flex-col gap-6">
         <Select
-          items={collection as Collection[]}
+          items={collections as Collection[]}
           selectedItemIndex={selectedCollectionIndex}
           onSelectedItem={setSelectedCollectionIndex}
           disabled={disabled}
           disabledMessage={disabledMessage}
         />
         <Select
-          items={collection[selectedCollectionIndex]?.collectibles as Collectible[]}
+          items={collections[selectedCollectionIndex].collectibles || []}
           selectedItemIndex={selectedCollectibleIndex}
           onSelectedItem={setSelectedCollectibleIndex}
           disabled={disabled}

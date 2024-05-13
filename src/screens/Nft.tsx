@@ -138,6 +138,7 @@ const NftScreen = () => {
             </div>
           );
         })()}
+
       <BottomSheet title={bottomSheetType} isOpen={modalIsOpen} onClose={() => setModalIsOpen(false)}>
         <CurrentBottomSheetChildren />
       </BottomSheet>
