@@ -47,7 +47,7 @@ const HomeScreen = () => {
     hashedPassword,
     encryptedAccounts,
     activeKeypairIndex,
-    activeWalletIndex,
+    activeProfileIndex,
   } = useSnapshot(appState);
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
   const [addrListIsOpen, setAddrListIsOpen] = useState<boolean>(false);
@@ -64,13 +64,13 @@ const HomeScreen = () => {
     () =>
       generateAddrList(
         activeKeypairIndex!,
-        activeWalletIndex!,
+        activeProfileIndex!,
         encryptedAccounts!,
         hashedPassword!,
         srcImage!,
         setActiveAddr,
       ),
-    [activeKeypairIndex, activeWalletIndex, encryptedAccounts, hashedPassword, srcImage],
+    [activeKeypairIndex, activeProfileIndex, encryptedAccounts, hashedPassword, srcImage],
   );
 
   const handleOnClick = (type: string) => {

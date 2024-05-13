@@ -9,7 +9,7 @@ import { appState } from "@state/index";
 import { transactionActions as TxA, transactionState } from "@state/transaction";
 import { formatCurrency } from "@utils/general";
 import { getSafeMintAddressForPriceAPI } from "@utils/tokens";
-import { FC, useMemo, useRef, useState } from "react";
+import { FC, useMemo, useRef, useState, useEffect } from "react";
 import { useSnapshot } from "valtio";
 
 import ArrowRightBoldIcon from "@/icons/ArrowRightBoldIcon";
@@ -45,15 +45,22 @@ const SendCollectible: FC<Props> = ({ onSubmit, defaultCollectible = undefined }
     return { mint: mint, ...collectionMap.get(mint) };
   });
 
-  // Set default collectible
-  if (defaultCollectible && collection.length) {
-    const collectionIndex = collection.findIndex((item) => item.mint === defaultCollectible.accountData.mint);
-    setSelectedCollectionIndex(collectionIndex);
-    const collectibleIndex = collection[collectionIndex]?.collectibles?.findIndex(
-      (item) => item.pubkey === defaultCollectible.pubkey,
-    );
-    setSelectedCollectibleIndex(collectibleIndex || 0);
-  }
+  useEffect(() => {
+    // Set default collectible
+    if (defaultCollectible && collection.length) {
+      const collectibles = collection
+        .map((item, collectionIndex) => {
+          return item.collectibles?.map((collectible, collectibleIndex) => {
+            return { collectionIndex, collectibleIndex, mint: collectible.accountData.mint };
+          });
+        })
+        .flat();
+      const collectionIndex = collectibles.findIndex((item) => item?.mint === defaultCollectible.accountData.mint);
+      console.log(collectibles[collectionIndex]);
+      setSelectedCollectionIndex(collectibles[collectionIndex]?.collectionIndex || 0);
+      setSelectedCollectibleIndex(collectibles[collectionIndex]?.collectibleIndex || 0);
+    }
+  }, [defaultCollectible, collection]);
 
   // Check if collection is empty
   const disabled = !collection.length;

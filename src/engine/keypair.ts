@@ -7,7 +7,7 @@ import { derivePath } from "ed25519-hd-key";
 import { fetchAccountInfo } from "./accounts";
 import { StoredAccount, StoredAccountType } from "./accounts/types";
 import { PouchID } from "./constants";
-import { upsertActiveIndex, upsertEncryptedAccounts, upsertPassword } from "./storage";
+import { upsertActiveIndex, upsertEncryptedAccounts, upsertPassword, upsertPasswordExpiredAt } from "./storage";
 
 export const getDerivedPath = (pathIndex: number) => `m/44'/501'/${pathIndex}'/0'`;
 
@@ -58,26 +58,27 @@ export const createWallet = async (
   const encryptedAccounts = encryptWithPassword(JSON.stringify([storedInitialAccount]), hashedPassword);
 
   await upsertEncryptedAccounts(PouchID.encryptedAccounts, encryptedAccounts);
-  await upsertActiveIndex(PouchID.activeWalletIndex, 0);
+  await upsertActiveIndex(PouchID.activeProfileIndex, 0);
   await upsertActiveIndex(PouchID.activeKeypairIndex, 0);
   await upsertActiveIndex(PouchID.nextAccountIndex, 1);
+  await upsertPasswordExpiredAt(Date.now() + 30 * 60 * 1000);
 
   return {
     activeKeypairName: "Account 1",
     keypair: keypair!,
     encryptedAccounts: encryptedAccounts!,
-    activeWalletIndex: 0,
+    activeProfileIndex: 0,
     activeKeypairIndex: 0,
   };
 };
 
 export const deriveKeypairAndName = async (hashedpassword: string) => {
-  const { encryptedAccounts, activeWalletIndex, activeKeypairIndex } = await fetchAccountInfo().catch((error) => {
+  const { encryptedAccounts, activeProfileIndex, activeKeypairIndex } = await fetchAccountInfo().catch((error) => {
     console.error(error);
     throw new Error("Failed to fetch account info");
   });
   const accounts = JSON.parse(decryptWithPassword(encryptedAccounts, hashedpassword));
-  const activeWallet: StoredAccount = accounts[activeWalletIndex];
+  const activeWallet: StoredAccount = accounts[activeProfileIndex];
   let keypair, keypairName;
   switch (activeWallet.type) {
     case StoredAccountType.SeedPhrase:

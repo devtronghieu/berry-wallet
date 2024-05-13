@@ -20,7 +20,7 @@ export interface AppState {
   keypair?: Keypair;
   hashedPassword?: string;
   activeKeypairName?: string;
-  activeWalletIndex?: number;
+  activeProfileIndex?: number;
   activeKeypairIndex?: number;
 }
 
@@ -71,7 +71,7 @@ export const appActions = {
     appState.activeKeypairIndex = index;
   },
   setActiveWalletIndex: (index: number) => {
-    appState.activeWalletIndex = index;
+    appState.activeProfileIndex = index;
   },
   setActiveKeypairName: (name: string) => {
     appState.activeKeypairName = name;
@@ -89,7 +89,7 @@ export const appActions = {
     appState.hashedPassword = undefined;
     appState.encryptedAccounts = undefined;
     appState.activeKeypairIndex = undefined;
-    appState.activeWalletIndex = undefined;
+    appState.activeProfileIndex = undefined;
     appState.activeKeypairName = undefined;
   },
   setLocalTokens: (tokens: Token[]) => {

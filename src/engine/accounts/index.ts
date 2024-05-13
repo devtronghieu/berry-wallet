@@ -14,35 +14,35 @@ import { StoredAccount, StoredAccountType, StoredPrivateKey, StoredSeedPhrase } 
 
 export const fetchAccountInfo = async () => {
   const encryptedAccounts = await getEncryptedAccounts(PouchID.encryptedAccounts);
-  const activeWalletIndex = await getActiveIndex(PouchID.activeWalletIndex);
+  const activeProfileIndex = await getActiveIndex(PouchID.activeProfileIndex);
   const activeKeypairIndex = await getActiveIndex(PouchID.activeKeypairIndex);
   const nextAccountIndex = await getActiveIndex(PouchID.nextAccountIndex);
   if (encryptedAccounts === null) throw new Error("No accounts found");
-  if (activeWalletIndex === null) throw new Error("No active wallet found");
+  if (activeProfileIndex === null) throw new Error("No active wallet found");
   if (activeKeypairIndex === null) throw new Error("No active keypair found");
   if (nextAccountIndex === null) throw new Error("No next account index found");
   return {
     encryptedAccounts,
-    activeWalletIndex,
+    activeProfileIndex,
     activeKeypairIndex,
     nextAccountIndex,
   };
 };
 
 export const addNewKeypair = async (hashedPassword: string) => {
-  const { encryptedAccounts, activeWalletIndex, nextAccountIndex } = await fetchAccountInfo().catch((error) => {
+  const { encryptedAccounts, activeProfileIndex, nextAccountIndex } = await fetchAccountInfo().catch((error) => {
     console.error(error);
     throw new Error("Failed to fetch account info");
   });
   const accounts = JSON.parse(decryptWithPassword(encryptedAccounts, hashedPassword)) as StoredAccount[];
-  let activeWalletIndexTemp = activeWalletIndex;
-  let activeWallet = accounts[activeWalletIndex];
+  let activeProfileIndexTemp = activeProfileIndex;
+  let activeWallet = accounts[activeProfileIndex];
 
   // Active account is private key, change it to the first seed phrase
   if (activeWallet.type === StoredAccountType.PrivateKey) {
-    activeWalletIndexTemp = accounts.findIndex((acc) => acc.type === StoredAccountType.SeedPhrase);
-    activeWallet = accounts[activeWalletIndexTemp];
-    await upsertActiveIndex(PouchID.activeWalletIndex, activeWalletIndexTemp);
+    activeProfileIndexTemp = accounts.findIndex((acc) => acc.type === StoredAccountType.SeedPhrase);
+    activeWallet = accounts[activeProfileIndexTemp];
+    await upsertActiveIndex(PouchID.activeProfileIndex, activeProfileIndexTemp);
   }
 
   activeWallet = activeWallet as StoredSeedPhrase;
@@ -75,7 +75,7 @@ export const addNewKeypair = async (hashedPassword: string) => {
     activeKeypairName,
     keypair,
     encryptedAccounts,
-    activeWalletIndex,
+    activeProfileIndex,
     activeKeypairIndex: activeWallet.privateKeys.length - 1,
   };
 };
@@ -131,7 +131,7 @@ export const addNewWallet = async (walletType: StoredAccountType, generateKey: s
   const newEncryptedAccounts = encryptWithPassword(JSON.stringify(accounts), hashedPassword);
 
   await upsertEncryptedAccounts(PouchID.encryptedAccounts, newEncryptedAccounts);
-  await upsertActiveIndex(PouchID.activeWalletIndex, accounts.length - 1);
+  await upsertActiveIndex(PouchID.activeProfileIndex, accounts.length - 1);
   await upsertActiveIndex(PouchID.activeKeypairIndex, 0);
   await upsertActiveIndex(PouchID.nextAccountIndex, nextAccountIndex + 1);
 
@@ -139,19 +139,19 @@ export const addNewWallet = async (walletType: StoredAccountType, generateKey: s
     activeKeypairName,
     keypair,
     encryptedAccounts: newEncryptedAccounts,
-    activeWalletIndex: accounts.length - 1,
+    activeProfileIndex: accounts.length - 1,
     activeKeypairIndex: 0,
   };
 };
 
 export const removeWallet = async (hashedPassword: string, account: StoredPrivateKey, activeKeypairName: string) => {
-  const { encryptedAccounts, activeWalletIndex, activeKeypairIndex } = await fetchAccountInfo().catch((error) => {
+  const { encryptedAccounts, activeProfileIndex, activeKeypairIndex } = await fetchAccountInfo().catch((error) => {
     console.error(error);
     throw new Error("Failed to fetch account info");
   });
   const accounts = JSON.parse(decryptWithPassword(encryptedAccounts, hashedPassword)) as StoredAccount[];
   let isFound = false;
-  let newActiveWalletIndex = activeWalletIndex;
+  let newActiveWalletIndex = activeProfileIndex;
   let newActiveKeypairIndex = activeKeypairIndex;
   let newActiveKeypairName = activeKeypairName;
   accounts.forEach((acc, walletIndex) => {
@@ -162,7 +162,7 @@ export const removeWallet = async (hashedPassword: string, account: StoredPrivat
           if (key.privateKey === account.privateKey) {
             acc.privateKeys.splice(keypairIndex, 1);
             // In case the active keypair belongs to the removed seephrase accounts
-            if (walletIndex === activeWalletIndex && acc.privateKeys.length <= activeKeypairIndex)
+            if (walletIndex === activeProfileIndex && acc.privateKeys.length <= activeKeypairIndex)
               newActiveKeypairIndex = acc.privateKeys.length - 1;
             if (acc.privateKeys.length === 0) {
               // Remove the seed phrase if there are no more keypairs
@@ -171,7 +171,11 @@ export const removeWallet = async (hashedPassword: string, account: StoredPrivat
               newActiveWalletIndex = accounts.length - 1;
               newActiveKeypairIndex = 0;
             }
-            newActiveKeypairName = acc.privateKeys[newActiveKeypairIndex].name;
+            if (accounts[newActiveWalletIndex].type === StoredAccountType.SeedPhrase) {
+              newActiveKeypairName = (accounts[newActiveWalletIndex] as StoredSeedPhrase).privateKeys[
+                newActiveKeypairIndex
+              ].name;
+            } else newActiveKeypairName = accounts[newActiveWalletIndex].name;
             isFound = true;
           }
         });
@@ -180,11 +184,15 @@ export const removeWallet = async (hashedPassword: string, account: StoredPrivat
         if (acc.privateKey === account.privateKey) {
           accounts.splice(walletIndex, 1);
           // Update the active wallet index and active keypair in case active private key is removed
-          if (activeWalletIndex === walletIndex) {
+          if (activeProfileIndex >= walletIndex) {
             newActiveWalletIndex = accounts.length - 1;
             newActiveKeypairIndex = 0;
           }
-          newActiveKeypairName = accounts[newActiveWalletIndex].name;
+          if (accounts[newActiveWalletIndex].type === StoredAccountType.SeedPhrase) {
+            newActiveKeypairName = (accounts[newActiveWalletIndex] as StoredSeedPhrase).privateKeys[
+              newActiveKeypairIndex
+            ].name;
+          } else newActiveKeypairName = accounts[newActiveWalletIndex].name;
           isFound = true;
         }
         break;
@@ -195,30 +203,30 @@ export const removeWallet = async (hashedPassword: string, account: StoredPrivat
   const newEncryptedAccounts = encryptWithPassword(JSON.stringify(accounts), hashedPassword);
 
   await upsertEncryptedAccounts(PouchID.encryptedAccounts, newEncryptedAccounts);
-  await upsertActiveIndex(PouchID.activeWalletIndex, newActiveWalletIndex);
+  await upsertActiveIndex(PouchID.activeProfileIndex, newActiveWalletIndex);
   await upsertActiveIndex(PouchID.activeKeypairIndex, newActiveKeypairIndex);
 
   return {
     activeKeypairName: newActiveKeypairName,
     encryptedAccounts: newEncryptedAccounts,
-    activeWalletIndex: newActiveWalletIndex,
+    activeProfileIndex: newActiveWalletIndex,
     activeKeypairIndex: newActiveKeypairIndex,
   };
 };
 
 export const updateLastBalanceCheck = async (hashedPassword: string, lastBalance: number) => {
-  const { encryptedAccounts, activeWalletIndex, activeKeypairIndex } = await fetchAccountInfo().catch((error) => {
+  const { encryptedAccounts, activeProfileIndex, activeKeypairIndex } = await fetchAccountInfo().catch((error) => {
     console.error(error);
     throw new Error("Failed to fetch account info");
   });
   const accounts = JSON.parse(decryptWithPassword(encryptedAccounts, hashedPassword));
   let activeAccount: StoredPrivateKey;
-  switch (accounts[activeWalletIndex].type) {
+  switch (accounts[activeProfileIndex].type) {
     case StoredAccountType.SeedPhrase:
-      activeAccount = accounts[activeWalletIndex].privateKeys[activeKeypairIndex];
+      activeAccount = accounts[activeProfileIndex].privateKeys[activeKeypairIndex];
       break;
     case StoredAccountType.PrivateKey:
-      activeAccount = accounts[activeWalletIndex];
+      activeAccount = accounts[activeProfileIndex];
       break;
     default:
       throw new Error("Invalid active account type");
@@ -277,7 +285,7 @@ export const updateAccountName = async (hashedPassword: string, account: StoredP
 };
 
 export const switchActiveAccount = async (walletIndex: number, keypairIndex: number) => {
-  await upsertActiveIndex(PouchID.activeWalletIndex, walletIndex);
+  await upsertActiveIndex(PouchID.activeProfileIndex, walletIndex);
   await upsertActiveIndex(PouchID.activeKeypairIndex, keypairIndex);
 };
 

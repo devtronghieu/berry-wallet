@@ -25,11 +25,11 @@ const ImportSeedPhrase: FC = () => {
     }
     if (validateMnemonic(seedPhrase.join(" "))) {
       addNewWallet(StoredAccountType.SeedPhrase, seedPhrase.join(" "), hashedPassword)
-        .then(({ activeKeypairIndex, encryptedAccounts, activeWalletIndex, activeKeypairName, keypair }) => {
+        .then(({ activeKeypairIndex, encryptedAccounts, activeProfileIndex, activeKeypairName, keypair }) => {
           appActions.setActiveKeypairIndex(activeKeypairIndex);
           appActions.setActiveKeypairName(activeKeypairName);
           appActions.setEncryptedAccounts(encryptedAccounts);
-          appActions.setActiveWalletIndex(activeWalletIndex);
+          appActions.setActiveWalletIndex(activeProfileIndex);
           appActions.setKeypair(keypair);
           navigate(Route.Home);
           toast.success("New wallet added successfully!");

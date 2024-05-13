@@ -2,10 +2,10 @@ import strawberry from "@assets/strawberry.svg";
 import unknownLogo from "@assets/tokens/unknown.svg";
 import { ChromeKernel } from "@messaging/core";
 import { Channel, Message } from "@messaging/types";
+import { appState } from "@state/index";
 import { useEffect, useMemo, useState } from "react";
 import { Outlet, useParams } from "react-router-dom";
-
-import { ChevronDownIcon } from "@/icons";
+import { useSnapshot } from "valtio";
 
 import { RequestOutletContext } from "./shared";
 
@@ -15,6 +15,7 @@ interface ContextData {
 }
 
 const RequestScreen = () => {
+  const { activeKeypairName } = useSnapshot(appState);
   const { messageId } = useParams<{ messageId: string }>();
   const [payload, setPayload] = useState<ContextData>();
   const chromeKernel = useMemo(() => new ChromeKernel(Channel.Popup), []);
@@ -43,10 +44,7 @@ const RequestScreen = () => {
       <div className="h-[60px] px-4 py-2 gap-1.5 flex justify-between bg-primary-300">
         <div className="flex items-center gap-2">
           <img className="w-10 h-10" src={strawberry} alt="strawberry logo" />
-          <p className="font-bold text-lg text-primary-500">Account 1</p>
-          <button>
-            <ChevronDownIcon size={24} />
-          </button>
+          <p className="font-bold text-lg text-primary-500">{activeKeypairName}</p>
         </div>
       </div>
 

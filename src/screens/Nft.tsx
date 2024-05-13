@@ -18,10 +18,6 @@ const NftScreen = () => {
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
   const [selectedCollectible, selectCollectible] = useState<Collectible>();
 
-  if (!nftId) {
-    return <Navigate to={Route.Home} />;
-  }
-
   const handleOnClick = (collectible: Collectible) => {
     setBottomSheetType("Send");
     setModalIsOpen(true);
@@ -37,7 +33,11 @@ const NftScreen = () => {
       },
     };
     return BottomSheetChildren[bottomSheetType];
-  }, [bottomSheetType]);
+  }, [bottomSheetType, selectedCollectible]);
+
+  if (!nftId) {
+    return <Navigate to={Route.Home} />;
+  }
 
   // nftId = collectionId:collectibleId
   const [collectionId, collectibleId] = nftId.split(":");
@@ -118,14 +118,18 @@ const NftScreen = () => {
 
               <div className="w-full">
                 <p className="text-lg font-semibold text-secondary-500 mb-3">Properties</p>
-                <div className="flex flex-wrap gap-2">
-                  {collectible.metadata.attributes.map((attribute, index) => (
-                    <div key={index} className="bg-primary-200 rounded-lg p-2">
-                      <p className="text-xs uppercase text-secondary-500">{attribute.trait_type}</p>
-                      <p className="text-base font-semibold text-primary-500">{attribute.value}</p>
-                    </div>
-                  ))}
-                </div>
+                {collectible.metadata.attributes ? (
+                  <div className="flex flex-wrap gap-2">
+                    {collectible.metadata.attributes.map((attribute, index) => (
+                      <div key={index} className="bg-primary-200 rounded-lg p-2">
+                        <p className="text-xs uppercase text-secondary-500">{attribute.trait_type}</p>
+                        <p className="text-base font-semibold text-primary-500">{attribute.value}</p>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-secondary-500">No properties available</p>
+                )}
               </div>
             </div>
           );
