@@ -100,8 +100,6 @@ const SendCollectible: FC<Props> = ({ onSubmit, defaultCollectible = undefined }
       solToken?.accountData.amount || "0",
       solToken?.accountData.decimals || 0,
     );
-    // console.log("solBalanceAmount", solBalanceAmount.current);
-    // console.log("solToken", solToken);
 
     TxA.resetTransactionState();
     TxA.setCollectible(collectible);
