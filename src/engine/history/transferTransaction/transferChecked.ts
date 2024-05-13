@@ -21,7 +21,7 @@ export const getCheckedAmount = (instruction: ParsedInstruction) => {
 
 export const getCheckedToken = async (instruction: ParsedInstruction) => {
   const mint = instruction.parsed.info.mint;
-  const metadata = await fetchTokenMetadata(mint).catch(() => undefined);
+  const metadata = await fetchTokenMetadata(mint);
   const pubkey = new PublicKey(instruction.parsed.info.destination);
   const amount = "0";
   const owner = "";

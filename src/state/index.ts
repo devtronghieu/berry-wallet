@@ -96,7 +96,6 @@ export const appActions = {
     appState.localTokens = tokens;
   },
   setRemoteTokens: (tokens: Token[]) => {
-    console.log(tokens);
     appState.remoteTokens = tokens;
   },
 };

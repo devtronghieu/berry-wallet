@@ -2,13 +2,13 @@ import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { ParsedInstruction, ParsedTransactionWithMeta, PublicKey } from '@solana/web3.js';
 
 import { getConnection } from '../connection';
-import { isSwapTransaction } from './swapTransaction';
+import { getSwapTransactionDetails, isSwapTransaction } from './swapTransaction';
 import { transferTokenTransationDetail } from './transferTransaction/transfer';
 import { transferCheckedTransationDetail } from './transferTransaction/transferChecked';
 
 export const connection = getConnection();
 
-export const getSignatures = async (address: PublicKey, limit: number = 50) => {
+export const getSignatures = async (address: PublicKey, limit: number = 100) => {
     const confirmedSignatureInfos = await connection.getSignaturesForAddress(address, {limit});
     const confirmedSignatureInfosWithoutDuplicates = new Set(confirmedSignatureInfos);
     const signatures = Array.from(confirmedSignatureInfosWithoutDuplicates).map((info) => info.signature);
@@ -17,16 +17,21 @@ export const getSignatures = async (address: PublicKey, limit: number = 50) => {
 };
 
 export const getTransactionDetail = async (transaction: ParsedTransactionWithMeta) => {
+    const signature = transaction.transaction.signatures[0];
     const instructions = transaction.transaction.message.instructions;
-    if (isSwapTransaction(instructions as ParsedInstruction[])) return null;
+    let transactionDetail;
 
-    const specificInstruction = getSpecificInstructionByProgramId(instructions as ParsedInstruction[], TOKEN_PROGRAM_ID);
+    if (isSwapTransaction(instructions as ParsedInstruction[])) {
+        console.log("Swap transaction", transaction.meta);
+        transactionDetail = await getSwapTransactionDetails(transaction.meta, transaction.blockTime as number, signature, 5);
+        return transactionDetail;
+    }
+    const specificInstructionIndex = getSpecificInstructionByProgramId(instructions as ParsedInstruction[], TOKEN_PROGRAM_ID);
+
+    const specificInstruction = instructions[specificInstructionIndex] as ParsedInstruction;
 
     if (!specificInstruction) return null;
 
-    const signature = transaction.transaction.signatures[0];
-
-    let transactionDetail;
     if (specificInstruction.parsed.type === "transferChecked") {
         transactionDetail = await transferCheckedTransationDetail(specificInstruction, transaction.meta, transaction.blockTime as number, signature);
     } else if (specificInstruction.parsed.type === "transfer") {
@@ -37,9 +42,9 @@ export const getTransactionDetail = async (transaction: ParsedTransactionWithMet
 };
 
 export const getSpecificInstructionByProgramId = (instructions: ParsedInstruction[] , programId: PublicKey) => {
-    const specificInstruction = instructions.find((instruction) => instruction.programId.equals(programId));
+    const specificInstructionIndex = instructions.findIndex((instruction) => instruction.programId.equals(programId));
     
-    return specificInstruction;
+    return specificInstructionIndex;
 };
 
 export const getTransaction = async (signature: string) => {
