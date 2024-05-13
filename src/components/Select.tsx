@@ -34,11 +34,11 @@ const Select: FC<Props> = ({ items, selectedItemIndex, onSelectedItem, disabled 
 
   // Check items is Collections, Collectibles or Tokens
   const isCollection = (item: Token | Collectible | Collection): item is Collection => {
-    return (item as Collection).collectibles !== undefined;
+    return item && (item as Collection).collectibles !== undefined;
   };
 
   const isCollectible = (item: Token | Collectible | Collection): item is Collectible => {
-    return (item as Collectible).metadata?.attributes !== undefined;
+    return item && (item as Collectible).metadata?.attributes !== undefined;
   };
 
   const isToken = (item: Token | Collectible | Collection): item is Token => {
