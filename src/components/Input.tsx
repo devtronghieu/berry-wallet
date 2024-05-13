@@ -10,6 +10,7 @@ interface Props {
   disabled?: boolean;
   disabledMessage?: string;
   as?: "input" | "textarea";
+  onBlur?: () => void;
 }
 
 const Input: FC<Props> = ({
@@ -22,6 +23,7 @@ const Input: FC<Props> = ({
   error,
   disabled = false,
   disabledMessage = "",
+  onBlur,
 }) => {
   const Component = as === "input" ? "input" : "textarea";
   if (disabled) placeholder = disabledMessage;
@@ -36,9 +38,10 @@ const Input: FC<Props> = ({
         value={value}
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
+        onBlur={onBlur}
         disabled={disabled}
       />
-      {error && <p className="font-semibold text-s text-error">{error}</p>}
+      {error && error !== "" && <p className="font-semibold text-s text-error">{error}</p>}
     </>
   );
 };
