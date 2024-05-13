@@ -6,7 +6,6 @@ import { Keypair } from "@solana/web3.js";
 import { proxy } from "valtio";
 
 import { appState } from ".";
-import { TransactionStatus } from "./transaction";
 
 export interface SwapContext {
     sourceToken: Token;
@@ -51,8 +50,7 @@ export const swapActions = proxy<SwapActions>({
         swapContext.receiveAmount = amount;
     },
     executeSwap: async () => {
-        const signature = await swap(appState.keypair as Keypair, swapContext.sourceToken.accountData.mint, swapContext.destinationToken.accountData.mint, parseFloat(swapContext.amount) * 10 ** swapContext.sourceToken.accountData.decimals);
-
+        const {signature, status} = await swap(appState.keypair as Keypair, swapContext.sourceToken.accountData.mint, swapContext.destinationToken.accountData.mint, parseFloat(swapContext.amount) * 10 ** swapContext.sourceToken.accountData.decimals);
 
         return {
             signature,
@@ -62,7 +60,7 @@ export const swapActions = proxy<SwapActions>({
             receivedToken: swapContext.destinationToken,
             fee: swapContext.fee,
             date: new Date(),
-            status: TransactionStatus.SUCCESS,
+            status,
             transactionType: TransactionType.SWAP
         } as unknown as SwapTransaction;
     },
