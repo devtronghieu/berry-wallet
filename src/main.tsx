@@ -104,7 +104,11 @@ const router = createHashRouter([
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <Toaster />
+    <Toaster
+      containerStyle={{
+        zIndex: 999999999,
+      }}
+    />
     <RouterProvider router={router} />
   </React.StrictMode>,
 );

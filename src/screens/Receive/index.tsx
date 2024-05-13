@@ -2,6 +2,7 @@ import solIcon from "@assets/tokens/sol.svg";
 import { appState } from "@state/index";
 import { shortenAddress } from "@utils/general";
 import { FC } from "react";
+import toast from "react-hot-toast";
 import QRCode from "react-qr-code";
 import { useSnapshot } from "valtio";
 
@@ -12,6 +13,7 @@ const Receive: FC = () => {
 
   const handleCopy = () => {
     window.navigator.clipboard.writeText(keypair?.publicKey.toString() as string);
+    toast.success("Copied to clipboard");
   };
 
   return (

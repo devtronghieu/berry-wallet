@@ -1,4 +1,5 @@
 import { FC, useState } from "react";
+import toast from "react-hot-toast";
 
 import SeedPhrase from "@/components/SeedPhrase";
 import CopyIcon from "@/icons/Copy";
@@ -25,6 +26,7 @@ const ShowSeedPhrase: FC<Props> = ({ seedPhrase }) => {
           className="mini-icon-button"
           onClick={() => {
             navigator.clipboard.writeText(seedPhrase);
+            toast.success("Copied to clipboard");
           }}
         >
           <CopyIcon size={iconSize} />

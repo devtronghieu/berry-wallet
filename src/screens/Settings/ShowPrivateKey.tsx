@@ -1,6 +1,7 @@
 import ActionButton from "@components/ActionButton";
 import TextArea from "@components/TextArea";
 import { FC, useState } from "react";
+import toast from "react-hot-toast";
 
 import { CopyIcon, EyeCloseIcon, EyeOpenIcon } from "@/icons";
 
@@ -25,6 +26,7 @@ const ShowPrivateKey: FC<Props> = ({ privateKey, onBack }) => {
           className="mini-icon-button"
           onClick={() => {
             navigator.clipboard.writeText(privateKey);
+            toast.success("Copied to clipboard");
           }}
         >
           <CopyIcon size={iconSize} />
