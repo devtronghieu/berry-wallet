@@ -10,7 +10,7 @@ import { appState } from "@state/index";
 import { swapActions, swapContext } from "@state/swap";
 import { formatCurrency } from "@utils/general";
 import { getSafeMintAddressForPriceAPI } from "@utils/tokens";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSnapshot } from "valtio";
 
 const Swap = () => {
@@ -43,17 +43,31 @@ const Swap = () => {
     swapActions.setSourceToken(tokens[index]);
   };
 
-  const onBlurAmount = () => {
-    const { errorMessage } = validateAmount(amount, balanceAmount.current);
-    setAmountError(errorMessage);
-  };
-
   const handleOnSwap = () => {
     setLoading(true);
     swapActions.executeSwap().then((swapTransaction) => {
       console.log(swapTransaction);
       setLoading(false);
     });
+  };
+
+  const updateQuote = useCallback(async () => {
+    const quote = await getQuote(
+      sourceToken.accountData.mint,
+      remoteTokens[selectedDestinationTokenIndex].accountData.mint,
+      parseFloat(amount) * 10 ** sourceToken.accountData.decimals,
+    );
+
+    swapActions.setSwapFee(getFriendlyAmount(quote.routePlan[0].swapInfo.feeAmount, 9));
+    swapActions.setReceiveAmount(
+      getFriendlyAmount(quote.routePlan[0].swapInfo.outAmount, destinationToken.accountData.decimals).toString(),
+    );
+  }, []);
+
+  const onBlurAmount = () => {
+    const { errorMessage } = validateAmount(amount, balanceAmount.current);
+    setAmountError(errorMessage);
+    updateQuote().catch(console.error);
   };
 
   useEffect(() => {
@@ -64,21 +78,6 @@ const Swap = () => {
       tokens[selectedSourceTokenIndex]?.accountData.amount || "0",
       tokens[selectedSourceTokenIndex]?.accountData.decimals || 0,
     );
-
-    const updateQuote = async () => {
-      const quote = await getQuote(
-        sourceToken.accountData.mint,
-        remoteTokens[selectedDestinationTokenIndex].accountData.mint,
-        parseFloat(amount) * 10 ** sourceToken.accountData.decimals,
-      );
-
-      swapActions.setSwapFee(getFriendlyAmount(quote.routePlan[0].swapInfo.feeAmount, 9));
-      swapActions.setReceiveAmount(
-        getFriendlyAmount(quote.routePlan[0].swapInfo.outAmount, destinationToken.accountData.decimals).toString(),
-      );
-    };
-
-    updateQuote().catch(console.error);
   }, [
     tokens,
     prices,
@@ -92,36 +91,38 @@ const Swap = () => {
   ]);
 
   return (
-    <div>
-      <Select
-        items={tokens as Token[]}
-        selectedItemIndex={selectedSourceTokenIndex}
-        onSelectedItem={handleSelectSourceToken}
-      />
-      <Select
-        items={remoteTokens as Token[]}
-        selectedItemIndex={selectedDestinationTokenIndex}
-        onSelectedItem={handleSelectDesToken}
-      />
-      <Input
-        key={sourceToken.accountData.mint}
-        value={amount}
-        onChange={(text) => {
-          swapActions.setAmount(text);
-        }}
-        placeholder="Amount"
-        error={amountError}
-        onBlur={onBlurAmount}
-      />
-      <Input
-        key={destinationToken.accountData.mint}
-        value={receiveAmount}
-        onChange={(text) => {
-          swapActions.setReceiveAmount(text);
-        }}
-        placeholder="Received Amount"
-        error=""
-      />
+    <>
+      <div className="flex flex-col gap-6">
+        <Select
+          items={tokens as Token[]}
+          selectedItemIndex={selectedSourceTokenIndex}
+          onSelectedItem={handleSelectSourceToken}
+        />
+        <Select
+          items={remoteTokens as Token[]}
+          selectedItemIndex={selectedDestinationTokenIndex}
+          onSelectedItem={handleSelectDesToken}
+        />
+        <Input
+          key={sourceToken.accountData.mint}
+          value={amount}
+          onChange={(text) => {
+            swapActions.setAmount(text);
+          }}
+          placeholder="Amount"
+          error={amountError}
+          onBlur={onBlurAmount}
+        />
+        <Input
+          key={destinationToken.accountData.mint}
+          value={receiveAmount}
+          onChange={(text) => {
+            swapActions.setReceiveAmount(text);
+          }}
+          placeholder="Received Amount"
+          error=""
+        />
+      </div>
 
       <div className="text-secondary-500 font-semibold text-base py-8 flex flex-col gap-y-2">
         <p className="flex justify-between">
@@ -144,7 +145,7 @@ const Swap = () => {
       <ActionButton onClick={handleOnSwap} disabled={amountError !== ""}>
         Swap
       </ActionButton>
-    </div>
+    </>
   );
 };
 

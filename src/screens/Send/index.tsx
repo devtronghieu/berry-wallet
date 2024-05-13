@@ -19,7 +19,7 @@ const Send: FC<Props> = ({ onSubmit, defaultTab = "Tokens", defaultCollectible =
   }, []);
 
   return (
-    <>
+    <div className="flex flex-col gap-6">
       <TabBar navTitle={["Tokens", "Collectibles"]} navOnClick={navOnClickList} activeTab={activeTab} />
       <div>
         {activeTab === "Tokens" && <SendToken onSubmit={onSubmit} />}
@@ -27,7 +27,7 @@ const Send: FC<Props> = ({ onSubmit, defaultTab = "Tokens", defaultCollectible =
           <SendCollectible onSubmit={onSubmit} defaultCollectible={defaultCollectible} />
         )}
       </div>
-    </>
+    </div>
   );
 };
 

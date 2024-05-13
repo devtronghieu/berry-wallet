@@ -83,14 +83,17 @@ const SendToken: FC<Props> = ({ onSubmit }) => {
 
   return (
     <div className="flex flex-col h-full">
-      <Select items={tokens as Token[]} selectedItemIndex={selectedIndex} onSelectedItem={setSelectedIndex} />
-      <Input
-        placeholder="Receiver"
-        value={receiverPublicKey}
-        onChange={handleOnChangeReceiverPublicKey}
-        error={receiverError}
-      />
-      <Input placeholder="Amount" type="number" value={amount} onChange={handleOnChangeAmount} error={amountError} />
+      <div className="flex flex-col gap-6">
+        <Select items={tokens as Token[]} selectedItemIndex={selectedIndex} onSelectedItem={setSelectedIndex} />
+        <Input
+          placeholder="Receiver"
+          value={receiverPublicKey}
+          onChange={handleOnChangeReceiverPublicKey}
+          error={receiverError}
+        />
+        <Input placeholder="Amount" type="number" value={amount} onChange={handleOnChangeAmount} error={amountError} />
+      </div>
+
       <div className="text-secondary-500 font-semibold text-base py-8 flex flex-col gap-y-2">
         <p className="flex justify-between">
           <span>Balance</span>

@@ -26,7 +26,7 @@ const Select: FC<Props> = ({ items, selectedItemIndex, onSelectedItem, disabled 
 
   if (disabled) {
     return (
-      <div className="bg-primary-200 text-base font-semibold w-full rounded-xl flex items-center justify-between px-5 py-2.5 text-secondary-500 mt-6 relative">
+      <div className="bg-primary-200 text-base font-semibold w-full rounded-xl flex items-center justify-between px-5 py-2.5 text-secondary-500 relative">
         <p>{disabledMessage}</p>
       </div>
     );
@@ -65,7 +65,7 @@ const Select: FC<Props> = ({ items, selectedItemIndex, onSelectedItem, disabled 
   return (
     <div
       key={selectedItemIndex}
-      className="bg-primary-200 text-base font-semibold w-full rounded-xl flex items-center justify-between px-5 py-2.5 text-secondary-500 mt-6 relative cursor-pointer"
+      className="bg-primary-200 text-base font-semibold w-full rounded-xl flex items-center justify-between px-5 py-2.5 text-secondary-500 relative cursor-pointer"
       onClick={() => setIsOpen(!isOpen)}
     >
       <div className="flex items-center gap-2 z-0">

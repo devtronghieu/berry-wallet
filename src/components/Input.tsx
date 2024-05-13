@@ -29,7 +29,7 @@ const Input: FC<Props> = ({
   if (disabled) placeholder = disabledMessage;
   if (className === undefined || className === "")
     className =
-      "bg-primary-200 text-base font-semibold w-full rounded-xl flex items-center justify-between px-5 py-3 placeholder-primary-100 mt-6 text-secondary-500 outline-secondary-500";
+      "bg-primary-200 text-base font-semibold w-full rounded-xl flex items-center justify-between px-5 py-3 placeholder-primary-100 text-secondary-500 outline-secondary-500";
   return (
     <>
       <Component
