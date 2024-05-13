@@ -50,10 +50,10 @@ const Swap: FC<Props> = ({ onSubmit }) => {
 
   const handleOnSwap = () => {
     setLoading(true);
-    onSubmit("SwapTransaction");
     swapActions.executeSwap().then((swapTransaction) => {
       setLoading(false);
       historyActions.setCurrentTransaction(swapTransaction);
+      onSubmit("SwapTransaction");
     });
   };
 
