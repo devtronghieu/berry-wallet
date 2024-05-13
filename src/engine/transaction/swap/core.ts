@@ -30,6 +30,7 @@ export type SwapQuote = {
 };
 
 export const getQuote = async (from: string, to: string, amount: number) => {
+  console.log("amount", amount);
   const response = await fetch(
     `${import.meta.env.VITE_JUPITER_ENDPOINT}/quote?inputMint=${from}&outputMint=${to}&amount=${amount}&slippageBps=50`,
   );

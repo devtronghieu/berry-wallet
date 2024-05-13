@@ -4,7 +4,8 @@ import { Token } from "./tokens/types";
 
 export const WRAPPED_SOL_MINT = "So11111111111111111111111111111111111111112";
 export const USDC_DEV_MINT = "Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr";
-export const USDC_MAIN_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
+export const USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
+export const MOUTAI_MINT = "45EgCwcPXYagBC7KqBin4nCFgEZWN7f3Y6nACwxqMCWX";
 export const BERRY_LOCAL_CONFIG_KEY = "berry-local-config";
 export const JUPITER_SWAP_PROGRAM_ID = "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4";
 export const enum PouchID {

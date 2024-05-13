@@ -100,10 +100,13 @@ const HomeScreen = () => {
         return <Receive />;
       },
       Swap() {
-        return <Swap />;
+        return <Swap onSubmit={setBottomSheetType} />;
       },
       Transaction() {
         return <TransactionResult />;
+      },
+      SwapTransaction() {
+        return <HistoryDetails />;
       },
       HistoryDetails() {
         return <HistoryDetails />;

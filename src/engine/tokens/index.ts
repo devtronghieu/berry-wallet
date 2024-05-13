@@ -12,7 +12,7 @@ import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { PublicKey } from "@solana/web3.js";
 
 import { getConnection } from "../connection";
-import { USDC_DEV_MINT, WRAPPED_SOL_MINT } from "../constants";
+import { MOUTAI_MINT, USDC_DEV_MINT, USDC_MINT, WRAPPED_SOL_MINT } from "../constants";
 
 const getBackupMetadata = (mint: string): ATAMetadata | undefined => {
   switch (mint) {
@@ -25,6 +25,15 @@ const getBackupMetadata = (mint: string): ATAMetadata | undefined => {
       };
     default:
       return;
+  }
+};
+
+export const getBackupTokenLogo = (mint: string) => {
+  switch (mint) {
+    case WRAPPED_SOL_MINT: return "https://statics.solscan.io/cdn/imgs/s60?ref=68747470733a2f2f7261772e67697468756275736572636f6e74656e742e636f6d2f736f6c616e612d6c6162732f746f6b656e2d6c6973742f6d61696e2f6173736574732f6d61696e6e65742f536f31313131313131313131313131313131313131313131313131313131313131313131313131313131322f6c6f676f2e706e67"
+    case USDC_MINT: return "https://statics.solscan.io/cdn/imgs/s60?ref=68747470733a2f2f7261772e67697468756275736572636f6e74656e742e636f6d2f736f6c616e612d6c6162732f746f6b656e2d6c6973742f6d61696e2f6173736574732f6d61696e6e65742f45506a465764643541756671535371654d32714e31787a7962617043384734774547476b5a777954447431762f6c6f676f2e706e67"
+    case MOUTAI_MINT: return "https://solscan.io/_next/image?url=https%3A%2F%2Fimg.fotofolio.xyz%2F%3Furl%3Dhttps%253A%252F%252Fbafybeihn5s2ykzqwpmb6d4dbowecovc7vo2wjx7zjltur7sl4ykfhbmoaq.ipfs.nftstorage.link&w=64&q=75"
+    default: return "";
   }
 };
 
@@ -51,6 +60,10 @@ export const fetchTokenMetadata = async (mintAddress: string) => {
       const response = await fetch(onchainJson);
       const offChainData = await response.json();
       metadata.image = offChainData.image;
+    }
+
+    if (metadata.image === "") {
+      metadata.image = getBackupTokenLogo(mintAddress);
     }
 
     return metadata;

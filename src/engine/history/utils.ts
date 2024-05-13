@@ -1,4 +1,4 @@
-import { ParsedInstruction, PublicKey } from "@solana/web3.js";
+import { ParsedInstruction, ParsedTransactionMeta, PublicKey } from "@solana/web3.js";
 
 export const getFilteredInstructionsByProgramId = (instructions: ParsedInstruction[] , programId: PublicKey) => {
     const specificInstruction = instructions.find((instruction) => instruction.programId.equals(programId));
@@ -7,11 +7,20 @@ export const getFilteredInstructionsByProgramId = (instructions: ParsedInstructi
 };
 
 export const getFilteredTransferInstructions = (instructions: ParsedInstruction[]) => {
-    const transferInstructions = instructions.filter((instruction) => instruction.parsed.type.include("transfer"));
-    
+    const transferInstructions = instructions.filter((instruction) => {
+        if (!instruction.parsed) return false;
+        if (!instruction.parsed.type) return false;
+        if ((instruction.parsed.type as string) === "transferChecked") return true;
+        return false;
+    });
+
     return transferInstructions;
 }
 
-export const getFilteredRelatedInstructions = (instructions: ParsedInstruction[], userPubkey: PublicKey) => {
-    return instructions.filter((instruction) => instruction.parsed.accounts.includes(userPubkey));
+export const getInnerInstructionsByIndex = (meta: ParsedTransactionMeta, index: number) => {
+    const innerInstructions = meta?.innerInstructions;
+    if (!innerInstructions) return null;
+    const innerInstruction = innerInstructions.find((instruction) => instruction.index === index);
+    
+    return innerInstruction;
 };

@@ -1,19 +1,24 @@
 import ActionButton from "@components/ActionButton";
 import Input from "@components/Input";
 import Select from "@components/Select";
-import { USDC_MAIN_MINT, WRAPPED_SOL_MINT } from "@engine/constants";
+import { USDC_MINT, WRAPPED_SOL_MINT } from "@engine/constants";
 import { Token } from "@engine/tokens/types";
 import { getQuote } from "@engine/transaction/swap/core";
 import { getFriendlyAmount } from "@engine/utils";
 import { validateAmount } from "@screens/Send/utils";
+import { historyActions } from "@state/history";
 import { appState } from "@state/index";
 import { swapActions, swapContext } from "@state/swap";
 import { formatCurrency } from "@utils/general";
 import { getSafeMintAddressForPriceAPI } from "@utils/tokens";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSnapshot } from "valtio";
 
-const Swap = () => {
+interface Props {
+  onSubmit: (type: string) => void;
+}
+
+const Swap: FC<Props> = ({ onSubmit }) => {
   const { tokens, remoteTokens, prices, keypair } = useSnapshot(appState);
   const { sourceToken, amount, fee, receiveAmount, destinationToken } = useSnapshot(swapContext);
   const initialSourceTokenIndex = useMemo(() => {
@@ -22,7 +27,7 @@ const Swap = () => {
   }, []);
 
   const initialDesTokenIndex = useMemo(() => {
-    return remoteTokens.findIndex((token) => token.accountData.mint === USDC_MAIN_MINT);
+    return remoteTokens.findIndex((token) => token.accountData.mint === USDC_MINT);
   }, []);
 
   const [selectedSourceTokenIndex, setSelectedSourceTokenIndex] = useState(initialSourceTokenIndex);
@@ -45,9 +50,10 @@ const Swap = () => {
 
   const handleOnSwap = () => {
     setLoading(true);
+    onSubmit("SwapTransaction");
     swapActions.executeSwap().then((swapTransaction) => {
-      console.log(swapTransaction);
       setLoading(false);
+      historyActions.setCurrentTransaction(swapTransaction);
     });
   };
 
@@ -62,7 +68,7 @@ const Swap = () => {
     swapActions.setReceiveAmount(
       getFriendlyAmount(quote.routePlan[0].swapInfo.outAmount, destinationToken.accountData.decimals).toString(),
     );
-  }, []);
+  }, [amount, sourceToken, destinationToken, remoteTokens, selectedDestinationTokenIndex]);
 
   const onBlurAmount = () => {
     const { errorMessage } = validateAmount(amount, balanceAmount.current);
@@ -117,7 +123,7 @@ const Swap = () => {
           key={destinationToken.accountData.mint}
           value={receiveAmount}
           onChange={(text) => {
-            swapActions.setReceiveAmount(text);
+            console.log(text);
           }}
           placeholder="Received Amount"
           error=""

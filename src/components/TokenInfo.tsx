@@ -45,7 +45,7 @@ export const TokenInfo: FC<TokenInfoProps> = ({
           <img
             src={receivedTokenImage}
             alt={receivedTokenName}
-            className="h-[100px] w-[100px] rounded-full ml-[50px]border-2 border-primary-100"
+            className="h-[100px] w-[100px] rounded-full ml-[-50px] border-2 border-primary-100"
           />
         </div>
       );
