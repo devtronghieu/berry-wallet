@@ -1,4 +1,4 @@
-import { Token, Collectible } from "@engine/tokens/types";
+import { Collectible, Token } from "@engine/tokens/types";
 import { appState } from "@state/index";
 import { transactionState } from "@state/transaction";
 import { getLocalLogo } from "@utils/general";

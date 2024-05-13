@@ -1,5 +1,5 @@
 import unknown from "@assets/tokens/unknown.svg";
-import { TransferTransaction } from "@engine/history/types";
+import { SwapTransaction, TransferTransaction } from "@engine/history/types";
 import { useHistory } from "@hooks/history";
 import { historyActions } from "@state/history";
 import { formatDate } from "@utils/general";
@@ -29,10 +29,9 @@ const History: FC<HistoryProps> = ({ onItemClick }) => {
           date = transaction.date;
 
           return (
-            <div>
+            <div key={index}>
               <p>{formatDate(date)}</p>
               <TransactionHistoryItem
-                key={index}
                 onClick={handleItemClick}
                 tokenType={(transaction as TransferTransaction).tokenType}
                 amount={transaction.amount}
@@ -41,6 +40,17 @@ const History: FC<HistoryProps> = ({ onItemClick }) => {
                 transactionType={transaction.transactionType}
                 receiver={(transaction as TransferTransaction).receiver}
                 sender={(transaction as TransferTransaction).sender}
+                receivedAmount={(transaction as SwapTransaction).receivedAmount}
+                receivedTokenImage={
+                  ((transaction as SwapTransaction).receivedToken &&
+                    (transaction as SwapTransaction).receivedToken.metadata?.image) ||
+                  unknown
+                }
+                receivedTokenName={
+                  ((transaction as SwapTransaction).receivedToken &&
+                    (transaction as SwapTransaction).receivedToken.metadata?.symbol) ||
+                  "Unknown"
+                }
               />
             </div>
           );
