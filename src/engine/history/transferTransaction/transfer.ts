@@ -27,7 +27,7 @@ export const transferTokenTransationDetail = async (
   const account = await getAccountInfo(new PublicKey(instruction.parsed.info.destination));
   const receiver = account.owner;
   const sender = instruction.parsed.info.authority;
-  let token = await getLocalToken(account.mint);
+  let token = getLocalToken(account.mint);
   if (!token) {
     const mint = account.mint;
     const decimals = await getTokenDecimalsByMint(mint);

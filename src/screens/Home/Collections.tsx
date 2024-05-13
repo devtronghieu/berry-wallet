@@ -1,7 +1,10 @@
 import { CollectionMap } from "@engine/tokens/types";
+import { appState } from "@state/index";
 import { Route } from "@utils/routes";
 import { FC } from "react";
+import Spinner from "react-activity/dist/Spinner";
 import { useNavigate } from "react-router-dom";
+import { useSnapshot } from "valtio";
 
 interface Props {
   collectionMap: CollectionMap;
@@ -9,6 +12,12 @@ interface Props {
 
 const Collections: FC<Props> = ({ collectionMap }) => {
   const navigate = useNavigate();
+
+  const { loading } = useSnapshot(appState);
+
+  if (loading.nfts) {
+    return <Spinner size={20} className="mx-auto" />;
+  }
 
   if (collectionMap.size === 0) {
     return <p className="text-center text-secondary-500">No collections found</p>;

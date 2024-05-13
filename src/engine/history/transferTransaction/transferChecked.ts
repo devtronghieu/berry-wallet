@@ -65,7 +65,7 @@ export const transferCheckedTransationDetail = async (
 ) => {
   const { receiver, sender } = await getCheckedStakeHolders(instruction);
   const mint = instruction.parsed.info.mint;
-  let token = await getLocalToken(mint);
+  let token = getLocalToken(mint);
   if (!token) {
     const decimals = instruction.parsed.info.tokenAmount.decimals || 0;
     const metadata = await fetchTokenMetadata(mint).catch(() => undefined);

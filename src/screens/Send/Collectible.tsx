@@ -9,7 +9,7 @@ import { appState } from "@state/index";
 import { transactionActions as TxA, transactionState } from "@state/transaction";
 import { formatCurrency } from "@utils/general";
 import { getSafeMintAddressForPriceAPI } from "@utils/tokens";
-import { FC, useMemo, useRef, useState, useEffect } from "react";
+import { FC, useEffect, useMemo, useRef, useState } from "react";
 import { useSnapshot } from "valtio";
 
 import ArrowRightBoldIcon from "@/icons/ArrowRightBoldIcon";
@@ -68,7 +68,7 @@ const SendCollectible: FC<Props> = ({ onSubmit, defaultCollectible = undefined }
 
   useMemo(() => {
     setCollectible(collection[selectedCollectionIndex]?.collectibles?.[selectedCollectibleIndex] as Collectible);
-  }, [selectedCollectionIndex, selectedCollectibleIndex]);
+  }, [collection, selectedCollectionIndex, selectedCollectibleIndex]);
 
   // Check if collection is empty
   const disabled = !collection.length;
@@ -115,7 +115,7 @@ const SendCollectible: FC<Props> = ({ onSubmit, defaultCollectible = undefined }
       keypair: keypair as Keypair,
       NFT: collectible,
     });
-  }, [collection, keypair, collectible]);
+  }, [keypair, collectible]);
 
   useMemo(() => {
     setIsValidAmount(false);

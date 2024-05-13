@@ -12,7 +12,8 @@ import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { PublicKey } from "@solana/web3.js";
 
 import { getConnection } from "../connection";
-import { MOUTAI_MINT, USDC_DEV_MINT, USDC_MINT, WRAPPED_SOL_MINT } from "../constants";
+import { MOUTAI_MINT, SAMO_MINT, USDC_DEV_MINT, USDC_MINT, USDT_MINT, WRAPPED_SOL_MINT } from "../constants";
+import { localTokens } from "./local";
 
 const getBackupMetadata = (mint: string): ATAMetadata | undefined => {
   switch (mint) {
@@ -30,15 +31,26 @@ const getBackupMetadata = (mint: string): ATAMetadata | undefined => {
 
 export const getBackupTokenLogo = (mint: string) => {
   switch (mint) {
-    case WRAPPED_SOL_MINT: return "https://statics.solscan.io/cdn/imgs/s60?ref=68747470733a2f2f7261772e67697468756275736572636f6e74656e742e636f6d2f736f6c616e612d6c6162732f746f6b656e2d6c6973742f6d61696e2f6173736574732f6d61696e6e65742f536f31313131313131313131313131313131313131313131313131313131313131313131313131313131322f6c6f676f2e706e67"
-    case USDC_MINT: return "https://statics.solscan.io/cdn/imgs/s60?ref=68747470733a2f2f7261772e67697468756275736572636f6e74656e742e636f6d2f736f6c616e612d6c6162732f746f6b656e2d6c6973742f6d61696e2f6173736574732f6d61696e6e65742f45506a465764643541756671535371654d32714e31787a7962617043384734774547476b5a777954447431762f6c6f676f2e706e67"
-    case MOUTAI_MINT: return "https://solscan.io/_next/image?url=https%3A%2F%2Fimg.fotofolio.xyz%2F%3Furl%3Dhttps%253A%252F%252Fbafybeihn5s2ykzqwpmb6d4dbowecovc7vo2wjx7zjltur7sl4ykfhbmoaq.ipfs.nftstorage.link&w=64&q=75"
-    default: return "";
+    case WRAPPED_SOL_MINT:
+      return "https://statics.solscan.io/cdn/imgs/s60?ref=68747470733a2f2f7261772e67697468756275736572636f6e74656e742e636f6d2f736f6c616e612d6c6162732f746f6b656e2d6c6973742f6d61696e2f6173736574732f6d61696e6e65742f536f31313131313131313131313131313131313131313131313131313131313131313131313131313131322f6c6f676f2e706e67";
+    case USDC_MINT:
+      return "https://statics.solscan.io/cdn/imgs/s60?ref=68747470733a2f2f7261772e67697468756275736572636f6e74656e742e636f6d2f736f6c616e612d6c6162732f746f6b656e2d6c6973742f6d61696e2f6173736574732f6d61696e6e65742f45506a465764643541756671535371654d32714e31787a7962617043384734774547476b5a777954447431762f6c6f676f2e706e67";
+    case USDT_MINT:
+      return "https://statics.solscan.io/cdn/imgs/s60?ref=68747470733a2f2f7261772e67697468756275736572636f6e74656e742e636f6d2f736f6c616e612d6c6162732f746f6b656e2d6c6973742f6d61696e2f6173736574732f6d61696e6e65742f457339764d46727a614345526d4a667246344832465944344b436f4e6b5931314d6343653842656e774e59422f6c6f676f2e737667";
+    case MOUTAI_MINT:
+      return "https://dd.dexscreener.com/ds-data/tokens/solana/45EgCwcPXYagBC7KqBin4nCFgEZWN7f3Y6nACwxqMCWX.png?size=lg&key=4d7db3";
+    case SAMO_MINT:
+      return "https://statics.solscan.io/cdn/imgs/s60?ref=68747470733a2f2f7261772e67697468756275736572636f6e74656e742e636f6d2f736f6c616e612d6c6162732f746f6b656e2d6c6973742f6d61696e2f6173736574732f6d61696e6e65742f37784b587467324357383764393754584a5344706244356a426b68655471413833545a52754a6f73674173552f6c6f676f2e706e67";
+    default:
+      return "";
   }
 };
 
 export const fetchTokenMetadata = async (mintAddress: string) => {
   const connection = getConnection();
+
+  const localMetadata = getLocalToken(mintAddress);
+  if (localMetadata) return localMetadata.metadata;
 
   const mint = new PublicKey(mintAddress);
 
@@ -104,17 +116,14 @@ export const fetchCollectibleMetadata = async (mintAddress: string) => {
   return metadata;
 };
 
-export const getLocalTokens = async () => {
-  const response = await fetch("/localTokenList.json");
-  const tokenList = await response.json();
+export const getLocalTokens = (): Token[] => {
+  const tokens: Token[] = [];
 
-  const tokens: Token[] = tokenList.tokens.map((localToken, index) => {
-    if (index === 200) return;
-    const mint = localToken.address;
+  Object.values(localTokens).forEach((localToken) => {
     const token: Token = {
-      pubkey: new PublicKey(mint),
+      pubkey: new PublicKey(localToken.address),
       accountData: {
-        mint,
+        mint: localToken.address,
         owner: "",
         amount: "0",
         decimals: localToken.decimals,
@@ -126,7 +135,7 @@ export const getLocalTokens = async () => {
       },
     };
 
-    return token;
+    tokens.push(token);
   });
 
   return tokens;
@@ -201,6 +210,8 @@ export const getOwnedTokens = async (pubkey: PublicKey) => {
     }
   });
 
+  console.log("--> before fetchTokenMetadata");
+
   // Token Metadata
   const tokenMetadataPromises: Promise<ATAMetadata | undefined>[] = [];
   tokens.forEach((token) => {
@@ -210,6 +221,8 @@ export const getOwnedTokens = async (pubkey: PublicKey) => {
   tokenMetadataList.forEach((metadata, index) => {
     tokens[index].metadata = metadata;
   });
+
+  console.log("--> after fetchTokenMetadata");
 
   return tokens;
 };
@@ -302,16 +315,8 @@ export const getTokenDecimalsByMint = async (mint: string) => {
   return (mintData.value!.data as ParsedDataOfMint).parsed.info.decimals;
 };
 
-export const getLocalToken = async (mint: string) => {
-  const response = await fetch("/localTokenList.json");
-  const tokenList = await response.json();
-
-  const localToken = tokenList.tokens.find((token: { address: string }) => {
-    if (token.address === mint) {
-      return token;
-    }
-  });
-
+export const getLocalToken = (mint: string) => {
+  const localToken = localTokens[mint];
   if (!localToken) return;
 
   const token: Token = {

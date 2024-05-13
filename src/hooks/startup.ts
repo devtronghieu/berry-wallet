@@ -47,25 +47,23 @@ export const useStartup = () => {
     appActions.setShowBalance(showBalance);
 
     // fetch history
-    getSignatures(keypair.publicKey)
-      .then((signatures) => {
-        for (const signature of signatures) {
-          getTransaction(signature)
-            .then((tx) => {
-              if (!tx) return;
-              historyActions.addTransaction(tx);
-            })
-            .catch(console.error);
-        }
-      })
-      .catch((err) => {
-        console.error("history -->", err);
-      });
+    // getSignatures(keypair.publicKey)
+    //   .then((signatures) => {
+    //     for (const signature of signatures) {
+    //       getTransaction(signature)
+    //         .then((tx) => {
+    //           if (!tx) return;
+    //           historyActions.addTransaction(tx);
+    //         })
+    //         .catch(console.error);
+    //     }
+    //   })
+    //   .catch((err) => {
+    //     console.error("history -->", err);
+    //   });
 
     // fetch local tokens
-    getLocalTokens().then((tokens) => {
-      appActions.setLocalTokens(tokens);
-    });
+    appActions.setLocalTokens(getLocalTokens());
 
     // fetch remote tokens
     getRemoteTokens().then((tokens) => {
@@ -74,23 +72,36 @@ export const useStartup = () => {
   }, [keypair]);
 
   useEffect(() => {
-    if (tokens.length === 0) return;
+    if (tokens.length === 0 || appState.loading.tokens) return;
 
     appState.loading.prices = true;
 
-    const fetchPrices = async () => {
-      const mintAddresses = tokens.map((token) => getSafeMintAddressForPriceAPI(token.accountData.mint));
-      const prices = (await queryTokenPrice(mintAddresses)) as {
-        getTokenPricesByTokenAddresses: GqlToken[];
-      };
-      const priceMap: Record<string, number> = {};
-      prices.getTokenPricesByTokenAddresses.forEach((price) => {
-        priceMap[price.tokenAddress] = price.price;
-      });
-      appActions.setPrices(priceMap);
+    const fetchPricesWithRetry = async (retryCount = 5, delay = 3000): Promise<void> => {
+      try {
+        const mintAddresses = tokens.map((token) => getSafeMintAddressForPriceAPI(token.accountData.mint));
+        console.log("Fetching prices...");
+        const prices = (await queryTokenPrice(mintAddresses)) as {
+          getTokenPricesByTokenAddresses: GqlToken[];
+        };
+        const priceMap: Record<string, number> = {};
+        prices.getTokenPricesByTokenAddresses.forEach((price) => {
+          priceMap[price.tokenAddress] = price.price;
+        });
+        appActions.setPrices(priceMap);
+      } catch (error) {
+        console.error("Error fetching prices:", error);
+        if (retryCount > 0) {
+          console.log(`Retrying... ${retryCount} attempts left.`);
+          await new Promise((resolve) => setTimeout(resolve, delay));
+          return fetchPricesWithRetry(retryCount - 1, delay);
+        } else {
+          console.error("Max retry attempts reached. Unable to fetch prices.");
+          throw new Error("Max retry attempts reached");
+        }
+      }
     };
 
-    fetchPrices()
+    fetchPricesWithRetry()
       .catch(console.error)
       .finally(() => (appState.loading.prices = false));
   }, [tokens]);
