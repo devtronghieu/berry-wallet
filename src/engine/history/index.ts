@@ -8,7 +8,7 @@ import { transferCheckedTransationDetail } from './transferTransaction/transferC
 
 export const connection = getConnection();
 
-export const getSignatures = async (address: PublicKey, limit: number = 1000) => {
+export const getSignatures = async (address: PublicKey, limit: number = 50) => {
     const confirmedSignatureInfos = await connection.getSignaturesForAddress(address, {limit});
     const confirmedSignatureInfosWithoutDuplicates = new Set(confirmedSignatureInfos);
     const signatures = Array.from(confirmedSignatureInfosWithoutDuplicates).map((info) => info.signature);
