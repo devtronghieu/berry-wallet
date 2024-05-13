@@ -17,6 +17,7 @@ const UnlockWalletScreen = () => {
   useEffect(() => {
     const restoreWalletSession = async () => {
       const passwordExpiredAt = await getPasswordExpiredAt();
+      console.log(passwordExpiredAt, Date.now(), (passwordExpiredAt || 0) < Date.now());
       if (!passwordExpiredAt || passwordExpiredAt < Date.now()) {
         return;
       }

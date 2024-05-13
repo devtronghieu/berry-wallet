@@ -2,6 +2,7 @@ import { PouchID } from "@engine/constants";
 import { getEncryptedAccounts } from "@engine/storage";
 import { Route } from "@utils/routes";
 import { FC, ReactNode, useEffect, useState } from "react";
+import Spinner from "react-activity/dist/Spinner";
 import { Navigate, useLocation } from "react-router-dom";
 import { useSnapshot } from "valtio";
 
@@ -29,7 +30,12 @@ export const ProtectedRoute: FC<Props> = ({ children }) => {
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading)
+    return (
+      <div className="extension-container flex items-center justify-center">
+        <Spinner size={20} />
+      </div>
+    );
 
   if (!encryptedAccounts) return <Navigate to={Route.SignIn} />;
 

@@ -77,8 +77,6 @@ export const useStartup = () => {
   }, [keypair]);
 
   useEffect(() => {
-    if (tokens.length === 0 || appState.loading.tokens) return;
-
     appState.loading.prices = true;
 
     const fetchPricesWithRetry = async (retryCount = 5, delay = 3000): Promise<void> => {

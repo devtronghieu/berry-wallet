@@ -1,4 +1,6 @@
 import ActionButton from "@components/ActionButton";
+import { BERRY_LOCAL_CONFIG_KEY } from "@engine/constants";
+import { upsertPasswordExpiredAt } from "@engine/storage";
 import { appActions, appState } from "@state/index";
 import { FC, useState } from "react";
 
@@ -29,6 +31,8 @@ const ChangeAutoLockTimer: FC<Props> = ({ onSave }) => {
 
   const handleClickSave = () => {
     appActions.setLockTimer((timerOptions.get(selectedOption) || 0) * 60 * 1000);
+    localStorage.setItem(BERRY_LOCAL_CONFIG_KEY, JSON.stringify(appState.localConfig));
+    upsertPasswordExpiredAt(Date.now() + appState.localConfig.lockTimer);
     onSave();
   };
 
