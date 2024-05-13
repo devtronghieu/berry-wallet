@@ -123,10 +123,10 @@ export interface SendNFTConfig {
   NFT?: Collectible;
 }
 export const constructNftTransaction = async (
-  tranferNFTConfig: SendNFTConfig,
+  transferNFTConfig: SendNFTConfig,
   transactionWithBlockhash?: Transaction,
 ): Promise<Transaction> => {
-  const { keypair, receiverPublicKey, NFT } = tranferNFTConfig;
+  const { keypair, receiverPublicKey, NFT } = transferNFTConfig;
   if (!receiverPublicKey || !NFT) throw new Error("Invalid NFT or receiver public key.");
   const fromTokenAccount = await getAssociatedTokenAddress(new PublicKey(NFT.accountData.mint), keypair.publicKey);
   const toTokenAccount = await getAssociatedTokenAddress(new PublicKey(NFT.accountData.mint), receiverPublicKey);
@@ -153,13 +153,13 @@ export const constructNftTransaction = async (
   return transaction;
 };
 
-export const sendCollectible = async (tranferNFTConfig: SendNFTConfig) => {
+export const sendCollectible = async (transferNFTConfig: SendNFTConfig) => {
   const connection = getConnection();
   try {
-    const transaction = await constructNftTransaction(tranferNFTConfig);
-    transaction.feePayer = tranferNFTConfig.keypair.publicKey;
+    const transaction = await constructNftTransaction(transferNFTConfig);
+    transaction.feePayer = transferNFTConfig.keypair.publicKey;
     transaction.recentBlockhash = (await connection.getLatestBlockhash("finalized")).blockhash;
-    const signature = await sendAndConfirmTransaction(connection, transaction, [tranferNFTConfig.keypair]);
+    const signature = await sendAndConfirmTransaction(connection, transaction, [transferNFTConfig.keypair]);
     console.log(`txhash: ${signature}`);
     transactionActions.setSignature(signature);
     transactionActions.setStatus(TransactionStatus.SUCCESS);

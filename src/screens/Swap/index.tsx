@@ -12,6 +12,7 @@ import { swapActions, swapContext } from "@state/swap";
 import { formatCurrency } from "@utils/general";
 import { getSafeMintAddressForPriceAPI } from "@utils/tokens";
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import Spinner from "react-activity/dist/Spinner";
 import toast from "react-hot-toast";
 import { useSnapshot } from "valtio";
 
@@ -157,7 +158,7 @@ const Swap: FC<Props> = ({ onSubmit }) => {
       </div>
 
       <ActionButton onClick={handleOnSwap} disabled={amountError !== ""}>
-        Swap
+        {loading ? <Spinner size={20} /> : "Swap"}
       </ActionButton>
     </>
   );
