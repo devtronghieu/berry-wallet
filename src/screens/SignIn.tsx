@@ -3,7 +3,6 @@ import { Route } from "@utils/routes";
 import { Link } from "react-router-dom";
 
 import ArrowDownBGIcon from "@/icons/ArrowDownBG";
-import GoogleIcon from "@/icons/Google";
 import PaperPlusIcon from "@/icons/PaperPlus";
 import PlusIcon from "@/icons/Plus";
 
@@ -19,9 +18,6 @@ const SignInScreen = () => {
           <button className="gradient-button">
             <PlusIcon size={20} />
             <Link to={Route.CreateWallet}>Create new wallet</Link>
-          </button>
-          <button className="gradient-button">
-            <GoogleIcon size={20} /> Sign in with Google
           </button>
           <button className="gradient-button">
             <PaperPlusIcon size={20} />
