@@ -76,7 +76,7 @@ const Select: FC<Props> = ({ items, selectedItemIndex, onSelectedItem, disabled 
       <div
         className={`mt-2 border border-solid rounded-xl border-primary-300 bg-primary-100 p-1 flex flex-col gap-y-2 absolute top-full w-full left-0 ${
           isOpen ? "visible" : "invisible"
-        } z-10`}
+        } z-10 max-h-36 overflow-y-auto no-scrollbar`}
       >
         {items.map((item, index) => {
           const { symbol, logo } = getSymbolOrNameAndLogo(item);
