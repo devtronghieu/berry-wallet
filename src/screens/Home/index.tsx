@@ -14,10 +14,11 @@ import TransactionResult from "@screens/Result";
 import Send from "@screens/Send";
 import Swap from "@screens/Swap";
 import { appActions, appState } from "@state/index";
-import { formatCurrency, getLocalLogo } from "@utils/general";
+import { formatCurrency, getLocalLogoBySymbol } from "@utils/general";
 import { Route } from "@utils/routes";
 import { getSafeMintAddressForPriceAPI } from "@utils/tokens";
 import { useEffect, useMemo, useState } from "react";
+import Spinner from "react-activity/dist/Spinner";
 import { useNavigate } from "react-router-dom";
 import { useSnapshot } from "valtio";
 
@@ -45,6 +46,7 @@ const HomeScreen = () => {
     encryptedAccounts,
     activeKeypairIndex,
     activeProfileIndex,
+    loading,
   } = useSnapshot(appState);
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
   const [addrListIsOpen, setAddrListIsOpen] = useState<boolean>(false);
@@ -54,7 +56,7 @@ const HomeScreen = () => {
   const navigate = useNavigate();
 
   const srcImage = useMemo(() => {
-    return tokens[0]?.metadata?.image || getLocalLogo(tokens[0]?.metadata?.symbol || "Unknown");
+    return tokens[0]?.metadata?.image || getLocalLogoBySymbol(tokens[0]?.metadata?.symbol || "Unknown");
   }, [tokens]);
 
   const keypairs: AddrListItem[] = useMemo(
@@ -170,7 +172,7 @@ const HomeScreen = () => {
             <HideBalance size={16} />
           ) : (
             <h1 className={`text-2xl font-semibold text-center text-primary-400 mt-2`}>
-              $ {formatCurrency(totalBalance)}
+              {loading.prices ? <Spinner className="inline-block" /> : `$ ${formatCurrency(totalBalance)}`}
             </h1>
           )}
         </div>

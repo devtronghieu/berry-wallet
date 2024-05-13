@@ -1,5 +1,6 @@
 import { TransactionStatus } from "@state/transaction";
 import { FC } from "react";
+import Spinner from "react-activity/dist/Spinner";
 
 import { CorrectIcon, WrongIcon } from "@/icons";
 
@@ -13,7 +14,7 @@ interface Props {
   children: React.ReactNode;
 }
 
-const TransactinDetails: FC<Props> = ({ transactionDetails, children }) => {
+const TransactionDetails: FC<Props> = ({ transactionDetails, children }) => {
   return (
     <>
       {children}
@@ -21,6 +22,7 @@ const TransactinDetails: FC<Props> = ({ transactionDetails, children }) => {
         {transactionDetails?.map((detail) => {
           const isStatus = detail.name === "Status";
           const isSuccess = detail.value === TransactionStatus.SUCCESS;
+          const isPending = detail.value === TransactionStatus.PENDING;
           const isFailed = detail.value === TransactionStatus.FAILED;
 
           return (
@@ -30,13 +32,14 @@ const TransactinDetails: FC<Props> = ({ transactionDetails, children }) => {
                 <span className={`${isSuccess ? "text-success" : ""} ${isFailed ? "text-error" : ""}`}>
                   {detail.value}
                 </span>
-                <p
+                <div
                   className={`rounded-button ${isSuccess ? "bg-secondary-100" : ""} 
                   ${isFailed ? "bg-primary-300" : ""} ${isStatus ? "!flex" : "!hidden"} `}
                 >
                   {isSuccess && <CorrectIcon size={12} />}
+                  {isPending && <Spinner size={12} />}
                   {isFailed && <WrongIcon size={12} />}
-                </p>
+                </div>
               </div>
             </div>
           );
@@ -46,4 +49,4 @@ const TransactinDetails: FC<Props> = ({ transactionDetails, children }) => {
   );
 };
 
-export default TransactinDetails;
+export default TransactionDetails;

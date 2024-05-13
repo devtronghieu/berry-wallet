@@ -1,5 +1,5 @@
 import { SOL } from "@engine/constants";
-import { Token, Collectible } from "@engine/tokens/types";
+import { Collectible, Token } from "@engine/tokens/types";
 import { proxy } from "valtio";
 
 export enum TransactionStatus {

@@ -18,13 +18,18 @@ export const useStartup = () => {
   useEffect(() => {
     if (!keypair) return;
 
+    appState.loading.tokens = true;
+    appState.loading.nfts = true;
+
     getOwnedTokens(keypair.publicKey)
       .then((tokens) => appActions.setTokens(tokens))
-      .catch(console.error);
+      .catch(console.error)
+      .finally(() => (appState.loading.tokens = false));
 
     fetchNFTs(keypair.publicKey)
       .then((collectionMap) => appActions.setCollectionMap(collectionMap))
-      .catch(console.error);
+      .catch(console.error)
+      .finally(() => (appState.loading.nfts = false));
 
     fetchAccountInfo()
       .then(({ encryptedAccounts, activeKeypairIndex, activeProfileIndex }) => {
@@ -45,10 +50,12 @@ export const useStartup = () => {
     getSignatures(keypair.publicKey)
       .then((signatures) => {
         for (const signature of signatures) {
-          getTransaction(signature).then((tx) => {
-            if (!tx) return;
-            historyActions.addTransaction(tx);
-          }).catch(console.error);
+          getTransaction(signature)
+            .then((tx) => {
+              if (!tx) return;
+              historyActions.addTransaction(tx);
+            })
+            .catch(console.error);
         }
       })
       .catch((err) => {
@@ -64,10 +71,13 @@ export const useStartup = () => {
     getRemoteTokens().then((tokens) => {
       appActions.setRemoteTokens(tokens);
     });
-
   }, [keypair]);
 
   useEffect(() => {
+    if (tokens.length === 0) return;
+
+    appState.loading.prices = true;
+
     const fetchPrices = async () => {
       const mintAddresses = tokens.map((token) => getSafeMintAddressForPriceAPI(token.accountData.mint));
       const prices = (await queryTokenPrice(mintAddresses)) as {
@@ -79,7 +89,10 @@ export const useStartup = () => {
       });
       appActions.setPrices(priceMap);
     };
-    fetchPrices().catch(console.error);
+
+    fetchPrices()
+      .catch(console.error)
+      .finally(() => (appState.loading.prices = false));
   }, [tokens]);
 
   useEffect(() => {

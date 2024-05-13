@@ -7,6 +7,11 @@ import { proxy } from "valtio";
 
 export interface AppState {
   network: "mainnet" | "devnet";
+  loading: {
+    tokens: boolean;
+    prices: boolean;
+    nfts: boolean;
+  };
   localConfig: {
     showBalance: boolean;
     lockTimer: number;
@@ -29,6 +34,11 @@ export const appState = proxy<AppState>({
   localConfig: {
     showBalance: true,
     lockTimer: 30 * 60 * 1000, // 30 minutes
+  },
+  loading: {
+    tokens: false,
+    prices: false,
+    nfts: false,
   },
   tokens: [],
   localTokens: [],
@@ -96,7 +106,6 @@ export const appActions = {
     appState.localTokens = tokens;
   },
   setRemoteTokens: (tokens: Token[]) => {
-    console.log(tokens);
     appState.remoteTokens = tokens;
   },
 };

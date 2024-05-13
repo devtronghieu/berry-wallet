@@ -1,7 +1,7 @@
-import { Token, Collectible } from "@engine/tokens/types";
+import { Collectible, Token } from "@engine/tokens/types";
 import { appState } from "@state/index";
 import { transactionState } from "@state/transaction";
-import { getLocalLogo } from "@utils/general";
+import { getLocalLogoBySymbol } from "@utils/general";
 import { FC, useMemo } from "react";
 import { useSnapshot } from "valtio";
 
@@ -22,7 +22,7 @@ const TransactionResult: FC = () => {
   const getSymbolNameAndLogo = (item: Token | Collectible) => {
     const symbol = item?.metadata?.symbol || "Unknown";
     const name = item?.metadata?.name || "Unknown";
-    const logo = item?.metadata?.image || getLocalLogo(symbol);
+    const logo = item?.metadata?.image || getLocalLogoBySymbol(symbol);
     return { symbol, name, logo };
   };
 

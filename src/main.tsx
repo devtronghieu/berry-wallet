@@ -1,4 +1,5 @@
 import "./index.css";
+import "react-activity/dist/Spinner.css";
 
 import ProtectedRoute from "@components/ProtectedRoute.tsx";
 import CreateWalletScreen from "@screens/CreateWallet";

@@ -40,7 +40,7 @@ const SendToken: FC<Props> = ({ onSubmit }) => {
       keypair: keypair as Keypair,
       receiverPublicKey: new PublicKey(receiverPublicKey),
       amount,
-      token: tokens[selectedIndex] as Token,
+      token: tokens[selectedIndex],
     });
   };
 

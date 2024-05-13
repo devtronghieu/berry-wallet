@@ -1,6 +1,6 @@
 import { ATAMetadata, Collectible, Token } from "@engine/tokens/types";
 import { transactionActions as TxA } from "@state/transaction";
-import { getLocalLogo } from "@utils/general";
+import { getLocalLogoBySymbol } from "@utils/general";
 import { FC, useState } from "react";
 
 import ArrowDownCircleIcon from "@/icons/ArrowDownCircle";
@@ -48,7 +48,7 @@ const Select: FC<Props> = ({ items, selectedItemIndex, onSelectedItem, disabled 
   // Get symbol/name and logo of the item
   const getSymbolOrNameAndLogo = (item: Token | Collectible | Collection) => {
     const symbol = (isToken(item) ? item?.metadata?.symbol : item?.metadata?.name) || "Unknown";
-    const logo = item?.metadata?.image || getLocalLogo(symbol);
+    const logo = item?.metadata?.image || getLocalLogoBySymbol(symbol);
     return { symbol, logo };
   };
 
