@@ -32,7 +32,7 @@ const ManageAccounts: FC<Props> = ({ accounts, onItemClick }) => {
             return (
               <SettingAccount
                 title={account.name}
-                value={`${formatCurrency(account.lastBalance)}`}
+                value={`$${formatCurrency(account.lastBalance)}`}
                 onClick={() => onItemClick(walletIndex, 0, StoredAccountType.PrivateKey, null)}
                 hasIcon={false}
                 key={account.privateKey}
