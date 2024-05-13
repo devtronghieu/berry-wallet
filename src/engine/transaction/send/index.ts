@@ -1,7 +1,6 @@
 import { getConnection } from "@engine/connection";
 import { WRAPPED_SOL_MINT } from "@engine/constants";
-import { Collectible,Token } from "@engine/tokens/types";
-import { convertDateToReadable } from "@engine/utils";
+import { Collectible, Token } from "@engine/tokens/types";
 import {
   createAssociatedTokenAccountInstruction,
   createTransferInstruction,
@@ -86,7 +85,6 @@ export const sendTransaction = async (transactionConfig: SendTransactionConfig) 
     transaction.feePayer = transactionConfig.keypair.publicKey;
     transaction.recentBlockhash = (await connection.getLatestBlockhash("finalized")).blockhash;
     const signature = await sendAndConfirmTransaction(connection, transaction, [transactionConfig.keypair]);
-    transactionActions.setDate(convertDateToReadable(new Date()));
     transactionActions.setSignature(signature);
     transactionActions.setStatus(TransactionStatus.SUCCESS);
   } catch (error) {
@@ -163,7 +161,6 @@ export const sendCollectible = async (tranferNFTConfig: SendNFTConfig) => {
     transaction.recentBlockhash = (await connection.getLatestBlockhash("finalized")).blockhash;
     const signature = await sendAndConfirmTransaction(connection, transaction, [tranferNFTConfig.keypair]);
     console.log(`txhash: ${signature}`);
-    transactionActions.setDate(convertDateToReadable(new Date()));
     transactionActions.setSignature(signature);
     transactionActions.setStatus(TransactionStatus.SUCCESS);
   } catch (error) {

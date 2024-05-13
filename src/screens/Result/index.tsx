@@ -1,4 +1,5 @@
 import { Collectible, Token } from "@engine/tokens/types";
+import { convertDateToReadable } from "@engine/utils";
 import { appState } from "@state/index";
 import { transactionState } from "@state/transaction";
 import { getLocalLogoBySymbol } from "@utils/general";
@@ -9,15 +10,15 @@ import TransactionDetails from "./TransactionDetails";
 
 const TransactionResult: FC = () => {
   const { network: env } = useSnapshot(appState);
-  const { amount, receiverPublicKey, date, status, fee, token, collectible, signature } = useSnapshot(transactionState);
+  const { amount, receiverPublicKey, status, fee, token, collectible, signature } = useSnapshot(transactionState);
   const transactionDetails = useMemo(() => {
     return [
       { name: "To", value: `${receiverPublicKey.slice(0, 4)}...${receiverPublicKey.slice(-4)}` },
-      { name: "Date", value: date },
+      { name: "Date", value: convertDateToReadable(new Date()) },
       { name: "Status", value: status },
       { name: "Transaction fee", value: `${fee} SOL` },
     ];
-  }, [date, fee, receiverPublicKey, status]);
+  }, [fee, receiverPublicKey, status]);
 
   const getSymbolNameAndLogo = (item: Token | Collectible) => {
     const symbol = item?.metadata?.symbol || "Unknown";
@@ -26,7 +27,7 @@ const TransactionResult: FC = () => {
     return { symbol, name, logo };
   };
 
-  const { symbol, name, logo } = getSymbolNameAndLogo(collectible ? collectible : token);
+  const { symbol, name, logo } = getSymbolNameAndLogo(collectible.pubkey ? collectible : token);
 
   return (
     <TransactionDetails transactionDetails={transactionDetails}>
