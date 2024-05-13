@@ -123,8 +123,6 @@ export const getRemoteTokens = async () => {
   const response = await fetch("https://token.jup.ag/strict");
   const tokenList = await response.json();
 
-  console.log(tokenList);
-
   const tokens: Token[] = tokenList.map((remoteToken) => {
     const mint = remoteToken.address;
     const token: Token = {
