@@ -51,6 +51,10 @@ const SendCollectible: FC<Props> = ({ onSubmit, defaultCollectible = undefined }
     collections[selectedCollectionIndex]?.collectibles?.[selectedCollectibleIndex] as Collectible,
   );
 
+  // Check if collection is empty
+  const disabled = !collections.length;
+  const disabledMessage = disabled ? "No collectibles available" : undefined;
+
   useEffect(() => {
     // Set default collectible
     if (defaultCollectible && collections.length) {
@@ -67,10 +71,6 @@ const SendCollectible: FC<Props> = ({ onSubmit, defaultCollectible = undefined }
       setCollectible(defaultCollectible);
     }
   }, [defaultCollectible, collections]);
-
-  // Check if collection is empty
-  const disabled = !collections.length;
-  const disabledMessage = disabled ? "No collectibles available" : undefined;
 
   const handleSubmitButton = () => {
     if (!keypair) return;
@@ -100,7 +100,7 @@ const SendCollectible: FC<Props> = ({ onSubmit, defaultCollectible = undefined }
     );
 
     TxA.resetTransactionState();
-    TxA.setCollectible(collectible);
+    collectible && TxA.setCollectible(collectible);
     setReceiverError("");
     setIsValidReceiver(false);
     setIsValidAmount(false);
@@ -133,7 +133,7 @@ const SendCollectible: FC<Props> = ({ onSubmit, defaultCollectible = undefined }
           disabledMessage={disabledMessage}
         />
         <Select
-          items={collections[selectedCollectionIndex].collectibles || []}
+          items={collections[selectedCollectionIndex]?.collectibles || []}
           selectedItemIndex={selectedCollectibleIndex}
           onSelectedItem={setSelectedCollectibleIndex}
           disabled={disabled}
