@@ -40,7 +40,7 @@ const History: FC<HistoryProps> = ({ onItemClick }) => {
               transactionType={transaction.transactionType}
               receiver={(transaction as TransferTransaction).receiver}
               sender={(transaction as TransferTransaction).sender}
-              receivedAmount={(transaction as SwapTransaction).receivedAmount}
+              receiveAmount={(transaction as SwapTransaction).receiveAmount}
               receivedTokenImage={
                 ((transaction as SwapTransaction).receivedToken &&
                   (transaction as SwapTransaction).receivedToken.metadata?.image) ||
