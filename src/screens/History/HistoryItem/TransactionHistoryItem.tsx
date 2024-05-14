@@ -15,7 +15,7 @@ const TransactionHistoryItem: FC<HistoryItemProps> = ({
   tokenName,
   sender,
   receiver,
-  receivedAmount,
+  receiveAmount,
   receivedTokenImage,
   receivedTokenName,
   onClick,
@@ -88,7 +88,7 @@ const TransactionHistoryItem: FC<HistoryItemProps> = ({
             -{formatCurrency(amount)} {tokenName}
           </p>
           <p className="text-secondary-500  font-semibold text-end">
-            +{formatCurrency(receivedAmount || 0)} {receivedTokenName}
+            +{formatCurrency(receiveAmount || 0)} {receivedTokenName}
           </p>
         </div>
       );
@@ -105,7 +105,7 @@ const TransactionHistoryItem: FC<HistoryItemProps> = ({
         </p>
       );
     }
-  }, [transactionType, amount, tokenName, receivedAmount, receivedTokenName, tokenType]);
+  }, [transactionType, amount, tokenName, receiveAmount, receivedTokenName, tokenType]);
 
   return <HistoryItem Icon={Icon} Address={Address} Amount={TotalAmount} onClick={onClick} />;
 };

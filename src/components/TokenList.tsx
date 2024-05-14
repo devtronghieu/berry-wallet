@@ -17,7 +17,7 @@ export const TokenList: FC<Props> = ({ className, tokens }) => {
 
   return (
     <div className={`token-list no-scrollbar ${className}`}>
-      {loading.tokens && <Spinner size={20} className="mx-auto" />}
+      {loading.tokens && <Spinner size={20} className="mx-auto mt-1" />}
 
       {!loading.tokens && tokens.length === 0 && <p className="text-center text-secondary-500">No tokens found</p>}
 
@@ -43,7 +43,7 @@ export const TokenList: FC<Props> = ({ className, tokens }) => {
                 </div>
               </div>
               <div className="flex flex-col items-end">
-                <p className="text-secondary-500 text-sm font-semibold">{friendlyAmount}</p>
+                <p className="text-secondary-500 text-sm font-semibold">{formatCurrency(friendlyAmount)}</p>
                 <p className="text-tertiary-300 text-sm font-semibold">
                   ${loading.prices ? "N/A" : formatCurrency(totalPrice)}
                 </p>

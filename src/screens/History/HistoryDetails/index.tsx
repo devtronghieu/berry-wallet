@@ -15,7 +15,6 @@ import { useSnapshot } from "valtio";
 const HistoryDetails = () => {
   const { network: env } = useSnapshot(appState);
   const { currentTransaction } = useSnapshot(historyState);
-
   return (
     <div className="flex flex-col gap-5">
       <TokenInfo
@@ -24,7 +23,7 @@ const HistoryDetails = () => {
         amount={currentTransaction?.amount || 0}
         tokenImage={(currentTransaction as TransferTransaction)?.token.metadata?.image || unknown}
         tokenName={(currentTransaction as TransferTransaction)?.token.metadata?.symbol || "Unknown"}
-        receiveAmount={(currentTransaction as SwapTransaction)?.receivedAmount || 0}
+        receiveAmount={(currentTransaction as SwapTransaction)?.receiveAmount || 0}
         receivedTokenImage={(currentTransaction as SwapTransaction)?.receivedToken?.metadata?.image || unknown}
         receivedTokenName={(currentTransaction as SwapTransaction)?.receivedToken?.metadata?.symbol || "Unknown"}
         signature={currentTransaction?.signature || ""}

@@ -1,6 +1,6 @@
 import SeparatedLine from "@components/SeparatedLine";
 import { TransactionStatus, TransactionType } from "@engine/history/types";
-import { formatDate, shortenAddress } from "@utils/general";
+import { formatCurrency, formatDate, shortenAddress } from "@utils/general";
 import { FC, useMemo } from "react";
 
 import { CorrectIcon } from "@/icons";
@@ -55,7 +55,7 @@ export const TransactionInfo: FC<TransactionInfoProps> = ({ date, status, transa
   }, [status]);
 
   const Fee = useMemo(() => {
-    return <TransactionInfoItem title="Fee" value={`${fee} SOL`} />;
+    return <TransactionInfoItem title="Fee" value={`${formatCurrency(fee)} SOL`} />;
   }, [fee]);
 
   return (

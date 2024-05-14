@@ -25,6 +25,7 @@ const ManageAccounts: FC<Props> = ({ accounts, onItemClick }) => {
                 value={`$${formatCurrency(privateKey.lastBalance)}`}
                 onClick={() => onItemClick(walletIndex, keypairIndex, StoredAccountType.SeedPhrase, account.seedPhrase)}
                 hasIcon={false}
+                hasInput
                 key={privateKey.privateKey}
               />
             ));
@@ -35,6 +36,7 @@ const ManageAccounts: FC<Props> = ({ accounts, onItemClick }) => {
                 value={`$${formatCurrency(account.lastBalance)}`}
                 onClick={() => onItemClick(walletIndex, 0, StoredAccountType.PrivateKey, null)}
                 hasIcon={false}
+                hasInput
                 key={account.privateKey}
               />
             );

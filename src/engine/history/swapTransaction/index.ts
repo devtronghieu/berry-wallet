@@ -38,7 +38,7 @@ export const getSwapTransactionDetails = async (
   );
   const { sourceInstruction, destinationInstruction } = getSwapInstruction(transferInstructions as ParsedInstruction[]);
   const amount = getCheckedAmount(sourceInstruction);
-  const receivedAmount = getCheckedAmount(destinationInstruction);
+  const receiveAmount = getCheckedAmount(destinationInstruction);
   const token = await getCheckedToken(sourceInstruction);
   const receivedToken = await getCheckedToken(destinationInstruction);
   const date = new Date(blockTime * 1000);
@@ -49,7 +49,7 @@ export const getSwapTransactionDetails = async (
   const swapTransactionDetails: SwapTransaction = {
     signature,
     amount,
-    receivedAmount,
+    receiveAmount,
     token,
     receivedToken,
     date,
